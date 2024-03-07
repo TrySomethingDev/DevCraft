@@ -7,7 +7,7 @@ import com.twirk.commands.PatternCommandExclamationPoint;
 import com.twirk.commands.PatternCommandFoo;
 import com.twirk.commands.PrefixCommandExample;
 import com.gikk.twirk.events.TwirkListener;
-import org.example.models.interfaces.ITwitchChatMessageListener;
+import net.trysomethingdev.devcraft.twitch.ITwitchChatMessageListener;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,9 +25,6 @@ import java.util.Scanner;
  */
 public class BotExample {
 	
-	public static void main(String[] args) throws IOException, InterruptedException{		
-		Start();
-	}
 
 	public static void Start(ITwitchChatMessageListener firstListener) throws InterruptedException, IOException {
 		System.out.println("Welcome to this Bot example. In this example you will be able \n"
@@ -76,20 +73,20 @@ public class BotExample {
 	}
 
 	private static TwirkListener getOnDisconnectListener(final Twirk twirk) {
-		
+
 		return new TwirkListener() {
 			@Override
 			public void onDisconnect() {
-				//Twitch might sometimes disconnects us from chat. If so, try to reconnect. 
-				try { 
+				//Twitch might sometimes disconnects us from chat. If so, try to reconnect.
+				try {
 					if( !twirk.connect() )
 						//Reconnecting might fail, for some reason. If so, close the connection and release resources.
 						twirk.close();
-				} 
-				catch (IOException e) { 
+				}
+				catch (IOException e) {
 					//If reconnection threw an IO exception, close the connection and release resources.
-					twirk.close(); 
-				} 
+					twirk.close();
+				}
 				catch (InterruptedException ignored) {  }
 			}
 		};

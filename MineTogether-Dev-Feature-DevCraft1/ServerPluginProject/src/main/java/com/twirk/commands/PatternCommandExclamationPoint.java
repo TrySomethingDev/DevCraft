@@ -4,9 +4,8 @@ import com.gikk.twirk.Twirk;
 import com.gikk.twirk.enums.USER_TYPE;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
-import org.example.models.TwitchChatMessage;
-import org.example.models.events.TwitchChatMessageAddedEvent;
-import org.example.models.interfaces.ITwitchChatMessageListener;
+import net.trysomethingdev.devcraft.twitch.ITwitchChatMessageListener;
+import net.trysomethingdev.devcraft.twitch.TwitchChatMessageAddedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
