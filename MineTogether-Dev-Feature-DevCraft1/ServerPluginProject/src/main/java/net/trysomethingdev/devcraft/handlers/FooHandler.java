@@ -3,7 +3,7 @@ package net.trysomethingdev.devcraft.handlers;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.traits.MyTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,10 +20,10 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 public class FooHandler implements Listener {
-    private final TrySomethingDevAmazingPlugin _plugin;
+    private final DevCraftPlugin _plugin;
     private NPC npc;
 
-    public FooHandler(TrySomethingDevAmazingPlugin plugin){
+    public FooHandler(DevCraftPlugin plugin){
         Bukkit.getPluginManager().registerEvents(this, plugin);
         _plugin = plugin;
     }

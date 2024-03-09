@@ -7,7 +7,7 @@ import de.oliver.fancynpcs.api.FancyNpcsPlugin;
 import de.oliver.fancynpcs.api.Npc;
 import de.oliver.fancynpcs.api.NpcData;
 import de.oliver.fancynpcs.api.utils.SkinFetcher;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,9 +26,9 @@ import static java.lang.Integer.parseInt;
 
 public class MineTogetherModeManager {
 
-    TrySomethingDevAmazingPlugin _plugin;
+    DevCraftPlugin _plugin;
 String _yourMCPlayerName;
-    public MineTogetherModeManager(TrySomethingDevAmazingPlugin plugin,String yourMCPlayerName) {
+    public MineTogetherModeManager(DevCraftPlugin plugin, String yourMCPlayerName) {
         _plugin = plugin;
 _yourMCPlayerName = yourMCPlayerName;
     }

@@ -1,6 +1,6 @@
-name: TrySomethingDevAmazingPlugin
+name: DevCraftPlugin
 version: '${version}'
-main: net.trysomethingdev.trysomethingdevamazingplugin.TrySomethingDevAmazingPlugin
+main: net.trysomethingdev.devcraft.DevCraftPlugin
 api-version: '1.20'
 commands:
   givechest:
@@ -13,3 +13,36 @@ commands:
    aliases:
      - ftms
    usage: /<command>
+  twitch:
+    description: Moderator command to control plugin's bot
+    usage: /twitch <subcommand>
+    permission: twitchchat.setup
+  twitchchat:
+    description: Allows players to talk to twitch chat
+    usage: /twitchchat [message]
+    aliases: ["tc", "tchat"]
+    permission: twitchchat.chat
+  twitchchatoff:
+    description: Turns off visibility of twitch chat for player
+    aliases: ["tcoff"]
+    permission: twitchchat.toggle
+  twitchchaton:
+    description: Turns on visibility of twitch chat for player
+    aliases: ["tcon"]
+    permission: twitchchat.toggle
+permissions:
+  twitchchat.setup:
+    description: Allows use of /twitch command
+    default: op
+  twitchchat.chat:
+    description: Allows use of /twitchchat command
+    default: op
+  twitchchat.toggle:
+    description: Allows use of /twitchchatoff and /twitchchaton commands
+    default: op
+  twitchchat.*:
+    description: Allows use of all twitch chat commands
+    children:
+      twitchchat.setup: true
+      twitchchat.chat: true
+      twitchchat.toggle: true

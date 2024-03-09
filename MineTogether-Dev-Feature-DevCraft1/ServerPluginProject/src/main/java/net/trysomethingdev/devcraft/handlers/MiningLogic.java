@@ -2,7 +2,7 @@ package net.trysomethingdev.devcraft.handlers;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class MiningLogic {
 
 
-    public static void StartMining(BlockPlaceEvent event, Player player, Material block, TrySomethingDevAmazingPlugin plugin) {
+    public static void StartMining(BlockPlaceEvent event, Player player, Material block, DevCraftPlugin plugin) {
 
         //Get Nearest NPC
         NPC npc = GetNearestNPCToBlock(event.getBlock());
@@ -43,7 +43,7 @@ public class MiningLogic {
 
     }
 
-    private static void MineForwardAndDown(NPC npc, Player player, TrySomethingDevAmazingPlugin plugin) {
+    private static void MineForwardAndDown(NPC npc, Player player, DevCraftPlugin plugin) {
         // Get the NPC's location and direction
         Location location = npc.getEntity().getLocation();
         Vector direction = location.getDirection();
@@ -51,7 +51,7 @@ public class MiningLogic {
         Block eyeBlock = MineEyeLevelFootLevelAndBelowFootLevelInFrontOfNPC(location, direction);
     }
 
-    private static void MoveNPCForwardOneBlock(NPC npc,Player player,TrySomethingDevAmazingPlugin plugin) {
+    private static void MoveNPCForwardOneBlock(NPC npc, Player player, DevCraftPlugin plugin) {
         // Move the NPC forward
         var locationToNavigateTo = npc.getEntity().getLocation().add(0, 0, 2);
 
@@ -71,7 +71,7 @@ public class MiningLogic {
         ScheduleTaskToSeeIfWeHaveArrived(npc, locationToNavigateTo, player,plugin);
     }
 
-    private static void ScheduleTaskToSeeIfWeHaveArrived(NPC finalNearestNPC, Location locationToNavigateTo,Player player,TrySomethingDevAmazingPlugin plugin) {
+    private static void ScheduleTaskToSeeIfWeHaveArrived(NPC finalNearestNPC, Location locationToNavigateTo, Player player, DevCraftPlugin plugin) {
 
         BukkitScheduler scheduler = Bukkit.getScheduler();
         scheduler = Bukkit.getScheduler();
@@ -131,7 +131,7 @@ public class MiningLogic {
 
     }
 
-    private static void ScheduleTaskToKeepMiningUntilWeReachNegative15(NPC finalNearestNPC,Player player,TrySomethingDevAmazingPlugin plugin) {
+    private static void ScheduleTaskToKeepMiningUntilWeReachNegative15(NPC finalNearestNPC, Player player, DevCraftPlugin plugin) {
 
         BukkitScheduler scheduler = Bukkit.getScheduler();
         scheduler = Bukkit.getScheduler();

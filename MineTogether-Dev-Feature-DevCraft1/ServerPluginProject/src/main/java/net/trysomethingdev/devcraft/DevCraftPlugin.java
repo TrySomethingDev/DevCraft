@@ -1,6 +1,26 @@
 package net.trysomethingdev.devcraft;
 
 import com.denizenscript.denizen.scripts.commands.BukkitCommandRegistry;
+import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffCommand;
+import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffTabCompleter;
+import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOnCommand;
+import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOnTabCompleter;
+import net.trysomethingdev.twitchplugin.Commands.twitch.TwitchCommand;
+import net.trysomethingdev.twitchplugin.Commands.twitch.TwitchTabCompleter;
+import net.trysomethingdev.twitchplugin.Commands.twitchChat.TwitchChatCommand;
+import net.trysomethingdev.twitchplugin.Commands.twitchChat.TwitchChatTabCompleter;
+import net.trysomethingdev.twitchplugin.Data.DataManager;
+import net.trysomethingdev.twitchplugin.Encryption.EncryptionManager;
+import net.trysomethingdev.twitchplugin.Twirk.TwitchBot;
+
+import lombok.Getter;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.logging.Level;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.trysomethingdev.devcraft.commands.TutorialCommands;
@@ -13,16 +33,15 @@ import net.trysomethingdev.devcraft.traits.MinerTrait;
 import net.trysomethingdev.devcraft.traits.MyTrait;
 import net.trysomethingdev.devcraft.traits.StripMinerTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.java.JavaPlugin;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
 
-public final class TrySomethingDevAmazingPlugin extends JavaPlugin {
+import java.io.File;
+
+
+public final class DevCraftPlugin extends JavaPlugin {
 
 
     public static java.util.logging.Logger log = java.util.logging.Logger.getLogger("Minecraft");
@@ -46,10 +65,47 @@ public final class TrySomethingDevAmazingPlugin extends JavaPlugin {
     protected int spawnLimit, sizeLimit;
     protected double hSpeedLimit;
 
+    public final static String TWITCH_SETUP_PERMISSION = "twitchchat.setup";
+    public final static String TWITCH_CHAT_PERMISSION = "twitchchat.chat";
+    public final static String TWITCH_TOGGLE_PERMISSION = "twitchchat.toggle";
 
+    @Getter
+    private DataManager dataManager;
+
+    @Getter
+    private EncryptionManager encryptionManager;
+
+    @Getter
+    private TwitchBot twitchBot;
     @Override
     public void onEnable() {
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
+
+        dataManager = new DataManager();
+        encryptionManager = new EncryptionManager();
+
+        twitchBot = new TwitchBot();
+
+        boolean success = twitchBot.reload();
+
+        if (!success) getLogger().log(Level.WARNING, "Unable to start twitch plugin fully. Please make sure it is fully configured!");
+
+        getCommand("twitch").setExecutor(new TwitchCommand());
+        getCommand("twitch").setTabCompleter(new TwitchTabCompleter());
+
+        getCommand("twitchchat").setExecutor(new TwitchChatCommand());
+        getCommand("twitchchat").setTabCompleter(new TwitchChatTabCompleter());
+
+        getCommand("twitchchaton").setExecutor(new TwitchChatOnCommand());
+        getCommand("twitchchaton").setTabCompleter(new TwitchChatOnTabCompleter());
+
+        getCommand("twitchchatoff").setExecutor(new TwitchChatOffCommand());
+        getCommand("twitchchatoff").setTabCompleter(new TwitchChatOffTabCompleter());
+
+
+
+        //  TwitchPlugin twitchChat = (TwitchPlugin) Bukkit.getPluginManager().getPlugin("TwitchPlugin");
+
 
 
 
@@ -68,6 +124,8 @@ public final class TrySomethingDevAmazingPlugin extends JavaPlugin {
         var fishTogetherModeManager = new FishTogetherModeManager(this,yourMineCraftPlayerName,APIBaseURL);
         //new EntityHandler(this);
         new DelayedTask(this);
+
+      //  new onChatEvent(twitchChat);
 
         new FooHandler(this);
        // new TorchHandler(this);
@@ -121,9 +179,9 @@ public final class TrySomethingDevAmazingPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
         // Plugin shutdown logic
+        if (twitchBot != null) twitchBot.getTwirk().close();
+        twitchBot = null;
     }
-
-
-
 }

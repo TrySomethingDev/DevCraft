@@ -4,7 +4,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,10 +17,10 @@ import org.bukkit.util.Vector;
     public class MyTrait extends Trait {
         public MyTrait() {
             super("foo");
-            plugin = JavaPlugin.getPlugin(TrySomethingDevAmazingPlugin.class);
+            plugin = JavaPlugin.getPlugin(DevCraftPlugin.class);
         }
 
-        TrySomethingDevAmazingPlugin plugin = null;
+        DevCraftPlugin plugin = null;
 
         boolean SomeSetting = false;
 
@@ -90,7 +90,7 @@ import org.bukkit.util.Vector;
                      //  npc.getEntity().setRotation(currentYaw, currentPitch);
                        // Add code here to do whatever you want with this yaw and pitch
 
-               Log("Pitch:" + npc.getEntity().getPitch() + " Yaw: " + npc.getEntity().getYaw());
+          //     Log("Pitch:" + npc.getEntity().getPitch() + " Yaw: " + npc.getEntity().getYaw());
 
 
                //Mine block in front of NPC

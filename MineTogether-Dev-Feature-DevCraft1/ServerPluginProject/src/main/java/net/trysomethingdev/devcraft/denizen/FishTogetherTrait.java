@@ -283,7 +283,7 @@ public class FishTogetherTrait extends Trait {
             ItemMeta diamondMeta = diamond.getItemMeta();
             if (diamondMeta != null) {
                 Component displayName = Component.text("A RARE TREASURE");
-                diamondMeta.displayName(displayName);
+                diamondMeta.setDisplayName(displayName.toString());
                 diamond.setItemMeta(diamondMeta);
             }
 

@@ -4,7 +4,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -18,10 +18,10 @@ import org.bukkit.util.Vector;
     public class MinerTrait extends Trait {
         public MinerTrait() {
             super("miner");
-            plugin = JavaPlugin.getPlugin(TrySomethingDevAmazingPlugin.class);
+            plugin = JavaPlugin.getPlugin(DevCraftPlugin.class);
         }
 
-        TrySomethingDevAmazingPlugin plugin = null;
+        DevCraftPlugin plugin = null;
 
         boolean SomeSetting = false;
 

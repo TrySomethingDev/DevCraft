@@ -1,7 +1,7 @@
 package net.trysomethingdev.devcraft.minetogethermode.items;
 
 import net.kyori.adventure.text.Component;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -18,9 +18,9 @@ public class ItemManager {
 
     public static ItemStack chest;
 
-    private static TrySomethingDevAmazingPlugin _plugin;
+    private static DevCraftPlugin _plugin;
 
-    public static void init(TrySomethingDevAmazingPlugin plugin) {
+    public static void init(DevCraftPlugin plugin) {
 
 
         _plugin = plugin;
@@ -33,11 +33,11 @@ public class ItemManager {
     private static void createMineTogetherModeChest(){
         ItemStack item = new ItemStack(Material.CHEST, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("Mine Together Mode Chest"));
+       // meta.displayName(Component.text("Mine Together Mode Chest"));
         List<String> lore22 = new ArrayList<>();
 
         List<Component> lore = new ArrayList<>(); lore.add(Component.text("Place this chest on the ground to")); lore.add(Component.text("start Mine Together Mode"));
-        meta.lore(lore);
+      //  meta.lore(lore);
         meta.addEnchant(Enchantment.LUCK,1 ,false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         

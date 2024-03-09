@@ -2,12 +2,12 @@ package net.trysomethingdev.devcraft.handlers;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import org.bukkit.Location;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class NpcHelper {
-    public static void MoveClosestNPCOneBlockPostiveX(BlockPlaceEvent event, TrySomethingDevAmazingPlugin plugin) {
+    public static void MoveClosestNPCOneBlockPostiveX(BlockPlaceEvent event, DevCraftPlugin plugin) {
      var npc = GetNearestNPCToLocation(event.getBlock().getLocation());
 
      //Seems like you have to add 2 to the x in order to move one
@@ -16,7 +16,7 @@ public class NpcHelper {
 
     }
 
-    public static void MoveClosestNPCOneBlockNegativeX(BlockPlaceEvent event, TrySomethingDevAmazingPlugin plugin) {
+    public static void MoveClosestNPCOneBlockNegativeX(BlockPlaceEvent event, DevCraftPlugin plugin) {
         var npc = GetNearestNPCToLocation(event.getBlock().getLocation());
         //adding two to the x to go one.
         npc.getNavigator().setTarget(npc.getEntity().getLocation().add(-2,0,0));

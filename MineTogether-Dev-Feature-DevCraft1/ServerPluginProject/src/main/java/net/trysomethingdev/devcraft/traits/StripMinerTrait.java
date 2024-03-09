@@ -4,7 +4,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -23,10 +23,10 @@ import org.bukkit.util.Vector;
     public class StripMinerTrait extends Trait {
         public StripMinerTrait() {
             super("stripminer");
-            plugin = JavaPlugin.getPlugin(TrySomethingDevAmazingPlugin.class);
+            plugin = JavaPlugin.getPlugin(DevCraftPlugin.class);
         }
 
-        TrySomethingDevAmazingPlugin plugin = null;
+        DevCraftPlugin plugin = null;
 
         boolean SomeSetting = false;
 
