@@ -73,6 +73,7 @@ public class TwitchBot {
         twirk = new TwirkBuilder(channel, name, oauth).build();
 
         twirk.addIrcListener(new onChatEvent());
+
         try {
             twirk.connect();
             return true;
