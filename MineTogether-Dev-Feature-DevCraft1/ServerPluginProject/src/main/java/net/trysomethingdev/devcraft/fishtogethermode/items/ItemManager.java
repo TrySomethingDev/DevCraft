@@ -1,7 +1,7 @@
 package net.trysomethingdev.devcraft.fishtogethermode.items;
 
 import net.kyori.adventure.text.Component;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -18,9 +18,9 @@ public class ItemManager {
 
     public static ItemStack chest;
 
-    private static TrySomethingDevAmazingPlugin _plugin;
+    private static DevCraftPlugin _plugin;
 
-    public static void init(TrySomethingDevAmazingPlugin plugin) {
+    public static void init(DevCraftPlugin plugin) {
         _plugin = plugin;
         createFishTogetherModeChest();
     }
@@ -28,9 +28,9 @@ public class ItemManager {
     private static void createFishTogetherModeChest(){
         ItemStack item = new ItemStack(Material.CHEST, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("Fishing Station"));
+        meta.setDisplayName("Fishing Station");
         List<Component> lore = new ArrayList<>(); lore.add(Component.text("Place this station on the ground to")); lore.add(Component.text("create fishing station"));
-        meta.lore(lore);
+      // meta.setLore(lore.toString());
         meta.addEnchant(Enchantment.LUCK,1 ,false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);

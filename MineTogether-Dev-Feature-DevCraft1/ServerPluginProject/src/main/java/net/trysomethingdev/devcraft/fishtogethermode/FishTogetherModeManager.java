@@ -9,7 +9,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
@@ -32,13 +32,13 @@ import java.util.List;
 import static java.lang.Integer.parseInt;
 
 public class FishTogetherModeManager {
-    TrySomethingDevAmazingPlugin _plugin;
+    DevCraftPlugin _plugin;
     String _yourMCPlayerName;
     private String _baseUrl;
     private List<InWorldFishingStation> _inWorldFishingStationList;
     private boolean _timerIsStarted = false;
 
-    public FishTogetherModeManager(TrySomethingDevAmazingPlugin plugin, String yourMCPlayerName,String ApiBaseUrl) {
+    public FishTogetherModeManager(DevCraftPlugin plugin, String yourMCPlayerName, String ApiBaseUrl) {
         _plugin = plugin;
         _yourMCPlayerName = yourMCPlayerName;
         _baseUrl = ApiBaseUrl;

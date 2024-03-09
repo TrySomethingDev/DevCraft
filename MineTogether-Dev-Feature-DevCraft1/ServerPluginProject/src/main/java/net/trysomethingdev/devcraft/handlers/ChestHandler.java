@@ -1,6 +1,6 @@
 package net.trysomethingdev.devcraft.handlers;
 
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.fishtogethermode.FishTogetherModeManager;
 import net.trysomethingdev.devcraft.minetogethermode.MineTogetherModeManager;
 import org.bukkit.Bukkit;
@@ -17,7 +17,7 @@ public class ChestHandler implements Listener{
 
     private MineTogetherModeManager _mineTogetherModeManager;
     private FishTogetherModeManager _fishTogetherModeManager;
-        public ChestHandler(TrySomethingDevAmazingPlugin plugin, MineTogetherModeManager mineTogetherModeManager,FishTogetherModeManager fishTogetherModeManager){
+        public ChestHandler(DevCraftPlugin plugin, MineTogetherModeManager mineTogetherModeManager, FishTogetherModeManager fishTogetherModeManager){
             Bukkit.getLogger().info("Initializing Chest Handler");
             Bukkit.getPluginManager().registerEvents(this, plugin);
             _mineTogetherModeManager = mineTogetherModeManager;
@@ -36,9 +36,9 @@ public class ChestHandler implements Listener{
             //We know we have a Chest
             Chest chest = (Chest) block.getState();
 
-            if (chest.customName() != null ) {
+            if (chest.getCustomName() != null ) {
 
-                String chestName = chest.customName().toString();
+                String chestName = chest.getCustomName().toString();
                 Bukkit.getLogger().info(chestName);
 
                 //Mine Together Mode Chest Handler
@@ -66,9 +66,9 @@ public class ChestHandler implements Listener{
         //We know we have a Chest
         Chest chest = (Chest) block.getState();
 
-        if (chest.customName() != null ) {
+        if (chest.getCustomName() != null ) {
 
-            String chestName = chest.customName().toString();
+            String chestName = chest.getCustomName().toString();
             Bukkit.getLogger().info(chestName);
 
             //Mine Together Mode Chest Handler

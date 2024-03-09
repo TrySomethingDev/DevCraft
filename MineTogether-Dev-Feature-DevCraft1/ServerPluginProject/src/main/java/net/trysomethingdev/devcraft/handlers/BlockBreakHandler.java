@@ -1,6 +1,6 @@
 package net.trysomethingdev.devcraft.handlers;
 
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.fishtogethermode.FishTogetherModeManager;
 import net.trysomethingdev.devcraft.minetogethermode.MineTogetherModeManager;
 import org.bukkit.Bukkit;
@@ -15,7 +15,7 @@ public class BlockBreakHandler implements Listener{
 
     private MineTogetherModeManager _mineTogetherModeManager;
     private FishTogetherModeManager _fishTogetherModeManager;
-        public BlockBreakHandler(TrySomethingDevAmazingPlugin plugin, MineTogetherModeManager mineTogetherModeManager, FishTogetherModeManager fishTogetherModeManager){
+        public BlockBreakHandler(DevCraftPlugin plugin, MineTogetherModeManager mineTogetherModeManager, FishTogetherModeManager fishTogetherModeManager){
             Bukkit.getLogger().info("Initializing BlockBreakHandler");
             Bukkit.getPluginManager().registerEvents(this, plugin);
             _mineTogetherModeManager = mineTogetherModeManager;
@@ -37,9 +37,9 @@ public class BlockBreakHandler implements Listener{
         //We know we have a Chest
         Chest chest = (Chest) block.getState();
 
-        if (chest.customName() != null ) {
+        if (chest.getCustomName() != null ) {
 
-            String chestName = chest.customName().toString();
+            String chestName = chest.getCustomName().toString();
             Bukkit.getLogger().info(chestName);
 
             //Mine Together Mode Chest Handler

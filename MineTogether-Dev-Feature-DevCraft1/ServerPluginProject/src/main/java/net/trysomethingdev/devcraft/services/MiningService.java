@@ -1,12 +1,12 @@
 package net.trysomethingdev.devcraft.services;
 
-import net.trysomethingdev.devcraft.TrySomethingDevAmazingPlugin;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import org.bukkit.Location;
 
 public class MiningService
 {
 
-    TrySomethingDevAmazingPlugin _plugin;
+    DevCraftPlugin _plugin;
 
     private int goalYLevel = -15;
     private int currentYLevel = 200;
