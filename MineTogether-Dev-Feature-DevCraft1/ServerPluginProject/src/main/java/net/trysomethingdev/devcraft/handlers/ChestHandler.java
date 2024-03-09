@@ -56,7 +56,7 @@ public class ChestHandler implements Listener{
     public void onChestBreak(BlockBreakEvent event)
     {
 
-        Bukkit.getLogger().info("A block break event has occured.");
+       // Bukkit.getLogger().info("A block break event has occured.");
 
         Block block = event.getBlock();
         if(block.getType() != Material.CHEST)  return;

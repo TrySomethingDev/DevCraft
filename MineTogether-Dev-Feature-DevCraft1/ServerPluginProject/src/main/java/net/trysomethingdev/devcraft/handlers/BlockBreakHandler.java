@@ -27,12 +27,12 @@ public class BlockBreakHandler implements Listener{
     public void onChestBreak(BlockBreakEvent event)
     {
 
-        Bukkit.getLogger().info("A block break event has occured.");
+       // Bukkit.getLogger().info("A block break event has occured.");
 
         Block block = event.getBlock();
         if(block.getType() != Material.CHEST)  return;
 
-        Bukkit.getLogger().info("A Chest was broken");
+     //   Bukkit.getLogger().info("A Chest was broken");
 
         //We know we have a Chest
         Chest chest = (Chest) block.getState();
