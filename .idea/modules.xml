@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/DevCraft.iml" filepath="$PROJECT_DIR$/.idea/DevCraft.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TrySomethingDevAmazingPlugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TrySomethingDevAmazingPlugin.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TrySomethingDevAmazingPlugin.test.iml" filepath="$PROJECT_DIR$/.idea/modules/TrySomethingDevAmazingPlugin.test.iml" />
+    </modules>
+  </component>
+</project>

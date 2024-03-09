@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="TwitchChat">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/MineTogether-Dev-Feature-DevCraft1/ServerPluginProject/lib/TwitchChat.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
