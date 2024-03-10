@@ -2,10 +2,14 @@ package net.trysomethingdev.devcraft;
 
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import net.citizensnpcs.api.npc.NPC;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 
+import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,14 +19,60 @@ public class DevCraftTwitchUsersManager {
 
     private final DevCraftPlugin plugin;
     //List of Twitch Users here
-    List<DevCraftTwitchUser> twitchUserList = new ArrayList<>();
+    List<DevCraftTwitchUser> devCraftTwitchUsers = new ArrayList<DevCraftTwitchUser>();
 
     public DevCraftTwitchUsersManager(DevCraftPlugin devCraftPlugin) {
 
         plugin = devCraftPlugin;
 
+        LoadSavedList();
+        SaveThisListToConfigEverySoManyMinutes(0.5);
 
 
+    }
+
+    private void LoadSavedList() {
+
+        Gson gson = new GsonBuilder().setPrettyPrinting()
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
+
+        // Load from file
+        try (Reader reader = new FileReader("DevCraftTwitchUsers.json")) {
+            devCraftTwitchUsers = gson.fromJson(reader, new TypeToken<List<DevCraftTwitchUser>>(){}.getType());
+            // Now loadedUsers contains the users that were saved to the file
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void Save()
+    {
+        Bukkit.getLogger().info("PRINTED LIST****");
+        for(var foo : devCraftTwitchUsers)
+        {
+           Bukkit.getLogger().info(foo.twitchUserName);
+        }
+
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+                .create();
+        // Save to file
+        try (Writer writer = new FileWriter("DevCraftTwitchUsers.json")) {
+            gson.toJson(devCraftTwitchUsers, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void SaveThisListToConfigEverySoManyMinutes(double minutesBetweenSaves) {
+        new DelayedTask(() -> {
+
+            Save();
+            SaveThisListToConfigEverySoManyMinutes(0.5);
+
+
+        }, (long) (20 * (minutesBetweenSaves * 60)));
 
     }
 
@@ -30,13 +80,13 @@ public class DevCraftTwitchUsersManager {
 
         new DelayedTask(() -> {
 
-            for(var user : twitchUserList)
+            for(var user : devCraftTwitchUsers)
             {
-                Duration duration = Duration.between(user.getLastActivityTime(), LocalDateTime.now());
+                Duration duration = Duration.between(user.lastActivityTime, LocalDateTime.now());
                 long minutes = duration.toMinutes();
 
 
-                if(minutes > 20 && user.isMarkedForDespawn())
+                if(minutes > 20 && user.markedForDespawn)
                 {
                     NPC npc = user.GetUserNPC();
                     if(npc != null && npc.isSpawned())
@@ -44,7 +94,7 @@ public class DevCraftTwitchUsersManager {
                         npc.despawn();
                     }
                 }
-                else if (minutes > 19 && !user.isMarkedForDespawn())
+                else if (minutes > 19 && !user.markedForDespawn)
                 {
                     user.markUserForDespawn();
                 }
@@ -61,17 +111,17 @@ public class DevCraftTwitchUsersManager {
 
     //Add
 public void Add(DevCraftTwitchUser twitchUser){
-    if (!twitchUserList.contains(twitchUser))
+    if (!devCraftTwitchUsers.contains(twitchUser))
     {
-        twitchUserList.add(twitchUser);
+        devCraftTwitchUsers.add(twitchUser);
     }
 }
 
     //Remove
     public void Remove(DevCraftTwitchUser twitchUser){
-        if (!twitchUserList.contains(twitchUser))
+        if (!devCraftTwitchUsers.contains(twitchUser))
         {
-            twitchUserList.remove(twitchUser);
+            devCraftTwitchUsers.remove(twitchUser);
         }
     }
 
@@ -80,7 +130,7 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(joinedNick);
         if(user == null)
         {  //If we make it here it means we did not find the user in the list. So we should add a user.
-            twitchUserList.add(new DevCraftTwitchUser(joinedNick,joinedNick));
+            devCraftTwitchUsers.add(new DevCraftTwitchUser(joinedNick,joinedNick));
         }
         else
         {
@@ -92,9 +142,9 @@ public void Add(DevCraftTwitchUser twitchUser){
     }
 
     private DevCraftTwitchUser getUserByTwitchUserName(String joinedNick) {
-        for (var user : twitchUserList)
+        for (var user : devCraftTwitchUsers)
         {
-            if(joinedNick.equals(user.getTwitchUserName())) {
+            if(joinedNick.equals(user.twitchUserName)) {
                 return user;
             }
         }
@@ -130,7 +180,7 @@ public void Add(DevCraftTwitchUser twitchUser){
         }
 
         var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) twitchUserList.add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
+        if(user == null) devCraftTwitchUsers.add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
         else user.Chatted();
     }
 

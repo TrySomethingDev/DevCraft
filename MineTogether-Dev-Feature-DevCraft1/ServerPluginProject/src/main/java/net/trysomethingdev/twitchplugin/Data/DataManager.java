@@ -1,6 +1,7 @@
 package net.trysomethingdev.twitchplugin.Data;
 
 import net.trysomethingdev.devcraft.DevCraftPlugin;
+import net.trysomethingdev.devcraft.DevCraftTwitchUser;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -8,11 +9,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.logging.Level;
 
 public class DataManager {
 
     private final DevCraftPlugin plugin;
+    public String DEVCRAFTUSERLIST_PATH = "DevCraftUsers";
     private FileConfiguration dataConfig = null;
     private File configFile = null;
 
@@ -22,6 +25,8 @@ public class DataManager {
     public final String USER_COLOR_PATH = "TwitchIRC.userColor";
     public final String STATUS_PATH = "TwitchIRC.status";
     public final String MODE_PATH = "TwitchIRC.mode";
+
+    public String TEST_PATH = "Test.testValue";
 
     public DataManager() {
         this.plugin = DevCraftPlugin.getPlugin(DevCraftPlugin.class);
