@@ -1,14 +1,11 @@
 package net.trysomethingdev.devcraft;
 
-import lombok.Getter;
-import lombok.Setter;
+
+import com.google.gson.annotations.Expose;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.TraitFactory;
-import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.trait.SkinTrait;
 import net.trysomethingdev.devcraft.traits.FollowTraitCustom;
-import net.trysomethingdev.devcraft.traits.SkinTraitCustom;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
@@ -16,34 +13,25 @@ import org.bukkit.entity.EntityType;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Getter
+
+
 public class DevCraftTwitchUser {
 
 
-    @Setter
-    private String twitchUserName;
+    @Expose public String twitchUserName;
 
-    @Setter
-    private String minecraftSkinName;
+    @Expose public String minecraftSkinName;
 
+     public LocalDateTime lastActivityTime = LocalDateTime.now();
+     public boolean isParted;
 
-    @Setter
-    private LocalDateTime lastActivityTime;
+     public boolean isJoined;
+     public boolean markedForDespawn;
 
-
-
-    @Getter
-    private boolean isParted;
-
-    @Getter
-    private boolean isJoined;
-
-    @Getter
-    private boolean markedForDespawn;
-
-    private static String[] usersToIgnoreList = {"TRYSOMETHINGDEV"
-            ,"DEVALLIANCEBOT"
-            ,"00_aaliyah"
+    private static String[] usersToIgnoreList = {
+            "00_aaliyah"
+  //          ,"DEVALLIANCEBOT"
+            //,"TRYSOMETHINGDEV"
             ,"00_alissa"
             ,"8hvdes"
             ,"D0nk7"
@@ -59,6 +47,12 @@ public class DevCraftTwitchUser {
 
 
     };
+
+    public DevCraftTwitchUser()
+    {
+
+    }
+
 
     public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName) {
         this.twitchUserName = twitchUserName;
@@ -82,6 +76,7 @@ public class DevCraftTwitchUser {
             NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, this.twitchUserName);
             SpawnNPC(npc);
             AddFollowerTrait(npc);
+            AddSkinTrait(this.minecraftSkinName);
         }, 20 * 2);
     }
 
@@ -123,8 +118,8 @@ public class DevCraftTwitchUser {
         this.isParted = false;
         this.lastActivityTime = LocalDateTime.now();
 
-        if(isMarkedForDespawn()){
-            Bukkit.broadcastMessage("Activity detected form Twitch user " + this.getTwitchUserName() + "they are no longer marked for de-spawn");
+        if(markedForDespawn){
+            Bukkit.broadcastMessage("Activity detected form Twitch user " + this.twitchUserName + "they are no longer marked for de-spawn");
             markedForDespawn = false;
         }
 
@@ -139,6 +134,7 @@ public class DevCraftTwitchUser {
         {
             SpawnNPC(npc);
             AddFollowerTrait(npc);
+            AddSkinTrait(this.minecraftSkinName);
         }
         else
         {
@@ -183,13 +179,12 @@ public class DevCraftTwitchUser {
 
     public void markUserForDespawn() {
         markedForDespawn = true;
-        Bukkit.broadcastMessage("No Twitch Activity Detected for user " + this.getTwitchUserName() + "will de-spawn their player in 1 minute");
+        Bukkit.broadcastMessage("No Twitch Activity Detected for user " + this.twitchUserName + "will de-spawn their player in 1 minute");
     }
 
     public void changeSkin(String skin) {
 
-        this.setMinecraftSkinName(skin);
-
+        this.minecraftSkinName = skin;
 
             AddSkinTrait(skin);
 

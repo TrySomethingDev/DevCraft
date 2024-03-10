@@ -12,6 +12,7 @@ import net.trysomethingdev.twitchplugin.Commands.twitchChat.TwitchChatCommand;
 import net.trysomethingdev.twitchplugin.Commands.twitchChat.TwitchChatTabCompleter;
 import net.trysomethingdev.twitchplugin.Data.DataManager;
 import net.trysomethingdev.twitchplugin.Encryption.EncryptionManager;
+import net.trysomethingdev.twitchplugin.Twirk.BotMode;
 import net.trysomethingdev.twitchplugin.Twirk.TwitchBot;
 
 import lombok.Getter;
@@ -87,7 +88,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
 
 
-
+        new DelayedTask(this);
         dataManager = new DataManager();
         encryptionManager = new EncryptionManager();
 
@@ -137,7 +138,7 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         var fishTogetherModeManager = new FishTogetherModeManager(this,yourMineCraftPlayerName,APIBaseURL);
         //new EntityHandler(this);
-        new DelayedTask(this);
+
 
       //  new onChatEvent(twitchChat);
 
@@ -200,7 +201,9 @@ public final class DevCraftPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
 
+
         // Plugin shutdown logic
+
         if (twitchBot != null) twitchBot.getTwirk().close();
         twitchBot = null;
     }
