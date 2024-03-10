@@ -1,6 +1,9 @@
 package net.trysomethingdev.devcraft;
 
 import com.denizenscript.denizen.scripts.commands.BukkitCommandRegistry;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffCommand;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffTabCompleter;
@@ -18,6 +21,8 @@ import net.trysomethingdev.twitchplugin.Twirk.TwitchBot;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +42,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.permissions.Permission;
 
-import java.io.File;
+import static java.lang.Character.getType;
 
 
 public final class DevCraftPlugin extends JavaPlugin {
@@ -83,9 +88,13 @@ public final class DevCraftPlugin extends JavaPlugin {
     @Getter
     private DevCraftChatHandler devCraftChatHandler;
 
+    public static List<String> usersToIgnoreList;
+
     @Override
     public void onEnable() {
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
+
+        LoadUsersToIgnoreList();
 
 
         new DelayedTask(this);
@@ -196,6 +205,19 @@ public final class DevCraftPlugin extends JavaPlugin {
 //        }
 //      //  End Example code of trait
 
+    }
+
+    private void LoadUsersToIgnoreList() {
+        Gson gson = new GsonBuilder().setPrettyPrinting()
+                .create();
+        Type type = new TypeToken<List<String>>(){}.getType();
+        try (FileReader reader = new FileReader("DevCraftUsersToIgnore.json")) {
+            List<String> strings = gson.fromJson(reader, type);
+
+            usersToIgnoreList = strings;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

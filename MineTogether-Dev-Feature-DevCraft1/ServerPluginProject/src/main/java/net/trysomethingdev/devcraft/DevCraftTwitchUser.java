@@ -13,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static net.trysomethingdev.devcraft.DevCraftPlugin.usersToIgnoreList;
 
 
 public class DevCraftTwitchUser {
@@ -28,25 +29,8 @@ public class DevCraftTwitchUser {
      public boolean isJoined;
      public boolean markedForDespawn;
 
-    private static String[] usersToIgnoreList = {
-            "00_aaliyah"
-  //          ,"DEVALLIANCEBOT"
-            //,"TRYSOMETHINGDEV"
-            ,"00_alissa"
-            ,"8hvdes"
-            ,"D0nk7"
-            ,"Icreateandestroythisworld"
-            ,"STREAMELEMENTS"
-            ,"VLMERCY"
-            ,"regressz"
-            ,"tarsai"
-            ,"josephq2bb5f"
-            ,"joseph1zj6gg"
-            , "markzynk"
-            , "zvgn"
 
 
-    };
 
     public DevCraftTwitchUser()
     {
@@ -152,7 +136,7 @@ public class DevCraftTwitchUser {
     }
 
     private boolean IsOnIgnoreList() {
-        for (String userToIgnore : usersToIgnoreList)
+        for (String userToIgnore :  usersToIgnoreList)
         {
             if(this.twitchUserName.toUpperCase().equals(userToIgnore.toUpperCase())) {
                 return true;
