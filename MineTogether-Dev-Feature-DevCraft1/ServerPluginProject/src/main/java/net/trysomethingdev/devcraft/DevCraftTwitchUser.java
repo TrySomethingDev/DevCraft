@@ -41,6 +41,25 @@ public class DevCraftTwitchUser {
     @Getter
     private boolean markedForDespawn;
 
+    private static String[] usersToIgnoreList = {"TRYSOMETHINGDEV"
+            ,"DEVALLIANCEBOT"
+            ,"00_aaliyah"
+            ,"00_alissa"
+            ,"8hvdes"
+            ,"D0nk7"
+            ,"Icreateandestroythisworld"
+            ,"STREAMELEMENTS"
+            ,"VLMERCY"
+            ,"regressz"
+            ,"tarsai"
+            ,"josephq2bb5f"
+            ,"joseph1zj6gg"
+            , "markzynk"
+            , "zvgn"
+
+
+    };
+
     public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName) {
         this.twitchUserName = twitchUserName;
         this.minecraftSkinName = minecraftSkinName;
@@ -94,6 +113,12 @@ public class DevCraftTwitchUser {
     }
 
     public void JustJoinedOrIsActive() {
+
+        if(IsOnIgnoreList())
+        {
+            return;
+        }
+
         this.isJoined = true;
         this.isParted = false;
         this.lastActivityTime = LocalDateTime.now();
@@ -128,6 +153,16 @@ public class DevCraftTwitchUser {
 
 
 
+    }
+
+    private boolean IsOnIgnoreList() {
+        for (String userToIgnore : usersToIgnoreList)
+        {
+            if(this.twitchUserName.toUpperCase().equals(userToIgnore.toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private NPC getNPCThatMatchesName(String twitchUserName) {
