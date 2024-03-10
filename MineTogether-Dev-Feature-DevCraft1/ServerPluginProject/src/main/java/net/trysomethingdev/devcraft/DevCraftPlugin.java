@@ -1,6 +1,7 @@
 package net.trysomethingdev.devcraft;
 
 import com.denizenscript.denizen.scripts.commands.BukkitCommandRegistry;
+import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffCommand;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffTabCompleter;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOnCommand;
@@ -29,9 +30,6 @@ import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
 import net.trysomethingdev.devcraft.fishtogethermode.FishTogetherModeManager;
 import net.trysomethingdev.devcraft.handlers.*;
 import net.trysomethingdev.devcraft.minetogethermode.MineTogetherModeManager;
-import net.trysomethingdev.devcraft.traits.MinerTrait;
-import net.trysomethingdev.devcraft.traits.MyTrait;
-import net.trysomethingdev.devcraft.traits.StripMinerTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 
 import org.bukkit.Bukkit;
@@ -77,12 +75,25 @@ public final class DevCraftPlugin extends JavaPlugin {
 
     @Getter
     private TwitchBot twitchBot;
+
+    @Getter
+    private DevCraftTwitchUsersManager twitchUsersManager;
+
+    @Getter
+    private DevCraftChatHandler devCraftChatHandler;
+
     @Override
     public void onEnable() {
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
 
+
+
         dataManager = new DataManager();
         encryptionManager = new EncryptionManager();
+
+        twitchUsersManager = new DevCraftTwitchUsersManager(this);
+        devCraftChatHandler =   new DevCraftChatHandler(this);
+
 
         twitchBot = new TwitchBot();
 
@@ -101,6 +112,9 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         getCommand("twitchchatoff").setExecutor(new TwitchChatOffCommand());
         getCommand("twitchchatoff").setTabCompleter(new TwitchChatOffTabCompleter());
+
+
+
 
 
 
@@ -145,7 +159,13 @@ public final class DevCraftPlugin extends JavaPlugin {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FishTogetherTrait.class).withName("fishtogether"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MinerTrait.class).withName("miner"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StripMinerTrait.class).withName("stripminer"));
-////
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FollowTraitCustom.class).withName("followtraitcustom"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SkinTraitCustom.class).withName("skintraitcustom"));
+
+
+        new DelayedTask(() -> {
+            twitchUsersManager.DespawnTwitchUsersWhoHaveBeenInactiveTooLong();
+        }, 20 * 10);
 
 //
 //        // Example code of trait
