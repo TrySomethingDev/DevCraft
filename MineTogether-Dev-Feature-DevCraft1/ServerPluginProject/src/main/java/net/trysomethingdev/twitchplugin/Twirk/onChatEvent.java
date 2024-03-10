@@ -17,13 +17,15 @@ import java.util.Collection;
 
 public class onChatEvent implements TwirkListener {
 
-    DevCraftPlugin plugin;
 
+    DevCraftPlugin plugin;
+    private final DevCraftChatHandler devCraftChatHandler;
     DataManager dataManager;
 
     public onChatEvent() {
         plugin = DevCraftPlugin.getPlugin(DevCraftPlugin.class);
         this.dataManager = plugin.getDataManager();
+        this.devCraftChatHandler = plugin.getDevCraftChatHandler();
     }
 
     @Override
@@ -35,7 +37,7 @@ public class onChatEvent implements TwirkListener {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (plugin.getTwitchBot().getDisabledUsers().contains(player.getUniqueId().toString())) continue;
 
-        DevCraftChatHandler.handlChat(sender,message);
+            devCraftChatHandler.handlChat(sender,message);
 
             Colorizer.sendMessage(player, ChatColor.of("#6441A5") + "<twitch> " +
                     dataManager.getConfig().getString(dataManager.USER_COLOR_PATH, "&r")+ sender.getDisplayName() + "&r: " +
@@ -46,20 +48,20 @@ public class onChatEvent implements TwirkListener {
     @Override
     public void onNamesList(Collection<String> namesList ) {
         if (!plugin.getTwitchBot().isStatus()) return;
-        DevCraftChatHandler.handleOnNamesList(namesList);
+        devCraftChatHandler.handleOnNamesList(namesList);
         }
 
 
     @Override
     public void onJoin(String joinedNick) {
         if (!plugin.getTwitchBot().isStatus()) return;
-        DevCraftChatHandler.handleOnJoin(joinedNick);
+        devCraftChatHandler.handleOnJoin(joinedNick);
     }
 
     @Override
     public void onPart(String partedNick) {
         if (!plugin.getTwitchBot().isStatus()) return;
-        DevCraftChatHandler.handleOnPart(partedNick);
+        devCraftChatHandler.handleOnPart(partedNick);
     }
 
 
