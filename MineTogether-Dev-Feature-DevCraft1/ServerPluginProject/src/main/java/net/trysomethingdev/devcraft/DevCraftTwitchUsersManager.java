@@ -85,8 +85,16 @@ public class DevCraftTwitchUsersManager {
                 Duration duration = Duration.between(user.lastActivityTime, LocalDateTime.now());
                 long minutes = duration.toMinutes();
 
+                if(user.markedForDespawn)
+                {
+                    NPC npc = user.GetUserNPC();
+                    if(npc != null && npc.isSpawned())
+                    {
+                        npc.despawn();
+                    }
+                }
 
-                if(minutes > 20 && user.markedForDespawn)
+                else if(minutes > 20 && user.markedForDespawn)
                 {
                     NPC npc = user.GetUserNPC();
                     if(npc != null && npc.isSpawned())
@@ -163,17 +171,10 @@ public void Add(DevCraftTwitchUser twitchUser){
         {
             Bukkit.getLogger().info("This has message has been identified as a command");
             var command = message.getContent().toUpperCase();
-            if(command.startsWith("!SKIN"))
-            {
-                var splitStringList = command.split(" ");
-                //The Skin name we are going to use is the second word.
-                var skin = splitStringList[1];
-                var user = getUserByTwitchUserName(sender.getUserName());
-                if(user != null){
-                    user.changeSkin(skin);
+            if(command.startsWith("!SKIN")) ExecuteChangeUserSkinCommand(sender, command);
+            if(command.startsWith("!JOIN") || command.startsWith("!PLAY")) ExecuteJoinCommand(sender);
+            if(command.startsWith("!EXIT") || command.startsWith("!QUIT")) ExecuteExitCommand(sender);
 
-                }
-            }
         }
         else {
             Bukkit.getLogger().info("Not identified as a command");
@@ -182,6 +183,26 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(sender.getUserName());
         if(user == null) devCraftTwitchUsers.add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
         else user.Chatted();
+    }
+
+    private void ExecuteExitCommand(TwitchUser sender) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user != null) user.userWantsToPlay = false;
+    }
+
+    private void ExecuteJoinCommand(TwitchUser sender) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user != null) user.userWantsToPlay = true;
+    }
+
+    private void ExecuteChangeUserSkinCommand(TwitchUser sender, String command) {
+        var splitStringList = command.split(" ");
+        //The Skin name we are going to use is the second word.
+        var skin = splitStringList[1];
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user != null){
+            user.changeSkin(skin);
+        }
     }
 
     public void userParted(String partedNick) {

@@ -29,6 +29,7 @@ public class DevCraftTwitchUser {
      public boolean isJoined;
      public boolean markedForDespawn;
 
+    public boolean userWantsToPlay;
 
 
 
@@ -48,7 +49,8 @@ public class DevCraftTwitchUser {
 
     public void Chatted() {
 
-        this.JustJoinedOrIsActive();
+
+            this.JustJoinedOrIsActive();
 
 
 
@@ -93,7 +95,7 @@ public class DevCraftTwitchUser {
 
     public void JustJoinedOrIsActive() {
 
-        if(IsOnIgnoreList())
+        if(IsOnIgnoreList() || !userWantsToPlay)
         {
             return;
         }
