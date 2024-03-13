@@ -5,7 +5,8 @@ import com.google.gson.annotations.Expose;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SkinTrait;
-import net.trysomethingdev.devcraft.traits.FollowTraitCustom;
+import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
+import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
@@ -219,14 +220,48 @@ public class DevCraftTwitchUser {
                 Bukkit.getLogger().info("Done adding SKIN");
             }
         }, 20 * 2);
+    }
 
+    public void StartFishingCommand() {
         new DelayedTask(() -> {
-
             var npc = GetUserNPC();
             if(npc != null) {
-
+                FishTogetherTrait testTrait = npc.getOrAddTrait(FishTogetherTrait.class);
             }
-        }, 20 * 2);
+        }, 20 * 1);
 
+
+    }
+
+    public void StartMineCommand() {
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if(npc != null) {
+                var trait = npc.getOrAddTrait(MinerTrait.class);
+            }
+        }, 20 * 1);
+
+    }
+
+    public void StartLoggingTreesCommand() {
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if(npc != null) {
+                var trait = npc.getOrAddTrait(LoggingTreesTrait.class);
+            }
+        }, 20 * 1);
+    }
+
+    public void StartEatingCommand() {
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if (npc != null) {
+                var trait = npc.getOrAddTrait(EatingTrait.class);
+            }
+        }, 20 * 1);
+
+    }
+
+    public void StartBuildingCommand() {
     }
 }
