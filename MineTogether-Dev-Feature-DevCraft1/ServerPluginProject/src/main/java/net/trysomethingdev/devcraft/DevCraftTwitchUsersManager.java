@@ -138,7 +138,7 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(joinedNick);
         if(user == null)
         {  //If we make it here it means we did not find the user in the list. So we should add a user.
-            devCraftTwitchUsers.add(new DevCraftTwitchUser(joinedNick,joinedNick));
+            this.Add(new DevCraftTwitchUser(joinedNick,joinedNick));
         }
         else
         {
@@ -149,10 +149,10 @@ public void Add(DevCraftTwitchUser twitchUser){
 
     }
 
-    private DevCraftTwitchUser getUserByTwitchUserName(String joinedNick) {
+    public DevCraftTwitchUser getUserByTwitchUserName(String joinedNick) {
         for (var user : devCraftTwitchUsers)
         {
-            if(joinedNick.equals(user.twitchUserName)) {
+            if(joinedNick.toUpperCase().equals(user.twitchUserName.toUpperCase())) {
                 return user;
             }
         }
@@ -174,6 +174,16 @@ public void Add(DevCraftTwitchUser twitchUser){
             if(command.startsWith("!SKIN")) ExecuteChangeUserSkinCommand(sender, command);
             if(command.startsWith("!JOIN") || command.startsWith("!PLAY")) ExecuteJoinCommand(sender);
             if(command.startsWith("!EXIT") || command.startsWith("!QUIT")) ExecuteExitCommand(sender);
+            if(command.startsWith("!GOTOBED") || command.startsWith("!BED") || command.startsWith("!SLEEP")) ExecuteGoToBedCommand(sender);
+            if(command.startsWith("!FISH")) ExecuteFishCommand(sender);
+            if(command.startsWith("!MINE")) ExecuteMineCommand(sender);
+            if(command.startsWith("!LOG") || command.startsWith("!CHOP")) ExecuteLogCommand(sender);
+            if(command.startsWith("!EAT")) ExecuteEatCommand(sender);
+            if(command.startsWith("!TEST")) ExecuteTestCommand(sender);
+            if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);
+
+
+
 
         }
         else {
@@ -181,8 +191,53 @@ public void Add(DevCraftTwitchUser twitchUser){
         }
 
         var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) devCraftTwitchUsers.add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
+        if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
         else user.Chatted();
+    }
+
+    private void ExecuteFishCommand(TwitchUser sender) {
+        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Fish Mode ");
+        var user = getUserByTwitchUserName(sender.getUserName());
+        user.StartFishingCommand();
+    }
+
+    private void ExecuteMineCommand(TwitchUser sender) {
+        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Mine Mode ");
+        var user = getUserByTwitchUserName(sender.getUserName());
+        user.StartMineCommand();
+    }
+
+    private void ExecuteLogCommand(TwitchUser sender) {
+        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Log Mode ");
+        var user = getUserByTwitchUserName(sender.getUserName());
+        user.StartLoggingTreesCommand();
+    }
+
+    private void ExecuteEatCommand(TwitchUser sender) {
+        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Eat Mode ");
+        var user = getUserByTwitchUserName(sender.getUserName());
+        user.StartEatingCommand();
+    }
+
+    private void ExecuteBuildCommand(TwitchUser sender) {
+        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Build Mode ");
+        var user = getUserByTwitchUserName(sender.getUserName());
+        user.StartBuildingCommand();
+    }
+
+    private void ExecuteTestCommand(TwitchUser sender) {
+
+        var user = getUserByTwitchUserName(sender.getUserName());
+        user.StartFishingCommand();
+        Bukkit.getLogger().info("Test Command Logged");
+
+
+    }
+
+    private void ExecuteGoToBedCommand(TwitchUser sender) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user != null) user.userWantsToPlay = true;
+
     }
 
     private void ExecuteExitCommand(TwitchUser sender) {
