@@ -1,5 +1,9 @@
 package net.trysomethingdev.devcraft.traits;
 
+import net.citizensnpcs.Settings;
+import net.citizensnpcs.api.ai.tree.Sequence;
+import net.citizensnpcs.api.ai.tree.StatusMapper;
+import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -7,6 +11,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.util.DelayedTask;
+import net.trysomethingdev.devcraft.util.DevBlockBreaker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,9 +20,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
@@ -25,6 +31,11 @@ import org.bukkit.util.Vector;
     @TraitName("quarry")
     public class QuarryTrait extends Trait {
 
+
+    private boolean readyForNextBlock;
+    private Queue<Block> queueOfBlocks;
+    private boolean finishedQueue;
+    private Block block;
 
     public QuarryTrait() {
         super("quarry");
@@ -95,73 +106,143 @@ import org.bukkit.util.Vector;
     private Inventory inventory;
         @Override
         public void run() {
+            
+            if (!npc.isSpawned())  return;
+            if(miningLocation == null)
+            {
+                miningLocation = npc.getEntity().getLocation().clone();
+                CreateListOfLocationsToMine(miningLocation);
+                readyForNextBlock = true;
+            }
 
-
-
-            if (!npc.isSpawned() //|| delay-- > 0
-            //
-             ) {
+            if(npc.getNavigator().isNavigating())
+            {
                 return;
             }
 
-            if(miningLocation == null)
+            if(npc.getDefaultGoalController().isExecutingGoal())
             {
-                miningLocation = Bukkit.getPlayer("TrySomethingDev").getLocation().clone();
+                return;
+            }
+            else if(block !=null && block.getType().isSolid())
+            {
+                block.breakNaturally();
+                return;
+
+            } else if(block != null && !block.getType().isSolid())
+            {
+                readyForNextBlock = true;
 
             }
 
-
-            if (
+             if (
                     //inventory.firstEmpty() == -1 ||
-             hitBedrock || currentDepth >= depth) { // Check if the inventory is full
+                    finishedQueue || hitBedrock || currentDepth >= depth) { // Check if the inventory is full
                 returnToSurface();
                 npc.removeTrait(QuarryTrait.class);
-            } else {
-                mineBlock();
+            } else if (readyForNextBlock){
+
+                 block = queueOfBlocks.poll();
+                 if(block == null){
+                  finishedQueue = true;
+                 }
+                 else{
+
+                     mineBlock(block);
+
+                 }
             }
-
-            //delay = 20;
-
-
         }
 
-        boolean hitBedrock = false;
-    private void mineBlock() {
-        // Mine a 4x4 area
-        new DelayedTask(() -> {
+    private void CreateListOfLocationsToMine(Location miningLocation) {
+        queueOfBlocks = new LinkedList<>();
+        for(int y = 0; y < depth; y++  )
             for (int x = 0; x < width; x++) {
                 for (int z = 0; z < length; z++) {
-                    Block block = miningLocation.clone().add(x, -currentDepth, z).getBlock();
+                    Block block = miningLocation.clone().add(x, -y, z).getBlock();
                     if (block.getType().isSolid()) {
-                        if(block.getType() == Material.BEDROCK)
+                         if(block.getType() == Material.BEDROCK)
                         {
-                            hitBedrock = true;
-                            return;
-                        }
-                        inventory.addItem(new ItemStack(block.getType()));
-                        block.setType(Material.AIR);
-                    }
-                }
-            }
-            currentDepth++;
-
-        }, 5 * 1);
-        for (int x = 0; x < width; x++) {
-            for (int z = 0; z < length; z++) {
-                Block block = miningLocation.clone().add(x, -currentDepth, z).getBlock();
-                if (block.getType().isSolid()) {
-                    if(block.getType() == Material.BEDROCK)
-                    {
-                        hitBedrock = true;
+                        //Done with List
                         return;
-                    }
-                    inventory.addItem(new ItemStack(block.getType()));
-                    block.setType(Material.AIR);
+                         }
+                        else{
+                             queueOfBlocks.add(block);
+                         }
                 }
             }
         }
-        currentDepth++;
+       // currentDepth++;
     }
+
+    boolean hitBedrock = false;
+        BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
+    private void mineBlock(Block block) {
+        // Mine a 4x4 area
+
+//        new DelayedTask(() -> {
+//            npc.getDefaultGoalController().isExecutingGoal()
+//
+//        }, 20 * 1);
+                if(block.getLocation().distance(npc.getEntity().getLocation()) > 2)
+                {
+                    npc.getNavigator().setTarget(block.getLocation());
+                    return;
+                }
+
+                blockBreakerConfiguration.radius(10);
+                BlockBreaker breaker = npc.getBlockBreaker(block, blockBreakerConfiguration);
+
+
+                npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
+
+
+    }
+
+
+
+
+
+
+    private void BreakTheBlock(Block blockWeWantToBreak) {
+//        inventory.addItem(new ItemStack(blockWeWantToBreak.getType()));
+//        block.setType(Material.AIR);
+
+        double radius = 10;
+
+        BlockBreaker.BlockBreakerConfiguration cfg = new BlockBreaker.BlockBreakerConfiguration();
+        if (radius == -1) {
+            cfg.radius(radius);
+        } else if (Settings.Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble() > 0) {
+            cfg.radius(Settings.Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble());
+        }
+
+
+//        if (npc.getEntity() instanceof InventoryHolder) {
+//            cfg.blockBreaker((block, itemstack) -> {
+//                org.bukkit.inventory.Inventory inventory = ((InventoryHolder) npc.getEntity()).getInventory();
+//                Location location = npc.getEntity().getLocation();
+//                for (ItemStack drop : block.getDrops(itemstack)) {
+//                    for (ItemStack unadded : inventory.addItem(drop).values()) {
+//                        location.getWorld().dropItemNaturally(npc.getEntity().getLocation(), unadded);
+//                    }
+//                }
+//            });
+//        }
+//        BlockBreaker breaker = npc.getBlockBreaker(blockWeWantToBreak, cfg);
+//        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
+
+        if (blockWeWantToBreak.getType() != Material.AIR) {
+            // Create a new BlockBreaker for the NPC
+
+            //blockWeWantToBreak.breakNaturally(new ItemStack(Material.DIAMOND_PICKAXE));
+            BlockBreaker breaker = npc.getBlockBreaker(blockWeWantToBreak, cfg);
+            npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 10);
+
+        }
+
+    }
+
 
     private void returnToSurface() {
         // Place ladders and return to the surface
