@@ -13,6 +13,7 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DevCraftTwitchUsersManager {
@@ -181,6 +182,7 @@ public void Add(DevCraftTwitchUser twitchUser){
             if(command.startsWith("!EAT")) ExecuteEatCommand(sender);
             if(command.startsWith("!TEST")) ExecuteTestCommand(sender);
             if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);
+            if(command.startsWith("!QUARRY")) ExecuteQuarryCommand(sender,command);
 
 
 
@@ -194,6 +196,36 @@ public void Add(DevCraftTwitchUser twitchUser){
         if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
         else user.Chatted();
     }
+
+    private void ExecuteQuarryCommand(TwitchUser sender, String command) {
+
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user == null) return;
+
+        var splitStringList = command.split(" ");
+        if (Arrays.stream(splitStringList).count() != 4)
+        {
+            //Just do default 1x1x1
+            user.QuarryCommand(1,1,1);
+        }
+        else {
+
+            int length = 1, width = 1,depth = 1;
+            try {
+                 length = Integer.parseInt(splitStringList[1]);
+                 width =  Integer.parseInt(splitStringList[2]);
+                 depth =  Integer.parseInt(splitStringList[3]);
+            }
+            catch( Exception e){
+
+            }
+
+            user.QuarryCommand(length,width,depth);
+            }
+
+        }
+
+
 
     private void ExecuteFishCommand(TwitchUser sender) {
         Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Fish Mode ");

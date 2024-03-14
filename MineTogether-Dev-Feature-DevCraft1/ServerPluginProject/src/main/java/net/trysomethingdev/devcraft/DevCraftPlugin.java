@@ -175,6 +175,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TestTrait.class).withName("test"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LoggingTreesTrait.class).withName("loggingtrees"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(EatingTrait.class).withName("eating"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(QuarryTrait.class).withName("quarry"));
 
 
 
