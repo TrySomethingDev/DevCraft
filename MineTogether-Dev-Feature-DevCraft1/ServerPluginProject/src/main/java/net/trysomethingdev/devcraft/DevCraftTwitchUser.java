@@ -62,13 +62,13 @@ public class DevCraftTwitchUser {
             //IF NPC Does not exist in registry we need to make it.
             NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, this.twitchUserName);
             SpawnNPC(npc);
-            AddFollowerTrait(npc);
+         //   AddFollowerTrait(npc);
             AddSkinTrait(this.minecraftSkinName);
         }, 20 * 2);
     }
 
     private static void SpawnNPC(NPC npc) {
-        var nextInt = ThreadLocalRandom.current().nextInt( 1, 5);
+        var nextInt = ThreadLocalRandom.current().nextInt( 1, 2);
         new DelayedTask(() -> {
             npc.spawn(Bukkit.getPlayer("trysomethingdev").getLocation());
 
@@ -120,7 +120,7 @@ public class DevCraftTwitchUser {
         else if (npc != null && !npc.isSpawned())
         {
             SpawnNPC(npc);
-            AddFollowerTrait(npc);
+           // AddFollowerTrait(npc);
             AddSkinTrait(this.minecraftSkinName);
         }
         else

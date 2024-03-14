@@ -5,11 +5,16 @@ import com.denizenscript.denizen.nms.interfaces.FishingHelper;
 import com.denizenscript.denizen.objects.NPCTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Inventory;
+import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.kyori.adventure.text.Component;
 import net.trysomethingdev.devcraft.events.NpcFishEvent;
+import net.trysomethingdev.devcraft.traits.FollowTraitCustom;
+import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,19 +24,25 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FishTogetherTrait extends Trait {
     public FishTogetherTrait() {
         super("fishtogether");
     }
 
+    private List<BlockFace> blockFacesToCheck = new ArrayList<>();
+
+
+
     @Persist("fishing")
     public boolean fishing = false;
     @Persist("catch type")
-    public FishingHelper.CatchType catchType = FishingHelper.CatchType.NONE;
+    public FishingHelper.CatchType catchType = FishingHelper.CatchType.DEFAULT;
 
     @Persist("fishing spot")
     public Location fishingLocation = null;
@@ -40,10 +51,10 @@ public class FishTogetherTrait extends Trait {
     public Item fish = null;
 
     @Persist("catch chance")
-    public int catchPercent = 65;
+    public int catchPercent = 100;
 
     @Persist("reel tick rate")
-    public int reelTickRate = 400;
+    public int reelTickRate = 200;
 
     @Persist("cast tick rate")
     public int castTickRate = 75;
@@ -52,25 +63,95 @@ public class FishTogetherTrait extends Trait {
     int castCount = 0;
 
     public boolean isCast = false;
+  //  private Inventory inventory;
 
     @Override
-    public void onSpawn() {
-        isCast = false;
+    public void onAttach() {
+        npc.removeTrait(FollowTraitCustom.class);
+        npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
+
+        //   inventory = Bukkit.createInventory(null, 36); // Create a new inventory for the NPC
+        var eq = npc.getOrAddTrait(Equipment.class);
+        eq.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.FISHING_ROD));
+
+        InitializeBlockFacedToChecklist();
+
+    }
+
+    private void InitializeBlockFacedToChecklist() {
+        blockFacesToCheck = new ArrayList<>();
+        blockFacesToCheck.add(BlockFace.NORTH);
+        blockFacesToCheck.add(BlockFace.SOUTH);
+        blockFacesToCheck.add(BlockFace.EAST);
+        blockFacesToCheck.add(BlockFace.WEST);
+        blockFacesToCheck.add(BlockFace.NORTH_EAST);
+        blockFacesToCheck.add(BlockFace.NORTH_WEST);
+        blockFacesToCheck.add(BlockFace.SOUTH_EAST);
+        blockFacesToCheck.add(BlockFace.SOUTH_WEST);
     }
 
     @Override
+    public void onSpawn() {
+        InitializeBlockFacedToChecklist();
+        isCast = false;
+        Log("****ONSPAWN*****");
+
+        npc.removeTrait(FollowTraitCustom.class);
+         npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
+
+     //   inventory = Bukkit.createInventory(null, 36); // Create a new inventory for the NPC
+        var eq = npc.getOrAddTrait(Equipment.class);
+        eq.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.FISHING_ROD));
+        this.startFishing();
+    }
+
+    private int delay;
+    @Override
     public void run() {
-        if (fish != null) {
-            //AresNote: Changed npc.getStoredLocation()) < 3 to npc.getStoredLocation()) < 1
-            if (fish.getLocation().distance(npc.getStoredLocation()) < 1) {
-                try {
-                    fish.remove();
-                }
-                catch (Exception e) {
-                }
-            }
+
+        if (!(npc.getEntity() instanceof Player))
+            return;
+        if (!npc.isSpawned())
+            return;
+        if(npc.getNavigator().isNavigating())
+        {
+            return;
         }
+        if(fishingLocation != null )
+        {
+           if( fishingLocation.distance(npc.getEntity().getLocation()) < 5 )
+            {
+             //   Log("We are within 5 blocks of the fishing location");
+              //  Log(fishingLocation.toString());
+                fishing = true;
+            }
+           else{
+               fishing = false;
+           }
+
+        }
+
+        //delay = 20;
+      //  if (fish != null) {
+       //     Log("Fish is not null");
+//            if (fish.getLocation().distance(npc.getEntity().getLocation()) < 5) {
+//                try {
+//                    Log("Removing Fish:" + fish.getName());
+////                    var invTrait = npc.getOrAddTrait(net.citizensnpcs.api.trait.trait.Inventory.class);
+////                    invTrait.setItem(3, fish.getItemStack());
+//
+//                   // inventory.addItem(fish.getItemStack());
+//                   // fish.remove();
+//                    fish = null;
+//                }
+//                catch (Exception e) {
+//                }
+//            }
+       // }
         if (!fishing) {
+          //  Log("We are not fishing");
+          //  Log("Do we have a fishing locaiton?");
+          //  if(fishingLocation != null) Log(fishingLocation.toString());
             isCast = false;
             return;
         }
@@ -78,6 +159,10 @@ public class FishTogetherTrait extends Trait {
             reelCount++;
             if (reelCount >= reelTickRate) {
                 reel();
+                Log("Checking Inventory");
+                CheckIfInventoryIsFullAndIfFullSendThemBackToPlayer();
+
+
                 reelCount = 0;
                 castCount = 0;
             }
@@ -89,6 +174,24 @@ public class FishTogetherTrait extends Trait {
                 castCount = 0;
             }
         }
+    }
+
+    private void CheckIfInventoryIsFullAndIfFullSendThemBackToPlayer() {
+        var inventoryTrait = npc.getOrAddTrait(Inventory.class);
+        var inventoryView = inventoryTrait.getInventoryView();
+        if(inventoryView.firstEmpty() == -1 )
+        {
+            Log(npc.getName() + " Inventory is FULL!");
+            npc.removeTrait(FishTogetherTrait.class);
+            var eqip = npc.getOrAddTrait(Equipment.class);
+            eqip.set(0, null);
+          var trait =  npc.getOrAddTrait(FollowTraitCustom.class);
+
+        }
+    }
+
+    private void Log(String message) {
+        Bukkit.getLogger().info(message);
     }
 
     // <--[action]
@@ -138,8 +241,6 @@ public class FishTogetherTrait extends Trait {
         fishingLocation = null;
         fishing = false;
         npc.removeTrait(FishTogetherTrait.class);
-
-
     }
 
     public boolean scanForFishSpot(Location near, boolean horizontal) {
@@ -165,19 +266,142 @@ public class FishTogetherTrait extends Trait {
         return false;
     }
 
+
+    private boolean findNearestWaterWithinRadius(Location startingLocation,int radius) {
+        Material blockTypeWeAreLookingFor = Material.WATER;
+        var closestLocation = SearchForMaterialInRaidus(startingLocation, radius,-1,3, blockTypeWeAreLookingFor);
+
+
+        if (closestLocation == null) return false;
+
+        Log("FindNearestWaterWithinRadius");
+        Log("closest location: " + closestLocation.getLocation());
+        this.fishingLocation = closestLocation.getLocation().clone();
+        return true;
+
+    }
+
+    private static Block SearchForMaterialInRaidus(Location location, int radius,int ylower, int yhigher, Material blockTypeWeAreLookingFor) {
+        // ylower is how much lower than the current Y we should search.
+        // yhigher is how much above the current Y we should search
+
+        Block closestBlockOfSpecifiedMaterial = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = ylower; y <= yhigher; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    Block block = location.getWorld().getBlockAt(location.getBlockX() + x, location.getBlockY() + y, location.getBlockZ() + z);
+                    if (block.getType() == blockTypeWeAreLookingFor) {
+
+                        double distance = block.getLocation().distance(location);
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestBlockOfSpecifiedMaterial = block;
+                        }
+
+
+
+                    }
+                }
+            }
+        }
+        return closestBlockOfSpecifiedMaterial;
+    }
+
     public void startFishing() {
-        fishing = true;
-        Location search = npc.getStoredLocation().clone();
-        Vector direction = npc.getStoredLocation().getDirection().clone();
+
+        Location search = npc.getEntity().getLocation().clone();
+        Vector direction = npc.getEntity().getLocation().getDirection().clone();
         if (direction.getY() > -0.1) {
             direction.setY(-0.1);
         }
+        Log("Scanning for fishing spot");
+
+
+
         for (int i = 0; i < 10; i++) {
             search.add(direction.clone());
-            if (scanForFishSpot(search, true)) {
-                break;
+            var foundLocation = findNearestWaterWithinRadius(search,5 * i);
+            Log("Searching starting from: " + search.toString());
+            Log("With Radius: " + 5 * 1);
+
+            if(foundLocation)
+            {
+                Log("We found a fishing spot");
+                Log("Fishing Spot is: " + fishingLocation.toString());
+
+                //We found water....but now can we find dry land to fish from?
+
+                //Air above///Not Water Below
+               if(fishingLocation.getBlock().getRelative(BlockFace.UP).getType() == Material.AIR)
+               {
+                   Log("There is air above the fishing spot");
+                 boolean foundSpot = CheckAllDirectionAroundThisSpotforGroundAndTwoAirBlocksVertically();
+                    if(foundSpot)
+                    {
+                        Log("We have place to stand");
+                        Log(validGroundToFishFrom.toString());
+                        WalkToLocationTask(validGroundToFishFrom);
+                        break;
+                    }
+               }
+        }
+        }
+
+    }
+
+    private Location validGroundToFishFrom;
+    private boolean CheckAllDirectionAroundThisSpotforGroundAndTwoAirBlocksVertically() {
+
+        for(var blockFace : blockFacesToCheck)
+        {
+            Boolean foundSpot = CheckBlockForValidFishingStandingLocation(fishingLocation.getBlock().getRelative(blockFace));
+            if(foundSpot)
+            {
+                Log("We found a good spot to stand from");
+                return true;
             }
         }
+
+        return false;
+    }
+
+    private Boolean CheckBlockForValidFishingStandingLocation(Block block) {
+        if(block.getType() != Material.WATER &&
+                block.getType() != Material.AIR)
+        {
+            var result =  CheckForTwoBlockOfAirAboveBlock(block);
+            if(result)
+            {
+                validGroundToFishFrom = block.getLocation();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean CheckForTwoBlockOfAirAboveBlock(Block block) {
+        if(block.getRelative(BlockFace.UP).getType() == Material.AIR  &&
+                block.getRelative(BlockFace.UP).getRelative(BlockFace.UP).getType() == Material.AIR){
+            return true;
+        }
+
+        return false;
+    }
+
+    private void WalkToLocationTask(Location destination)
+    {
+
+        npc.removeTrait(FollowTraitCustom.class);
+        npc.removeTrait(FollowTrait.class);
+
+        new DelayedTask(() -> {
+            var result = npc.getNavigator().canNavigateTo(destination);
+            Log("Can Navigate To = " + result);
+            npc.getNavigator().setTarget(destination);
+        }, 20 * 1);
+
     }
 
     // <--[action]
@@ -191,6 +415,7 @@ public class FishTogetherTrait extends Trait {
     //
     // -->
     private void cast() {
+        Log("Casting out");
         new NPCTag(npc).action("cast fishing rod", null);
         if (fishingLocation == null || fishingLocation.getWorld() == null || !fishingLocation.getWorld().equals(npc.getEntity().getWorld())) {
             Debug.echoError("Fishing location not found!");
@@ -199,7 +424,7 @@ public class FishTogetherTrait extends Trait {
         isCast = true;
         double v = 34;
         double g = 20;
-        Location from = npc.getStoredLocation();
+        Location from = npc.getEntity().getLocation();
         from = from.add(0, 0.33, 0);
         Location to = fishingLocation;
         Vector test = to.clone().subtract(from).toVector();
@@ -246,6 +471,7 @@ public class FishTogetherTrait extends Trait {
 
     private void reelWithoutLoot() {
         isCast = false;
+        Log("Reeling in wihtout loot");
         new NPCTag(npc).action("reel in fishing rod", null);
         if (fishHook != null && fishHook.isValid()) {
             fishHook.remove();
@@ -269,8 +495,11 @@ public class FishTogetherTrait extends Trait {
     // -->
     private void reel() {
         isCast = false;
+        Log("Reeling in");
         new NPCTag(npc).action("reel in fishing rod", null);
         int chance = (int) (Math.random() * 100);
+        Log("CatchType Set to: "+ catchType.toString());
+
         if (catchPercent > chance && fishHook != null && catchType != FishingHelper.CatchType.NONE) {
             try {
                 fish.remove();
@@ -278,14 +507,14 @@ public class FishTogetherTrait extends Trait {
             catch (Exception e) {
             }
             Location location = fishHook.getLocation();
-
-            ItemStack diamond = new ItemStack(Material.DIAMOND_BLOCK);
-            ItemMeta diamondMeta = diamond.getItemMeta();
-            if (diamondMeta != null) {
-                Component displayName = Component.text("A RARE TREASURE");
-                diamondMeta.setDisplayName(displayName.toString());
-                diamond.setItemMeta(diamondMeta);
-            }
+//
+//            ItemStack diamond = new ItemStack(Material.DIAMOND_BLOCK);
+//            ItemMeta diamondMeta = diamond.getItemMeta();
+//            if (diamondMeta != null) {
+//                Component displayName = Component.text("A RARE TREASURE");
+//                diamondMeta.setDisplayName(displayName.toString());
+//                diamond.setItemMeta(diamondMeta);
+//            }
 
             ItemStack result = NMSHandler.fishingHelper.getResult(fishHook, catchType);
             if (result != null) {
