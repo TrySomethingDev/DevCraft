@@ -33,7 +33,9 @@ public class FollowTraitCustom extends Trait {
     @Persist
     private double margin = 5;
     public FollowTraitCustom() {
+
         super("followtraitcustom");
+        player = Bukkit.getPlayer("TrySomethingDev");
     }
 
 
