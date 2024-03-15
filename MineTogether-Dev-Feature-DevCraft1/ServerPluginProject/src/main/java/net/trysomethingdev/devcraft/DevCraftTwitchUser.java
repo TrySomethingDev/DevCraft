@@ -264,4 +264,23 @@ public class DevCraftTwitchUser {
 
     public void StartBuildingCommand() {
     }
+
+    public void QuarryCommand(int length, int width, int depth) {
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if (npc != null) {
+
+                if(npc.hasTrait(QuarryTrait.class))
+                {
+                    npc.removeTrait(QuarryTrait.class);
+                }
+
+                var quarry = new QuarryTrait(length,width,depth);
+                npc.addTrait(quarry);
+
+            }
+        }, 20 * 1);
+
+
+    }
 }
