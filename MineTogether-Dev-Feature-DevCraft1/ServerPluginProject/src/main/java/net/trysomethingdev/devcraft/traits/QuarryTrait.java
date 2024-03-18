@@ -273,6 +273,8 @@ import java.util.Queue;
         }, 20 * 1);
        }
 
+
+
     //Run code when your trait is attached to a NPC.
         //This is called BEFORE onSpawn, so npc.getEntity() will return null
         //This would be a good place to load configurable defaults for new NPCs.

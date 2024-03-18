@@ -4,12 +4,16 @@ package net.trysomethingdev.devcraft;
 import com.google.gson.annotations.Expose;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.SkinTrait;
 import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
@@ -226,6 +230,7 @@ public class DevCraftTwitchUser {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if(npc != null) {
+                RemoveTraits(npc);
                 FishTogetherTrait testTrait = npc.getOrAddTrait(FishTogetherTrait.class);
             }
         }, 20 * 1);
@@ -275,6 +280,8 @@ public class DevCraftTwitchUser {
                     npc.removeTrait(QuarryTrait.class);
                 }
 
+                RemoveTraits(npc);
+
                 var quarry = new QuarryTrait(length,width,depth);
                 npc.addTrait(quarry);
 
@@ -282,5 +289,38 @@ public class DevCraftTwitchUser {
         }, 20 * 1);
 
 
+    }
+
+    private static void RemoveTraits(NPC npc) {
+
+        ResetHeadPosition(npc);
+        RemoveToolFromInventorySpotZero(npc);
+
+        if(npc.hasTrait(QuarryTrait.class))
+        {
+            //Remove Quarry Trait and Pickaxe
+            npc.removeTrait(QuarryTrait.class);
+        }
+
+        if(npc.hasTrait(FishTogetherTrait.class))
+        {
+            //Remove Fishing Trait and Fishing Rod
+            npc.removeTrait(FishTogetherTrait.class);
+
+        }
+    }
+
+    private static void ResetHeadPosition(NPC npc) {
+        var rote = npc.getOrAddTrait(RotationTrait.class);
+        var ph = rote.getPhysicalSession();
+        float pitch = 0;
+        float yaw = 0;
+        npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
+
+    }
+
+    private static void RemoveToolFromInventorySpotZero(NPC npc) {
+        var eq = npc.getOrAddTrait(Equipment.class);
+        eq.set(0, new ItemStack(Material.AIR));
     }
 }
