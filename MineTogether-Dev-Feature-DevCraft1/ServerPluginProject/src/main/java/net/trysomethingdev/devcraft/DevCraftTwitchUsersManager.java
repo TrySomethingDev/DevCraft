@@ -178,11 +178,12 @@ public void Add(DevCraftTwitchUser twitchUser){
             if(command.startsWith("!GOTOBED") || command.startsWith("!BED") || command.startsWith("!SLEEP")) ExecuteGoToBedCommand(sender);
             if(command.startsWith("!FISH")) ExecuteFishCommand(sender);
             if(command.startsWith("!MINE")) ExecuteMineCommand(sender);
-            if(command.startsWith("!LOG") || command.startsWith("!CHOP")) ExecuteLogCommand(sender);
+            if(command.startsWith("!LOG") || command.startsWith("!CHOP")  || command.startsWith("!WOOD")) ExecuteLogCommand(sender);
             if(command.startsWith("!EAT")) ExecuteEatCommand(sender);
             if(command.startsWith("!TEST")) ExecuteTestCommand(sender);
             if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);
             if(command.startsWith("!QUARRY")) ExecuteQuarryCommand(sender,command);
+            if(command.startsWith("!DANCE")) ExecuteDanceCommand(sender,command);
 
 
 
@@ -195,6 +196,15 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(sender.getUserName());
         if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
         else user.Chatted();
+    }
+
+    private void ExecuteDanceCommand(TwitchUser sender, String command) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user == null) return;
+
+            user.DanceCommand();
+
+
     }
 
     private void ExecuteQuarryCommand(TwitchUser sender, String command) {

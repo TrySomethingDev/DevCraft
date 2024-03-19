@@ -252,6 +252,7 @@ public class DevCraftTwitchUser {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if(npc != null) {
+                RemoveTraits(npc);
                 var trait = npc.getOrAddTrait(LoggingTreesTrait.class);
             }
         }, 20 * 1);
@@ -279,7 +280,7 @@ public class DevCraftTwitchUser {
                 {
                     npc.removeTrait(QuarryTrait.class);
                 }
-
+                ResetHeadPosition(npc);
                 RemoveTraits(npc);
 
                 var quarry = new QuarryTrait(length,width,depth);
@@ -292,22 +293,12 @@ public class DevCraftTwitchUser {
     }
 
     private static void RemoveTraits(NPC npc) {
-
         ResetHeadPosition(npc);
         RemoveToolFromInventorySpotZero(npc);
-
-        if(npc.hasTrait(QuarryTrait.class))
-        {
-            //Remove Quarry Trait and Pickaxe
-            npc.removeTrait(QuarryTrait.class);
-        }
-
-        if(npc.hasTrait(FishTogetherTrait.class))
-        {
-            //Remove Fishing Trait and Fishing Rod
-            npc.removeTrait(FishTogetherTrait.class);
-
-        }
+        if(npc.hasTrait(QuarryTrait.class)) npc.removeTrait(QuarryTrait.class);
+        if(npc.hasTrait(FishTogetherTrait.class)) npc.removeTrait(FishTogetherTrait.class);
+        if(npc.hasTrait(LoggingTreesTrait.class)) npc.removeTrait(LoggingTreesTrait.class);
+        if(npc.hasTrait(DanceTrait.class)) npc.removeTrait(DanceTrait.class);
     }
 
     private static void ResetHeadPosition(NPC npc) {
@@ -322,5 +313,25 @@ public class DevCraftTwitchUser {
     private static void RemoveToolFromInventorySpotZero(NPC npc) {
         var eq = npc.getOrAddTrait(Equipment.class);
         eq.set(0, new ItemStack(Material.AIR));
+    }
+
+    public void DanceCommand() {
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if (npc != null) {
+
+
+                ResetHeadPosition(npc);
+                RemoveTraits(npc);
+
+                var dance = new DanceTrait();
+                npc.addTrait(dance);
+
+            }
+        }, 20 * 1);
+
+
+
+
     }
 }
