@@ -183,6 +183,7 @@ public void Add(DevCraftTwitchUser twitchUser){
             if(command.startsWith("!TEST")) ExecuteTestCommand(sender);
             if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);
             if(command.startsWith("!QUARRY")) ExecuteQuarryCommand(sender,command);
+            if(command.startsWith("!DANCE")) ExecuteDanceCommand(sender,command);
 
 
 
@@ -195,6 +196,15 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(sender.getUserName());
         if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
         else user.Chatted();
+    }
+
+    private void ExecuteDanceCommand(TwitchUser sender, String command) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user == null) return;
+
+            user.DanceCommand();
+
+
     }
 
     private void ExecuteQuarryCommand(TwitchUser sender, String command) {
