@@ -11,6 +11,7 @@ import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +25,7 @@ import static net.trysomethingdev.devcraft.DevCraftPlugin.usersToIgnoreList;
 public class DevCraftTwitchUser {
 
 
+    private static Location npcGlobalSpawnPoint;
     @Expose public String twitchUserName;
 
     @Expose public String minecraftSkinName;
@@ -44,10 +46,11 @@ public class DevCraftTwitchUser {
     }
 
 
-    public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName) {
+    public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName, Location spawnLocation) {
         this.twitchUserName = twitchUserName;
         this.minecraftSkinName = minecraftSkinName;
         lastActivityTime = LocalDateTime.now();
+        npcGlobalSpawnPoint = spawnLocation;
         this.JustJoinedOrIsActive();
 
     }
@@ -61,12 +64,11 @@ public class DevCraftTwitchUser {
 
     }
 
-    private void createNPCWithFollowerTraitAndSpawnIt() {
+    private void createNPCWAndSpawnIt() {
         new DelayedTask(() -> {
             //IF NPC Does not exist in registry we need to make it.
             NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, this.twitchUserName);
             SpawnNPC(npc);
-         //   AddFollowerTrait(npc);
             AddSkinTrait(this.minecraftSkinName);
         }, 20 * 2);
     }
@@ -74,7 +76,7 @@ public class DevCraftTwitchUser {
     private static void SpawnNPC(NPC npc) {
         var nextInt = ThreadLocalRandom.current().nextInt( 1, 2);
         new DelayedTask(() -> {
-            npc.spawn(Bukkit.getPlayer("trysomethingdev").getLocation());
+            npc.spawn(npcGlobalSpawnPoint);
 
         }, 20 * nextInt);
     }
@@ -114,11 +116,6 @@ public class DevCraftTwitchUser {
             markedForDespawn = false;
         }
 
-
-        //Make sure they have an NPC in the world.
-        //Check to see if NPC is Spawned
-        var npcRegistry = CitizensAPI.getNPCRegistry();
-
         NPC npc = getNPCThatMatchesName(this.twitchUserName);
         if(npc != null && npc.isSpawned()) return;
         else if (npc != null && !npc.isSpawned())
@@ -130,7 +127,7 @@ public class DevCraftTwitchUser {
         else
         {
             //If npc is null
-            this.createNPCWithFollowerTraitAndSpawnIt();
+            this.createNPCWAndSpawnIt();
         }
 
 

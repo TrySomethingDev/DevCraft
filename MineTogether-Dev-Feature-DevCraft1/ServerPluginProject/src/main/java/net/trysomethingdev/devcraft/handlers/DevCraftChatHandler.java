@@ -40,7 +40,7 @@ public class DevCraftChatHandler {
 
         for (var name : namesList) {
             Bukkit.getLogger().info(name);
-            usersManager.Add(new DevCraftTwitchUser(name,name));
+            usersManager.Add(new DevCraftTwitchUser(name,name,pluggin.getNpcGlobalSpawnPoint()));
         }
 
     }

@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import net.citizensnpcs.api.npc.NPC;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 import java.io.*;
 import java.time.Duration;
@@ -21,11 +22,12 @@ public class DevCraftTwitchUsersManager {
     private final DevCraftPlugin plugin;
     //List of Twitch Users here
     List<DevCraftTwitchUser> devCraftTwitchUsers = new ArrayList<DevCraftTwitchUser>();
+    private Location globalNpcSpawnPoint;
 
-    public DevCraftTwitchUsersManager(DevCraftPlugin devCraftPlugin) {
+    public DevCraftTwitchUsersManager(DevCraftPlugin devCraftPlugin,Location npcGlobalSpawnPoint) {
 
         plugin = devCraftPlugin;
-
+        this.globalNpcSpawnPoint = npcGlobalSpawnPoint;
         LoadSavedList();
         SaveThisListToConfigEverySoManyMinutes(0.5);
 
@@ -139,7 +141,7 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(joinedNick);
         if(user == null)
         {  //If we make it here it means we did not find the user in the list. So we should add a user.
-            this.Add(new DevCraftTwitchUser(joinedNick,joinedNick));
+            this.Add(new DevCraftTwitchUser(joinedNick,joinedNick,globalNpcSpawnPoint));
         }
         else
         {
@@ -194,7 +196,7 @@ public void Add(DevCraftTwitchUser twitchUser){
         }
 
         var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName()));
+        if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName(),globalNpcSpawnPoint));
         else user.Chatted();
     }
 

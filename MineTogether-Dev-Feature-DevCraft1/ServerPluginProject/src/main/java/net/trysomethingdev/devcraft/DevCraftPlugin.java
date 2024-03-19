@@ -17,8 +17,11 @@ import net.trysomethingdev.twitchplugin.Data.DataManager;
 import net.trysomethingdev.twitchplugin.Encryption.EncryptionManager;
 import net.trysomethingdev.twitchplugin.Twirk.BotMode;
 import net.trysomethingdev.twitchplugin.Twirk.TwitchBot;
+import net.citizensnpcs.util.Util;
+
 
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -90,8 +93,17 @@ public final class DevCraftPlugin extends JavaPlugin {
 
     public static List<String> usersToIgnoreList;
 
+    @Getter
+    private Location npcGlobalSpawnPoint;
+
     @Override
     public void onEnable() {
+
+        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),-101,64,500);
+
+        npcGlobalSpawnPoint = Util.getCenterLocation(npcGlobalSpawnPoint.getBlock());
+
+
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
 
         LoadUsersToIgnoreList();
@@ -101,7 +113,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         dataManager = new DataManager();
         encryptionManager = new EncryptionManager();
 
-        twitchUsersManager = new DevCraftTwitchUsersManager(this);
+        twitchUsersManager = new DevCraftTwitchUsersManager(this, npcGlobalSpawnPoint );
         devCraftChatHandler =   new DevCraftChatHandler(this);
 
 
@@ -149,7 +161,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         //new EntityHandler(this);
 
 
-      //  new onChatEvent(twitchChat);
+        //new onChatEvent(twitchChat);
 
         new FooHandler(this);
        // new TorchHandler(this);
@@ -236,4 +248,6 @@ public final class DevCraftPlugin extends JavaPlugin {
         if (twitchBot != null) twitchBot.getTwirk().close();
         twitchBot = null;
     }
+
+
 }
