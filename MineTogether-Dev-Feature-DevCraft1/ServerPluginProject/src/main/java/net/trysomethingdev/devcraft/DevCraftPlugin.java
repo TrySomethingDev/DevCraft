@@ -96,11 +96,15 @@ public final class DevCraftPlugin extends JavaPlugin {
     @Getter
     private Location npcGlobalSpawnPoint;
 
+    @Getter
+    private Location fishingAreaStartPoint;
+
     @Override
     public void onEnable() {
 
-        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),-101,64,500);
+        fishingAreaStartPoint = new Location(Bukkit.getWorld("world"),-60,64,500);
 
+        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),-101,64,500);
         npcGlobalSpawnPoint = Util.getCenterLocation(npcGlobalSpawnPoint.getBlock());
 
 

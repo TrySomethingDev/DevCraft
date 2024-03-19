@@ -227,6 +227,7 @@ public class DevCraftTwitchUser {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if(npc != null) {
+
                 RemoveTraits(npc);
                 FishTogetherTrait testTrait = npc.getOrAddTrait(FishTogetherTrait.class);
             }

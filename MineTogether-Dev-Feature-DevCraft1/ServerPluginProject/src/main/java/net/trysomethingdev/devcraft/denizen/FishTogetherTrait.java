@@ -5,6 +5,7 @@ import com.denizenscript.denizen.nms.interfaces.FishingHelper;
 import com.denizenscript.denizen.objects.NPCTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.google.common.collect.Lists;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -12,6 +13,7 @@ import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.util.PlayerAnimation;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.events.NpcFishEvent;
 import net.trysomethingdev.devcraft.traits.FollowTraitCustom;
 import net.trysomethingdev.devcraft.util.DelayedTask;
@@ -24,6 +26,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
@@ -31,8 +34,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FishTogetherTrait extends Trait {
+    private final DevCraftPlugin plugin;
+    private boolean lookingForLocation = true;
+
     public FishTogetherTrait() {
         super("fishtogether");
+
+            plugin = JavaPlugin.getPlugin(DevCraftPlugin.class);
+
     }
 
     private List<BlockFace> blockFacesToCheck = new ArrayList<>();
@@ -102,21 +111,32 @@ public class FishTogetherTrait extends Trait {
      //   inventory = Bukkit.createInventory(null, 36); // Create a new inventory for the NPC
         var eq = npc.getOrAddTrait(Equipment.class);
         eq.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.FISHING_ROD));
-        this.startFishing();
+
     }
 
     private int delay;
     @Override
     public void run() {
 
-        if (!(npc.getEntity() instanceof Player))
-            return;
-        if (!npc.isSpawned())
-            return;
-        if(npc.getNavigator().isNavigating())
+        if (!(npc.getEntity() instanceof Player)) return;
+        if (!npc.isSpawned()) return;
+        if (npc.getNavigator().isNavigating()) return;
+
+        if(this.lookingForLocation)
         {
-            return;
+            if(npc.getEntity().getLocation().distance(plugin.getFishingAreaStartPoint()) < 2){
+                startFishing();
+                lookingForLocation = false;
+            }
+            else{
+                npc.getNavigator().setTarget(plugin.getFishingAreaStartPoint());
+            }
+                return;
         }
+
+        //Check if we are at the fishing start location.
+
+
         if(fishingLocation != null )
         {
            if( fishingLocation.distance(npc.getEntity().getLocation()) < 5 )
@@ -309,7 +329,6 @@ public class FishTogetherTrait extends Trait {
     }
 
     public void startFishing() {
-
         Location search = npc.getEntity().getLocation().clone();
         Vector direction = npc.getEntity().getLocation().getDirection().clone();
         if (direction.getY() > -0.1) {
@@ -318,12 +337,16 @@ public class FishTogetherTrait extends Trait {
         Log("Scanning for fishing spot");
 
 
+        SearchForNearbyFishingLocation(search, direction);
 
+    }
+
+    private void SearchForNearbyFishingLocation(Location search, Vector direction) {
         for (int i = 0; i < 10; i++) {
             search.add(direction.clone());
-            var foundLocation = findNearestWaterWithinRadius(search,5 * i);
+            var foundLocation = findNearestWaterWithinRadius(search,15 * i);
             Log("Searching starting from: " + search.toString());
-            Log("With Radius: " + 5 * 1);
+            Log("With Radius: " + 15 * 1);
 
             if(foundLocation)
             {
@@ -340,15 +363,34 @@ public class FishTogetherTrait extends Trait {
                     if(foundSpot)
                     {
                         Log("We have place to stand");
-                        Log(validGroundToFishFrom.toString());
-                        WalkToLocationTask(validGroundToFishFrom);
-                        break;
+                        //Is there anyone else near that spot
+
+
+                        var nearbyEntities = npc.getEntity().getWorld().getNearbyEntities(validGroundToFishFrom,3,3,3);
+
+                            for(var ent : nearbyEntities){
+                                Log(ent.getName());
+                            }
+
+
+                        if(nearbyEntities.isEmpty()){
+
+                            Log("WE FOUND  SPOT WITH NO ENTITIES");
+                            Log(validGroundToFishFrom.toString());
+                            WalkToLocationTask(validGroundToFishFrom);
+                            break;
+                        }
+                        Log("DID NOT FIND  SPOT WITH NO ENTITIES");
+                        foundSpot = false;
+
+
                     }
                }
         }
         }
-
     }
+
+
 
     private Location validGroundToFishFrom;
     private boolean CheckAllDirectionAroundThisSpotforGroundAndTwoAirBlocksVertically() {
