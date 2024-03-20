@@ -6,6 +6,7 @@ import com.denizenscript.denizen.objects.NPCTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.google.common.collect.Lists;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -35,7 +36,8 @@ import java.util.List;
 
 public class FishTogetherTrait extends Trait {
     private final DevCraftPlugin plugin;
-    private boolean lookingForLocation = true;
+    private boolean lookingForLocation = false;
+    private boolean isSearchingForFishingLocation;
 
     public FishTogetherTrait() {
         super("fishtogether");
@@ -114,86 +116,82 @@ public class FishTogetherTrait extends Trait {
 
     }
 
+    private int delaySetting = 20 * 10;
     private int delay;
     @Override
     public void run() {
 
+        //Pre-Checks
         if (!(npc.getEntity() instanceof Player)) return;
         if (!npc.isSpawned()) return;
         if (npc.getNavigator().isNavigating()) return;
+        if (this.lookingForLocation) return;
+        if (!CitizensAPI.getNPCRegistry().isNPC(npc.getEntity())) return;
 
-        if(this.lookingForLocation)
+        Log("Fired Fish " + "LookingForLocation: " + this.lookingForLocation + " Fishing: " + fishing);
+
+        //If we do not have a fishing location
+        // AND we have not started looking for a fishing location yet...
+        //We want to start searching for a fishing location.
+        if(fishingLocation == null && !this.lookingForLocation)
         {
-            if(npc.getEntity().getLocation().distance(plugin.getFishingAreaStartPoint()) < 2){
-                startFishing();
-                lookingForLocation = false;
-            }
-            else{
-                npc.getNavigator().setTarget(plugin.getFishingAreaStartPoint());
-            }
-                return;
+            Log("Firing 1");
+            //start searching for location
+            fishing = false;
+
+            GetFishingLocation();
+        }
+        else if(fishingLocation != null && !this.lookingForLocation) {
+        //
+            Log("Firing 2");
+            //We are ready to fish.
+            fishing = true;
         }
 
-        //Check if we are at the fishing start location.
-
-
-        if(fishingLocation != null )
-        {
-           if( fishingLocation.distance(npc.getEntity().getLocation()) < 5 )
-            {
-             //   Log("We are within 5 blocks of the fishing location");
-              //  Log(fishingLocation.toString());
-                fishing = true;
-            }
-           else{
-               fishing = false;
-           }
-
-        }
-
-        //delay = 20;
-      //  if (fish != null) {
-       //     Log("Fish is not null");
-//            if (fish.getLocation().distance(npc.getEntity().getLocation()) < 5) {
-//                try {
-//                    Log("Removing Fish:" + fish.getName());
-////                    var invTrait = npc.getOrAddTrait(net.citizensnpcs.api.trait.trait.Inventory.class);
-////                    invTrait.setItem(3, fish.getItemStack());
-//
-//                   // inventory.addItem(fish.getItemStack());
-//                   // fish.remove();
-//                    fish = null;
-//                }
-//                catch (Exception e) {
-//                }
-//            }
-       // }
         if (!fishing) {
           //  Log("We are not fishing");
           //  Log("Do we have a fishing locaiton?");
           //  if(fishingLocation != null) Log(fishingLocation.toString());
+            Log("Not Fishing");
             isCast = false;
             return;
         }
         if (isCast) {
+            Log("IsCast");
             reelCount++;
             if (reelCount >= reelTickRate) {
                 reel();
                 Log("Checking Inventory");
                 CheckIfInventoryIsFullAndIfFullSendThemBackToPlayer();
-
-
                 reelCount = 0;
                 castCount = 0;
             }
         }
         else {
+            Log("Else");
             castCount++;
             if (castCount >= castTickRate) {
                 cast();
                 castCount = 0;
             }
         }
+    }
+
+    private void GetFishingLocation() {
+            if(npc.getEntity().getLocation().distance(plugin.getFishingAreaStartPoint()) < 5){
+                new DelayedTask(() -> {
+                    Log("Firing 3");
+                    this.lookingForLocation = true;
+                startFishing();
+                }, 20 * 1);
+            }
+            else{
+                Log("Firing 4");
+                npc.getNavigator().setTarget(plugin.getFishingAreaStartPoint());
+            }
+
+
+
     }
 
     private void CheckIfInventoryIsFullAndIfFullSendThemBackToPlayer() {
@@ -330,64 +328,58 @@ public class FishTogetherTrait extends Trait {
 
     public void startFishing() {
         Location search = npc.getEntity().getLocation().clone();
-        Vector direction = npc.getEntity().getLocation().getDirection().clone();
-        if (direction.getY() > -0.1) {
-            direction.setY(-0.1);
-        }
         Log("Scanning for fishing spot");
-
-
-        SearchForNearbyFishingLocation(search, direction);
+        SearchForNearbyFishingLocation(search);
 
     }
 
-    private void SearchForNearbyFishingLocation(Location search, Vector direction) {
-        for (int i = 0; i < 10; i++) {
-            search.add(direction.clone());
-            var foundLocation = findNearestWaterWithinRadius(search,15 * i);
-            Log("Searching starting from: " + search.toString());
-            Log("With Radius: " + 15 * 1);
+    private void SearchForNearbyFishingLocation(Location search) {
+
+
+        //Currently this is searching just in the direction they are facing.
+        for (int x = 0; x < 10; x++) {
+            for (int i = 0; i < 10; i++) {
+            search.add(new Location(npc.getEntity().getWorld(),x,0,i));
+            Log("direction: " + search.getDirection());
+
+            var foundLocation = findNearestWaterWithinRadius(search,1* i);
 
             if(foundLocation)
             {
                 Log("We found a fishing spot");
                 Log("Fishing Spot is: " + fishingLocation.toString());
-
                 //We found water....but now can we find dry land to fish from?
-
                 //Air above///Not Water Below
-               if(fishingLocation.getBlock().getRelative(BlockFace.UP).getType() == Material.AIR)
-               {
-                   Log("There is air above the fishing spot");
-                 boolean foundSpot = CheckAllDirectionAroundThisSpotforGroundAndTwoAirBlocksVertically();
+                if(fishingLocation.getBlock().getRelative(BlockFace.UP).getType() == Material.AIR)
+                {
+                    Log("There is air above the fishing spot");
+                    boolean foundSpot = CheckAllDirectionAroundThisSpotforGroundAndTwoAirBlocksVertically();
                     if(foundSpot)
                     {
                         Log("We have place to stand");
                         //Is there anyone else near that spot
-
-
                         var nearbyEntities = npc.getEntity().getWorld().getNearbyEntities(validGroundToFishFrom,3,3,3);
-
-                            for(var ent : nearbyEntities){
-                                Log(ent.getName());
-                            }
-
-
-                        if(nearbyEntities.isEmpty()){
-
-                            Log("WE FOUND  SPOT WITH NO ENTITIES");
-                            Log(validGroundToFishFrom.toString());
-                            WalkToLocationTask(validGroundToFishFrom);
-                            break;
+                        for(var ent : nearbyEntities){
+                            Log(ent.getName());
                         }
-                        Log("DID NOT FIND  SPOT WITH NO ENTITIES");
-                        foundSpot = false;
+                       // if(nearbyEntities.isEmpty()){
+
+                        //    Log("WE FOUND SPOT WITH NO ENTITIES");
+                         //   Log(validGroundToFishFrom.toString());
+                            WalkToLocationTask(validGroundToFishFrom);
+                        this.isSearchingForFishingLocation = false;
+                            return;
+                       // }
+                     //   Log("DID NOT FIND  SPOT WITH NO ENTITIES");
+                      //  foundSpot = false;
 
 
                     }
-               }
+                }
+            }
         }
         }
+
     }
 
 

@@ -52,11 +52,11 @@ public class DevCraftTwitchUsersManager {
 
     private void Save()
     {
-        Bukkit.getLogger().info("PRINTED LIST****");
-        for(var foo : devCraftTwitchUsers)
-        {
-           Bukkit.getLogger().info(foo.twitchUserName);
-        }
+//        Bukkit.getLogger().info("PRINTED LIST****");
+//        for(var foo : devCraftTwitchUsers)
+//        {
+//           Bukkit.getLogger().info(foo.twitchUserName);
+//        }
 
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
                 .create();
@@ -186,6 +186,9 @@ public void Add(DevCraftTwitchUser twitchUser){
             if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);
             if(command.startsWith("!QUARRY")) ExecuteQuarryCommand(sender,command);
             if(command.startsWith("!DANCE")) ExecuteDanceCommand(sender,command);
+            if(command.startsWith("!FOLLOW")) ExecuteFollowCommand(sender,command);
+            if(command.startsWith("!UNLOAD")) ExecuteUnloadIntoNearestChest(sender,command);
+            if(command.startsWith("!RESPAWN")) ExecuteRespawnCommand(sender,command);
 
 
 
@@ -198,6 +201,27 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(sender.getUserName());
         if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName(),globalNpcSpawnPoint));
         else user.Chatted();
+    }
+
+    private void ExecuteRespawnCommand(TwitchUser sender, String command) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user == null) return;
+
+        user.Respawn();
+    }
+
+    private void ExecuteUnloadIntoNearestChest(TwitchUser sender, String command) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user == null) return;
+
+        user.UnloadIntoNearestChest();
+    }
+
+    private void ExecuteFollowCommand(TwitchUser sender, String command) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user == null) return;
+
+        user.FollowCommand();
     }
 
     private void ExecuteDanceCommand(TwitchUser sender, String command) {

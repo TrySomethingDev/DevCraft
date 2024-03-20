@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.SkinTrait;
 import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
@@ -85,7 +86,7 @@ public class DevCraftTwitchUser {
         new DelayedTask(() -> {
         FollowTraitCustom followTrait = new FollowTraitCustom(Bukkit.getPlayer("trysomethingdev"));
         npc.addTrait(followTrait);
-        }, 20 * 3);
+        }, 20 * 2);
     }
 
     public NPC GetUserNPC() {
@@ -297,6 +298,11 @@ public class DevCraftTwitchUser {
         if(npc.hasTrait(FishTogetherTrait.class)) npc.removeTrait(FishTogetherTrait.class);
         if(npc.hasTrait(LoggingTreesTrait.class)) npc.removeTrait(LoggingTreesTrait.class);
         if(npc.hasTrait(DanceTrait.class)) npc.removeTrait(DanceTrait.class);
+        if(npc.hasTrait(FollowTraitCustom.class)) npc.removeTrait(FollowTraitCustom.class);
+        if(npc.hasTrait(UnloadTrait.class)) npc.removeTrait(UnloadTrait.class);
+        if(npc.hasTrait(MinerTrait.class)) npc.removeTrait(MinerTrait.class);
+        if(npc.hasTrait(StripMinerTrait.class)) npc.removeTrait(StripMinerTrait.class);
+
     }
 
     private static void ResetHeadPosition(NPC npc) {
@@ -331,5 +337,59 @@ public class DevCraftTwitchUser {
 
 
 
+    }
+
+    public void FollowCommand() {
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if (npc != null) {
+                if(npc.hasTrait(FollowTraitCustom.class))
+                {
+                    npc.removeTrait(FollowTraitCustom.class);
+                    return;
+                }
+                ResetHeadPosition(npc);
+                RemoveTraits(npc);
+
+                AddFollowerTrait(npc);
+
+
+            }
+        }, 20 * 1);
+
+    }
+
+    public void UnloadIntoNearestChest() {
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if (npc != null) {
+                ResetHeadPosition(npc);
+                RemoveTraits(npc);
+
+                npc.getOrAddTrait(UnloadTrait.class);
+
+
+
+            }
+        }, 20 * 1);
+    }
+
+    public void Respawn() {
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if (npc != null) {
+                ResetHeadPosition(npc);
+                RemoveTraits(npc);
+                npc.despawn();
+
+                //Respawn
+                new DelayedTask(() -> {
+
+                    if (npc != null) {
+                    SpawnNPC(npc);
+                    }
+                }, 20 * 2);
+            }
+        }, 20 * 1);
     }
 }
