@@ -102,9 +102,9 @@ public final class DevCraftPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        fishingAreaStartPoint = new Location(Bukkit.getWorld("world"),-60,64,500);
+        fishingAreaStartPoint = new Location(Bukkit.getWorld("world"),20,-60,0);
 
-        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),-101,64,500);
+        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),0,-60,0);
         npcGlobalSpawnPoint = Util.getCenterLocation(npcGlobalSpawnPoint.getBlock());
 
 
@@ -197,9 +197,9 @@ public final class DevCraftPlugin extends JavaPlugin {
 
 
 
-        new DelayedTask(() -> {
-            twitchUsersManager.DespawnTwitchUsersWhoHaveBeenInactiveTooLong();
-        }, 20 * 10);
+//        new DelayedTask(() -> {
+//            twitchUsersManager.DespawnTwitchUsersWhoHaveBeenInactiveTooLong();
+//        }, 20 * 10);
 
 //
 //        // Example code of trait

@@ -57,12 +57,7 @@ public class DevCraftTwitchUser {
     }
 
     public void Chatted() {
-
-
             this.JustJoinedOrIsActive();
-
-
-
     }
 
     private void createNPCWAndSpawnIt() {

@@ -79,45 +79,45 @@ public class DevCraftTwitchUsersManager {
 
     }
 
-    public void DespawnTwitchUsersWhoHaveBeenInactiveTooLong() {
-
-        new DelayedTask(() -> {
-
-            for(var user : devCraftTwitchUsers)
-            {
-                Duration duration = Duration.between(user.lastActivityTime, LocalDateTime.now());
-                long minutes = duration.toMinutes();
-
-                if(user.markedForDespawn)
-                {
-                    NPC npc = user.GetUserNPC();
-                    if(npc != null && npc.isSpawned())
-                    {
-                        npc.despawn();
-                    }
-                }
-
-                else if(minutes > 20 && user.markedForDespawn)
-                {
-                    NPC npc = user.GetUserNPC();
-                    if(npc != null && npc.isSpawned())
-                    {
-                        npc.despawn();
-                    }
-                }
-                else if (minutes > 19 && !user.markedForDespawn)
-                {
-                    user.markUserForDespawn();
-                }
-
-            }
-
-            //Call it again so it checks again after so much time.
-            DespawnTwitchUsersWhoHaveBeenInactiveTooLong();
-
-
-        }, 20 * 20);
-    }
+//    public void DespawnTwitchUsersWhoHaveBeenInactiveTooLong() {
+//
+//        new DelayedTask(() -> {
+//
+//            for(var user : devCraftTwitchUsers)
+//            {
+//                Duration duration = Duration.between(user.lastActivityTime, LocalDateTime.now());
+//                long minutes = duration.toMinutes();
+//
+//                if(user.markedForDespawn)
+//                {
+//                    NPC npc = user.GetUserNPC();
+//                    if(npc != null && npc.isSpawned())
+//                    {
+//                        npc.despawn();
+//                    }
+//                }
+//
+//                else if(minutes > 20 && user.markedForDespawn)
+//                {
+//                    NPC npc = user.GetUserNPC();
+//                    if(npc != null && npc.isSpawned())
+//                    {
+//                        npc.despawn();
+//                    }
+//                }
+//                else if (minutes > 19 && !user.markedForDespawn)
+//                {
+//                    user.markUserForDespawn();
+//                }
+//
+//            }
+//
+//            //Call it again so it checks again after so much time.
+//            DespawnTwitchUsersWhoHaveBeenInactiveTooLong();
+//
+//
+//        }, 20 * 20);
+//    }
 
 
     //Add
