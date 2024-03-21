@@ -96,13 +96,19 @@ public final class DevCraftPlugin extends JavaPlugin {
     @Getter
     private Location npcGlobalSpawnPoint;
 
+    @Getter
+    private Location fishingAreaStartPoint;
+
     @Override
     public void onEnable() {
 
-        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),-101,64,500);
+
+
+        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),0,-60,0);
 
         npcGlobalSpawnPoint = Util.getCenterLocation(npcGlobalSpawnPoint.getBlock());
 
+        fishingAreaStartPoint = new Location(Bukkit.getWorld("world"),20.5,-60,0.5);
 
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
 
@@ -189,6 +195,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(EatingTrait.class).withName("eating"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(QuarryTrait.class).withName("quarry"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(DanceTrait.class).withName("dance"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(UnloadTrait.class).withName("unload"));
 
 
 

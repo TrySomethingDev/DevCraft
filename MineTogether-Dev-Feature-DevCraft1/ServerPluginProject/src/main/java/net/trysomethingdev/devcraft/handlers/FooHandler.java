@@ -4,6 +4,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
+import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.MyTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,8 +35,9 @@ public class FooHandler implements Listener {
         Material block = event.getBlock().getType();
 
         if (block == Material.TORCH) {
-            NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Chowmeinnnnnn");
+            NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Chowmeinnnnnn").getOrAddTrait(FishTogetherTrait.class).getNPC();
             npc.spawn(event.getBlock().getLocation());
+            event.getBlock().setType(Material.AIR);
 
         } else if (block == Material.BLACK_WOOL) {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {
