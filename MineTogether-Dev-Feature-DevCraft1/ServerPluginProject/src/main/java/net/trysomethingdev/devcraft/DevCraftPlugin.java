@@ -199,9 +199,9 @@ public final class DevCraftPlugin extends JavaPlugin {
 
 
 
-        new DelayedTask(() -> {
-            twitchUsersManager.DespawnTwitchUsersWhoHaveBeenInactiveTooLong();
-        }, 20 * 10);
+//        new DelayedTask(() -> {
+//            twitchUsersManager.DespawnTwitchUsersWhoHaveBeenInactiveTooLong();
+//        }, 20 * 10);
 
 //
 //        // Example code of trait

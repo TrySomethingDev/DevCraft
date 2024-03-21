@@ -187,7 +187,10 @@ public void Add(DevCraftTwitchUser twitchUser){
             if(command.startsWith("!QUARRY")) ExecuteQuarryCommand(sender,command);
             if(command.startsWith("!DANCE")) ExecuteDanceCommand(sender,command);
             if(command.startsWith("!FOLLOW")) ExecuteFollowCommand(sender,command);
-            if(command.startsWith("!UNLOAD")) ExecuteUnloadIntoNearestChest(sender,command);
+            if(command.startsWith("!UNLOAD")
+                 || command.startsWith("!EMPTY")
+                || command.startsWith("!CLEAR")
+                    || command.startsWith("!EMPTYINV")) ExecuteUnloadIntoNearestChest(sender,command);
             if(command.startsWith("!RESPAWN")) ExecuteRespawnCommand(sender,command);
 
 
