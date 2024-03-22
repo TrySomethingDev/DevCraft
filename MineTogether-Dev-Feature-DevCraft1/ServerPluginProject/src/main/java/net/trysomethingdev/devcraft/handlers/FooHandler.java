@@ -1,14 +1,19 @@
 package net.trysomethingdev.devcraft.handlers;
 
+import com.denizenscript.denizen.npc.DenizenNPCHelper;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.MyTrait;
+import net.trysomethingdev.devcraft.traits.UnloadTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -87,11 +92,193 @@ public class FooHandler implements Listener {
             npc.addTrait(instanceOfTraitClass);
 
         }
+        else if (block == Material.HAY_BLOCK) {
+            var npc = GetNearestNPCToBlock(event.getBlock());
+            Bukkit.getLogger().info("Firing Hay Block placed event");
+            findChestAndTransferItems(npc);
+
+        }
+        else if (block == Material.HONEY_BLOCK) {
+            var npc = GetNearestNPCToBlock(event.getBlock());
+            Bukkit.getLogger().info("Firing Honey Block placed event");
+            clearAllItemsFromNPCInventory(npc);
+
+        }
+        else if (block == Material.COPPER_BLOCK) {
+            var npc = GetNearestNPCToBlock(event.getBlock());
+            Bukkit.getLogger().info("Firing Copper Block placed event");
+            TransferAllItemsThatWillFitToChest(npc);
+
+        }
+        else if (block == Material.DRIED_KELP_BLOCK) {
+            var npc = GetNearestNPCToBlock(event.getBlock());
+            Bukkit.getLogger().info("Firing Dried Kelp Block placed event");
+            SpitOutOneInventory(npc);
+
+        }
+        else if (block == Material.MOSS_BLOCK) {
+            var npc = GetNearestNPCToBlock(event.getBlock());
+            Bukkit.getLogger().info("Firing Mossp Block placed event");
+            SpitOutAllInventory(npc);
+
+        }
+
+
+
 
 
 
     }
 
+    private void SpitOutAllInventory(NPC npc) {
+
+            var npcInv = npc.getOrAddTrait(Inventory.class);
+            var contents = npcInv.getInventoryView().getContents();
+        for (int i = 0; i < contents.length; i++) {
+
+            var itemStack = npcInv.getInventoryView().getItem(i);
+            if(itemStack == null) continue;
+
+            var drop = npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation().add(0,1.5,0),itemStack);
+            drop.setVelocity(npc.getEntity().getLocation().getDirection().multiply(.8));
+
+            npcInv.setItem(i,new ItemStack(Material.STICK, 0));
+
+
+
+
+
+        }
+
+
+    }
+
+    private void SpitOutOneInventory(NPC npc) {
+      var drop = npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation().add(0,1.5,0),new ItemStack(Material.DIAMOND,1));
+      drop.setVelocity(npc.getEntity().getLocation().getDirection().multiply(.8));
+
+    }
+
+    private void TransferAllItemsThatWillFitToChest(NPC npc) {
+        Block block = npc.getEntity().getWorld().getBlockAt(npc.getEntity().getLocation());
+
+        Bukkit.getLogger().info(block.toString());
+        if (block.getType() == Material.CHEST) {
+
+
+            Chest chest = (Chest) block.getState();
+            var chestInventory = chest.getInventory();
+            var npcInv = npc.getOrAddTrait(Inventory.class);
+
+            while(chestInventory.firstEmpty() != -1)
+            {   Bukkit.getLogger().info("CHEST FIRST EMPTY VALUE");
+                Bukkit.getLogger().info(String.valueOf(chestInventory.firstEmpty()));
+
+                //Get the first location id with an ItemStack in it and distribute it into the other chest.
+                ItemStack npcItemStack;
+                for (int i = 0; i < npcInv.getContents().length; i++) {
+                       npcItemStack = npcInv.getInventoryView().getItem(i);
+                       if(npcItemStack == null) continue;
+                }
+
+
+
+
+            }
+
+
+
+
+
+
+            for(int n = 0; n < 27; ++n) {
+                ItemStack stack = npcInv.getInventoryView().getItem(n);;
+                if(stack == null) continue;
+                chestInventory.setItem(n, stack) ;
+
+            }
+
+
+        }
+
+    }
+
+    private void clearAllItemsFromNPCInventory(NPC npc) {
+
+
+            var npcInv = npc.getOrAddTrait(Inventory.class);
+            ItemStack[] itemStacks = new ItemStack[]{
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0),
+                    new ItemStack(Material.STICK,0)
+
+            };
+            npcInv.setContents(itemStacks);
+
+
+
+
+    }
+
+    public void findChestAndTransferItems(NPC npc) {
+        Block block = npc.getEntity().getWorld().getBlockAt(npc.getEntity().getLocation());
+
+        Bukkit.getLogger().info(block.toString());
+        if (block.getType() == Material.CHEST) {
+
+
+            Chest chest = (Chest) block.getState();
+            var chestInventory = chest.getInventory();
+
+
+            var npcInv = npc.getOrAddTrait(Inventory.class);
+
+
+
+
+            for(int n = 0; n < 27; ++n) {
+                ItemStack stack = npcInv.getInventoryView().getItem(n);;
+                if(stack == null) continue;
+                chestInventory.setItem(n, stack) ;
+
+            }
+
+
+        }
+    }
     private void HaveNPCSwingAxeFor3Seconds(NPC npc) {
         // Simulate the NPC swinging its arm for 3 seconds
         new BukkitRunnable() {

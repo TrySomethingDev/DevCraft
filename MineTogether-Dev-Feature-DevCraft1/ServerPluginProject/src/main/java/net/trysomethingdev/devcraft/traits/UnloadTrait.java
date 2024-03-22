@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -181,8 +182,9 @@ import static com.denizenscript.denizen.npc.DenizenNPCHelper.getInventory;
             }
 
     public void findChestAndTransferItems() {
-        Block block = npc.getEntity().getWorld().getBlockAt(npc.getEntity().getLocation());
+        Block block = npc.getEntity().getWorld().getBlockAt(npc.getEntity().getLocation().getBlock().getRelative(BlockFace.DOWN).getLocation());
         if (block.getType() == Material.CHEST) {
+            Log("We found a CHEST");
             Chest chest = (Chest) block.getState();
             var chestInventory = chest.getInventory();
 
@@ -191,7 +193,14 @@ import static com.denizenscript.denizen.npc.DenizenNPCHelper.getInventory;
 
 
 
-            chestInventory.setContents(npcInv.getContents());
+
+            for(int n = 0; n < 27; ++n) {
+                ItemStack stack = npcInv.getInventoryView().getItem(n);;
+                if(stack == null) continue;
+                chestInventory.setItem(n, stack) ;
+
+            }
+
 
             npc.removeTrait(UnloadTrait.class);
             //npcInv.setContents(new ItemStack[]{});
