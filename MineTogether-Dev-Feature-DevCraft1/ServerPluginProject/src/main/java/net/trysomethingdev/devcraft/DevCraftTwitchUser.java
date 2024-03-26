@@ -265,7 +265,7 @@ public class DevCraftTwitchUser {
     public void StartBuildingCommand() {
     }
 
-    public void QuarryCommand(int length, int width, int depth) {
+    public void QuarryCommand(int length, int width, int depth,DevCraftPlugin plugin) {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if (npc != null) {
@@ -277,7 +277,8 @@ public class DevCraftTwitchUser {
                 ResetHeadPosition(npc);
                 RemoveTraits(npc);
 
-                var quarry = new QuarryTrait(length,width,depth);
+
+                var quarry = new QuarryTrait(length,width,depth,plugin);
                 npc.addTrait(quarry);
 
             }

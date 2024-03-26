@@ -118,7 +118,7 @@ public class FooHandler implements Listener {
         }
         else if (block == Material.MOSS_BLOCK) {
             var npc = GetNearestNPCToBlock(event.getBlock());
-            Bukkit.getLogger().info("Firing Mossp Block placed event");
+            Bukkit.getLogger().info("Firing Moss Block placed event");
             SpitOutAllInventory(npc);
 
         }

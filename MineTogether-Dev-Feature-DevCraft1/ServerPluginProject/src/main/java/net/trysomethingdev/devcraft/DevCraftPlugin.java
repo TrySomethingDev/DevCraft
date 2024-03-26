@@ -4,6 +4,7 @@ import com.denizenscript.denizen.scripts.commands.BukkitCommandRegistry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import net.trysomethingdev.devcraft.fishtogethermode.items.ItemManager;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffCommand;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffTabCompleter;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
@@ -51,7 +53,7 @@ import static java.lang.Character.getType;
 public final class DevCraftPlugin extends JavaPlugin {
 
 
-    public static java.util.logging.Logger log = java.util.logging.Logger.getLogger("Minecraft");
+    public static Logger log = Logger.getLogger("Minecraft");
     /** Handle to access the Permissions plugin */
     public static Permission permissions;
     /** Name of the plugin, used in output messages */
@@ -98,17 +100,25 @@ public final class DevCraftPlugin extends JavaPlugin {
 
     @Getter
     private Location fishingAreaStartPoint;
+    @Getter
+    private Location miningLocationStartPoint;
 
     @Override
     public void onEnable() {
 
+//        //Playtest Settings
+//miningLocationStartPoint =  new Location(Bukkit.getWorld("world"),2,71,1903.5);
+//        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),0.5,72,1890.5);
+//        npcGlobalSpawnPoint = Util.getCenterLocation(npcGlobalSpawnPoint.getBlock());
+//        fishingAreaStartPoint = new Location(Bukkit.getWorld("world"),-13.5,71,1892.5);
 
-
-        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),0,-60,0);
-
+        //Dev Server Testing
+        miningLocationStartPoint =  new Location(Bukkit.getWorld("world"),30,-60,1.5);
+        npcGlobalSpawnPoint = new Location(Bukkit.getWorld("world"),0.5,-60,0.5);
         npcGlobalSpawnPoint = Util.getCenterLocation(npcGlobalSpawnPoint.getBlock());
+        fishingAreaStartPoint = new Location(Bukkit.getWorld("world"),19.5,-60,1.5);
 
-        fishingAreaStartPoint = new Location(Bukkit.getWorld("world"),20.5,-60,0.5);
+
 
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
 
@@ -177,7 +187,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         // AresNote: Registered it the old-fashioned way.
         getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
 
-        net.trysomethingdev.devcraft.fishtogethermode.items.ItemManager.init(this);
+        ItemManager.init(this);
         net.trysomethingdev.devcraft.minetogethermode.items.ItemManager.init(this);
 
         getCommand("givechest").setExecutor(new TutorialCommands());
@@ -255,6 +265,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         if (twitchBot != null) twitchBot.getTwirk().close();
         twitchBot = null;
     }
+
 
 
 }

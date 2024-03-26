@@ -4,9 +4,11 @@ import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.ai.tree.Sequence;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.npc.BlockBreaker;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.util.DataKey;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.DevCraftTwitchUser;
@@ -19,7 +21,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.LinkedList;
@@ -36,6 +40,8 @@ import java.util.Queue;
     private Queue<Block> queueOfBlocks;
     private boolean finishedQueue;
     private Block block;
+    private boolean scanning;
+    private boolean arrivedAtMiningLocation;
 
     public QuarryTrait() {
         super("quarry");
@@ -55,9 +61,16 @@ import java.util.Queue;
 
         int currentDepth = 0;
 
-        int maxSize = 10;
-    public QuarryTrait(int length, int width, int depth) {
+        int minSize = 4;
+        int maxSize = 80;
+    public QuarryTrait(int length, int width, int depth, DevCraftPlugin plugin) {
         super("quarry");
+
+        this.plugin = plugin;
+
+        if(length < minSize) length = minSize;
+        if(width < minSize) width = minSize;
+        if(depth < minSize) depth = minSize;
 
         if(length > maxSize) length = maxSize;
         if(width > maxSize) width = maxSize;
@@ -108,23 +121,33 @@ import java.util.Queue;
         public void run() {
             
             if (!npc.isSpawned())  return;
+            if (npc.getNavigator().isNavigating()) return;
+            if(npc.getDefaultGoalController().isExecutingGoal()) return;
+
+            //We need to arrive at the mining location
+            if(!arrivedAtMiningLocation)
+            {
+                if(npc.getEntity().getLocation().distance(plugin.getMiningLocationStartPoint()) > 2)
+                {
+                    npc.getNavigator().setTarget(plugin.getMiningLocationStartPoint());
+                }
+                else{
+                    arrivedAtMiningLocation = true;
+                }
+            }
+
+
             if(miningLocation == null)
             {
-                miningLocation = npc.getEntity().getLocation().clone();
+                miningLocation = plugin.getMiningLocationStartPoint();
                 CreateListOfLocationsToMine(miningLocation);
                 readyForNextBlock = true;
             }
 
-            if(npc.getNavigator().isNavigating())
-            {
-                return;
-            }
 
-            if(npc.getDefaultGoalController().isExecutingGoal())
-            {
-                return;
-            }
-            else if(block !=null && block.getType().isSolid())
+
+
+            if(block !=null && block.getType().isSolid())
             {
                 block.breakNaturally();
                 return;
@@ -132,14 +155,17 @@ import java.util.Queue;
             } else if(block != null && !block.getType().isSolid())
             {
                 readyForNextBlock = true;
-
             }
 
+
+            //If inventory is full or we reach our desired depth, or bedrock, then TP up to the surface and find the player.
              if (
-                    //inventory.firstEmpty() == -1 ||
+                    inventory.firstEmpty() == -1 ||
                     finishedQueue || hitBedrock || currentDepth >= depth) { // Check if the inventory is full
-                returnToSurface();
+               // returnToSurface();
                 npc.removeTrait(QuarryTrait.class);
+                npc.teleport(plugin.getNpcGlobalSpawnPoint(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                npc.getOrAddTrait(FollowTraitCustom.class);
             } else if (readyForNextBlock){
 
                  block = queueOfBlocks.poll();
@@ -174,6 +200,8 @@ import java.util.Queue;
         }
        // currentDepth++;
     }
+
+
 
     boolean hitBedrock = false;
         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
@@ -280,8 +308,14 @@ import java.util.Queue;
         //This would be a good place to load configurable defaults for new NPCs.
         @Override
         public void onAttach() {
-       //     plugin.getServer().getLogger().info(npc.getName() + "has been assigned MyTrait!");
-     //       Bukkit.dispatchCommand(npc.getEntity(),"say I have a new trait.");
+
+
+            npc.removeTrait(FollowTraitCustom.class);
+            npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
+
+            //   inventory = Bukkit.createInventory(null, 36); // Create a new inventory for the NPC
+            var eq = npc.getOrAddTrait(Equipment.class);
+            eq.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.DIAMOND_PICKAXE));
         }
 
         // Run code when the NPC is despawned. This is called before the entity actually despawns so npc.getEntity() is still valid.
