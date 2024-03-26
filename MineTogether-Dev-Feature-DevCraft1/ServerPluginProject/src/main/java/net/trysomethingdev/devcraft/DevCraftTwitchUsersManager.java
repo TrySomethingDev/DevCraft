@@ -176,18 +176,21 @@ public void Add(DevCraftTwitchUser twitchUser){
             var command = message.getContent().toUpperCase();
             if(command.startsWith("!SKIN")) ExecuteChangeUserSkinCommand(sender, command);
             if(command.startsWith("!JOIN") || command.startsWith("!PLAY")) ExecuteJoinCommand(sender);
-            if(command.startsWith("!EXIT") || command.startsWith("!QUIT")) ExecuteExitCommand(sender);
-            if(command.startsWith("!GOTOBED") || command.startsWith("!BED") || command.startsWith("!SLEEP")) ExecuteGoToBedCommand(sender);
+          //  if(command.startsWith("!EXIT") || command.startsWith("!QUIT")) ExecuteExitCommand(sender);
+        //    if(command.startsWith("!GOTOBED") || command.startsWith("!BED") || command.startsWith("!SLEEP")) ExecuteGoToBedCommand(sender);
             if(command.startsWith("!FISH")) ExecuteFishCommand(sender);
-            if(command.startsWith("!MINE")) ExecuteMineCommand(sender);
-            if(command.startsWith("!LOG") || command.startsWith("!CHOP")  || command.startsWith("!WOOD")) ExecuteLogCommand(sender);
+         //   if(command.startsWith("!MINE")) ExecuteMineCommand(sender);
+         //   if(command.startsWith("!LOG") || command.startsWith("!CHOP")  || command.startsWith("!WOOD")) ExecuteLogCommand(sender);
             if(command.startsWith("!EAT")) ExecuteEatCommand(sender);
             if(command.startsWith("!TEST")) ExecuteTestCommand(sender);
-            if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);
+          //  if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);
             if(command.startsWith("!QUARRY")) ExecuteQuarryCommand(sender,command);
             if(command.startsWith("!DANCE")) ExecuteDanceCommand(sender,command);
             if(command.startsWith("!FOLLOW")) ExecuteFollowCommand(sender,command);
-            if(command.startsWith("!UNLOAD")) ExecuteUnloadIntoNearestChest(sender,command);
+          //  if(command.startsWith("!UNLOAD")
+           //      || command.startsWith("!EMPTY")
+          //      || command.startsWith("!CLEAR")
+          //          || command.startsWith("!EMPTYINV")) ExecuteUnloadIntoNearestChest(sender,command);
             if(command.startsWith("!RESPAWN")) ExecuteRespawnCommand(sender,command);
 
 
@@ -242,11 +245,11 @@ public void Add(DevCraftTwitchUser twitchUser){
         if (Arrays.stream(splitStringList).count() != 4)
         {
             //Just do default 1x1x1
-            user.QuarryCommand(1,1,1);
+            user.QuarryCommand(80,80,400,plugin);
         }
         else {
 
-            int length = 1, width = 1,depth = 1;
+            int length = 80, width = 80,depth = 400;
             try {
                  length = Integer.parseInt(splitStringList[1]);
                  width =  Integer.parseInt(splitStringList[2]);
@@ -256,7 +259,7 @@ public void Add(DevCraftTwitchUser twitchUser){
 
             }
 
-            user.QuarryCommand(length,width,depth);
+            user.QuarryCommand(length,width,depth,plugin);
             }
 
         }

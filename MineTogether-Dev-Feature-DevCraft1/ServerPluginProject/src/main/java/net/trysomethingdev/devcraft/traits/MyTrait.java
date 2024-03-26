@@ -19,14 +19,10 @@ import org.bukkit.util.Vector;
             super("foo");
             plugin = JavaPlugin.getPlugin(DevCraftPlugin.class);
         }
-
         DevCraftPlugin plugin = null;
-
         boolean SomeSetting = false;
-
         // see the 'Persistence API' section
         @Persist("mysettingname") boolean automaticallyPersistedSetting = false;
-
         // Here you should load up any values you have previously saved (optional).
         // This does NOT get called when applying the trait for the first time, only loading onto an existing npc at server start.
         // This is called AFTER onAttach so you can load defaults in onAttach and they will be overridden here.
@@ -34,12 +30,10 @@ import org.bukkit.util.Vector;
         public void load(DataKey key) {
             SomeSetting = key.getBoolean("SomeSetting", false);
         }
-
         // Save settings for this NPC (optional). These values will be persisted to the Citizens saves file
         public void save(DataKey key) {
             key.setBoolean("SomeSetting",SomeSetting);
         }
-
         // An example event handler. All traits will be registered automatically as Spigot event Listeners
         @EventHandler
         public void click(net.citizensnpcs.api.event.NPCRightClickEvent event){
@@ -51,9 +45,6 @@ import org.bukkit.util.Vector;
                 NPCJump();
             }
         }
-
-
-
         // Called every tick
         private double YLastTick = 0;
         private int TicksAtSameY = 0;
@@ -102,11 +93,7 @@ import org.bukkit.util.Vector;
     {
         Bukkit.getLogger().info("LastDirectionFacing = " + lastDirectionFacing);
     }
-
             //   Bukkit.getLogger().info("DirectionPlayerIsFacing = " + directionPlayerIsFacing);
-
-
-
               var result = npc.getEntity()
                       .getWorld()
                       .rayTraceBlocks(locationOfPlayersHead,npc.getEntity().getLocation().getDirection(),20);
@@ -115,20 +102,11 @@ import org.bukkit.util.Vector;
                  // npc.getEntity().getWorld().spawnParticle(Particle.BLOCK_CRACK,result.getHitBlock().getLocation(),1);
                  // World w = npc.getEntity().getWorld(); /* get the World from a player or however you'd like */
                  // Location loc = npc.getEntity().getLocation().add(0,2,0); /* The location to spawn the particle */
-
                   var rayTraceSource = locationOfPlayersHead;
                   var rayTracedLocation = result.getHitBlock().getLocation();
-
               //    Bukkit.getLogger().info("RayTracedHitLocation: " + rayTracedLocation.toString());
                   Bukkit.getLogger().info(result.getHitBlock().getType().name());
-
                   drawLine(rayTraceSource,rayTracedLocation);
-
-
-
-
-
-
 //                  w.spawnParticle(Particle.HEART, loc.add(1,3,0), 5, 0, 1, 0);
 //                  w.spawnParticle(Particle.ASH, loc.add(2,3,0), 5, 0, 1, 0);
 //                  w.spawnParticle(Particle.BLOCK_CRACK, loc.add(3,3,0), 100, 0, 1, 0, Material.DIAMOND_BLOCK.createBlockData());

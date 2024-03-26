@@ -5,10 +5,9 @@ import com.google.gson.annotations.Expose;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.SkinTrait;
-import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
+import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
@@ -265,7 +264,7 @@ public class DevCraftTwitchUser {
     public void StartBuildingCommand() {
     }
 
-    public void QuarryCommand(int length, int width, int depth) {
+    public void QuarryCommand(int length, int width, int depth,DevCraftPlugin plugin) {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if (npc != null) {
@@ -277,7 +276,8 @@ public class DevCraftTwitchUser {
                 ResetHeadPosition(npc);
                 RemoveTraits(npc);
 
-                var quarry = new QuarryTrait(length,width,depth);
+
+                var quarry = new QuarryTrait(length,width,depth,plugin);
                 npc.addTrait(quarry);
 
             }

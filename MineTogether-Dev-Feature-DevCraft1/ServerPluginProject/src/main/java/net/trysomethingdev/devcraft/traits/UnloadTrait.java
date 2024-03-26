@@ -11,12 +11,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
+
+import static com.denizenscript.denizen.npc.DenizenNPCHelper.getInventory;
 
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
@@ -25,6 +29,7 @@ import java.util.Arrays;
     public class UnloadTrait extends Trait {
 
     private int jumpDelay;
+    private boolean unloadingInventoryStarted;
 
     public UnloadTrait() {
         super("unload");
@@ -92,8 +97,9 @@ import java.util.Arrays;
 
             //If we have no inventory...
             //Just remove trait and return.
-            var inv = npc.getOrAddTrait(Inventory.class);
-            var contents = inv.getContents();
+
+            var npcInv = npc.getOrAddTrait(Inventory.class);
+            var contents = npcInv.getContents();
 
             boolean hasInventory = CheckIfNPCHasInventory(contents);
 
@@ -104,15 +110,58 @@ import java.util.Arrays;
                 return;
             }
 
-                Log("Searching....");
-                //Find closest Chest
-            var result = SearchForMaterialInRaidus(npc.getEntity().getLocation(),30,-3,3,Material.CHEST);
 
-            if(result != null)
-            {
-                Log(result.toString());
-            }
+            if(unloadingInventoryStarted) return;
 
+
+            unloadingInventoryStarted = true;
+            findChestAndTransferItems();
+            unloadingInventoryStarted =false;
+//            new DelayedTask(() -> {
+//                //Log("Searching....");
+//                //Find closest Chest
+//                Block result = SearchForMaterialInRaidus(npc.getEntity().getLocation(),30,-3,3,Material.CHEST);
+//
+//                if(result == null) return;
+
+                ///
+               // new DelayedTask(() -> {
+
+
+
+//                    Chest chest = (Chest) result.getState();
+//
+//                    Log(result.toString());
+//
+//
+//                    //Now that we have a chest
+//                    //Lets put our inventory into it.
+//
+//                    var chestInv = chest.getInventory();
+//
+//                    while(chestInv.firstEmpty() != -1) {
+//                        while (CheckIfNPCHasInventory(contents)) {
+//                            var locationInt = chestInv.firstEmpty();
+//                            var contents2 = chestInv.getStorageContents();
+//                            for (int i = 0; i < contents2.length; i++) {
+//                                var content = contents2[i];
+//                                if (content == null) {
+//                                    chestInv.setItem(i, npcInv.getContents()[locationInt]);
+//                                    npcInv.setItem(locationInt, null);
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    unloadingInventoryStarted =false;
+//                }, 20 * 3);
+/////
+
+
+
+//                }, 20 * 3);
+////
+//
 
 
 
@@ -131,6 +180,40 @@ import java.util.Arrays;
 //                    }
 //                }
             }
+
+    public void findChestAndTransferItems() {
+        Block block = npc.getEntity().getWorld().getBlockAt(npc.getEntity().getLocation().getBlock().getRelative(BlockFace.DOWN).getLocation());
+        if (block.getType() == Material.CHEST) {
+            Log("We found a CHEST");
+            Chest chest = (Chest) block.getState();
+            var chestInventory = chest.getInventory();
+
+
+            var npcInv = npc.getOrAddTrait(Inventory.class);
+
+
+
+
+            for(int n = 0; n < 27; ++n) {
+                ItemStack stack = npcInv.getInventoryView().getItem(n);;
+                if(stack == null) continue;
+                chestInventory.setItem(n, stack) ;
+
+            }
+
+
+            npc.removeTrait(UnloadTrait.class);
+            //npcInv.setContents(new ItemStack[]{});
+
+//            for (ItemStack item : playerInventory.getContents()) {
+//                if (item != null) {
+//                    chestInventory.getContents();
+//                    playerInventory.setItem();
+//                }
+//            }
+        }
+    }
+
     private static Block SearchForMaterialInRaidus(Location location, int radius, int ylower, int yhigher, Material blockTypeWeAreLookingFor) {
         // ylower is how much lower than the current Y we should search.
         // yhigher is how much above the current Y we should search

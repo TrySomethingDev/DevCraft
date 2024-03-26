@@ -6,4 +6,16 @@
       <sourceFolder url="file://$MODULE_DIR$/../../MineTogether-Dev-Feature-DevCraft1/ServerPluginProject/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
     </content>
   </component>
+  <component name="FacetManager">
+    <facet type="minecraft" name="Minecraft">
+      <configuration>
+        <autoDetectTypes>
+          <platformType>SPIGOT</platformType>
+          <platformType>PAPER</platformType>
+          <platformType>ADVENTURE</platformType>
+        </autoDetectTypes>
+        <projectReimportVersion>1</projectReimportVersion>
+      </configuration>
+    </facet>
+  </component>
 </module>
