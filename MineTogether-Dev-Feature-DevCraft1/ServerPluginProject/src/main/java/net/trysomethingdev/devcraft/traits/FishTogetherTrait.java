@@ -653,9 +653,14 @@ public class FishTogetherTrait extends Trait {
                 // AresNote: Increased velocity from 0.03D to 0.1D
                 fish.setVelocity(new Vector(d5 * d9, d6 * d9 + Math.sqrt(d8) * 0.1D, d7 * d9));
 
+                var user = plugin.getTwitchUsersManager().getUserByTwitchUserName(npc.getName());
+                if(user != null){
+                    user.fishCaught();
+                }
                 //AresNote: Create and fire custom event
                 NpcFishEvent npcFishEvent = new NpcFishEvent((Player) npc.getEntity(), fish);
                 Bukkit.getServer().getPluginManager().callEvent(npcFishEvent);
+
             }
             new NPCTag(npc).action("catch fish", null);
         }

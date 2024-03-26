@@ -38,6 +38,9 @@ public class DevCraftTwitchUser {
 
     public boolean userWantsToPlay;
 
+    public int TotalNumberOfFishCaught = 0;
+    public int TotalNumberOfBlocksMined = 0;
+
 
 
     public DevCraftTwitchUser()
@@ -53,6 +56,18 @@ public class DevCraftTwitchUser {
         npcGlobalSpawnPoint = spawnLocation;
         this.JustJoinedOrIsActive();
 
+    }
+
+    public void blockMined()
+    {
+        TotalNumberOfBlocksMined++;
+        Bukkit.broadcastMessage("User: " +  this.twitchUserName + " has mined " + TotalNumberOfBlocksMined + " mined total");
+    }
+
+    public void fishCaught()
+    {
+        TotalNumberOfFishCaught++;
+        Bukkit.broadcastMessage("User: " +  this.twitchUserName + " has caught " + TotalNumberOfFishCaught + " fish total");
     }
 
     public void Chatted() {

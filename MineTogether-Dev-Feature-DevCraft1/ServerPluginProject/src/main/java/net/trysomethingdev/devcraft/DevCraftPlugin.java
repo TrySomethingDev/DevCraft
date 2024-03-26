@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.trysomethingdev.devcraft.fishtogethermode.items.ItemManager;
+import net.trysomethingdev.devcraft.handlers.BlockBreakHandler;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffCommand;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffTabCompleter;
@@ -35,7 +36,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
 import net.trysomethingdev.devcraft.handlers.*;
-import net.trysomethingdev.devcraft.minetogethermode.MineTogetherModeManager;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 
 import org.bukkit.Bukkit;
@@ -169,7 +169,7 @@ public final class DevCraftPlugin extends JavaPlugin {
 
 
         new FooHandler(this);
-
+        new BlockBreakHandler(this);
         getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
 
         ItemManager.init(this);

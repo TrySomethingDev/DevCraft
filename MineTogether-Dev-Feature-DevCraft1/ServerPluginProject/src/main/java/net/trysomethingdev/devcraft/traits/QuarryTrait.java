@@ -206,13 +206,7 @@ import java.util.Queue;
     boolean hitBedrock = false;
         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
     private void mineBlock(Block block) {
-        // Mine a 4x4 area
-
-//        new DelayedTask(() -> {
-//            npc.getDefaultGoalController().isExecutingGoal()
-//
-//        }, 20 * 1);
-                if(block.getLocation().distance(npc.getEntity().getLocation()) > 2)
+               if(block.getLocation().distance(npc.getEntity().getLocation()) > 2)
                 {
                     npc.getNavigator().setTarget(block.getLocation());
                     return;
@@ -224,71 +218,12 @@ import java.util.Queue;
 
                 npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
 
-
+                var user = plugin.getTwitchUsersManager().getUserByTwitchUserName(npc.getName());
+                if(user != null){
+                    user.blockMined();
+                }
     }
 
-
-
-
-
-
-    private void BreakTheBlock(Block blockWeWantToBreak) {
-//        inventory.addItem(new ItemStack(blockWeWantToBreak.getType()));
-//        block.setType(Material.AIR);
-
-        double radius = 10;
-
-        BlockBreaker.BlockBreakerConfiguration cfg = new BlockBreaker.BlockBreakerConfiguration();
-        if (radius == -1) {
-            cfg.radius(radius);
-        } else if (Settings.Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble() > 0) {
-            cfg.radius(Settings.Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble());
-        }
-
-
-//        if (npc.getEntity() instanceof InventoryHolder) {
-//            cfg.blockBreaker((block, itemstack) -> {
-//                org.bukkit.inventory.Inventory inventory = ((InventoryHolder) npc.getEntity()).getInventory();
-//                Location location = npc.getEntity().getLocation();
-//                for (ItemStack drop : block.getDrops(itemstack)) {
-//                    for (ItemStack unadded : inventory.addItem(drop).values()) {
-//                        location.getWorld().dropItemNaturally(npc.getEntity().getLocation(), unadded);
-//                    }
-//                }
-//            });
-//        }
-//        BlockBreaker breaker = npc.getBlockBreaker(blockWeWantToBreak, cfg);
-//        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
-
-        if (blockWeWantToBreak.getType() != Material.AIR) {
-            // Create a new BlockBreaker for the NPC
-
-            //blockWeWantToBreak.breakNaturally(new ItemStack(Material.DIAMOND_PICKAXE));
-            BlockBreaker breaker = npc.getBlockBreaker(blockWeWantToBreak, cfg);
-            npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 10);
-
-        }
-
-    }
-
-
-    private void returnToSurface() {
-        // Place ladders and return to the surface
-        for (int y = 0; y < depth; y++) {
-            Block block = miningLocation.clone().add(0, -y, 0).getBlock();
-            block.getRelative(BlockFace.SOUTH).setType(Material.COBBLESTONE);
-            block.setType(Material.LADDER);
-        }
-
-        // Place a chest and transfer the inventory
-        Block chestBlock = miningLocation.clone().add(0, 1, 0).getBlock();
-        chestBlock.setType(Material.CHEST);
-        Chest chest = (Chest) chestBlock.getState();
-        chest.getInventory().setContents(inventory.getContents());
-
-        // Clear the inventory
-        inventory.clear();
-    }
 
     private static void Log(String s) {
         Bukkit.getLogger().info(s);
