@@ -1,18 +1,15 @@
 package net.trysomethingdev.devcraft.handlers;
 
-import com.denizenscript.denizen.npc.DenizenNPCHelper;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
+import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.MyTrait;
-import net.trysomethingdev.devcraft.traits.UnloadTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -40,9 +37,9 @@ public class FooHandler implements Listener {
         Material block = event.getBlock().getType();
 
         if (block == Material.TORCH) {
-            NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Chowmeinnnnnn").getOrAddTrait(FishTogetherTrait.class).getNPC();
-            npc.spawn(event.getBlock().getLocation());
-            event.getBlock().setType(Material.AIR);
+          // NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Chowmeinnnnnn").getOrAddTrait(FishTogetherTrait.class).getNPC();
+          //  npc.spawn(event.getBlock().getLocation());
+           // event.getBlock().setType(Material.AIR);
 
         } else if (block == Material.BLACK_WOOL) {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {

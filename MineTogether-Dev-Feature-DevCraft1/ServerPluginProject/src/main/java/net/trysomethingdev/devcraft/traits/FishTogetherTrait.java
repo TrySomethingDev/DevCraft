@@ -1,11 +1,10 @@
-package net.trysomethingdev.devcraft.denizen;
+package net.trysomethingdev.devcraft.traits;
 
 import com.denizenscript.denizen.nms.NMSHandler;
 import com.denizenscript.denizen.nms.interfaces.FishingHelper;
 import com.denizenscript.denizen.objects.NPCTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.google.common.collect.Lists;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -16,7 +15,6 @@ import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.events.NpcFishEvent;
-import net.trysomethingdev.devcraft.traits.FollowTraitCustom;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,7 +31,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class FishTogetherTrait extends Trait {
     private final DevCraftPlugin plugin;

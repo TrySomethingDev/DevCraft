@@ -1,6 +1,5 @@
 package net.trysomethingdev.devcraft;
 
-import com.denizenscript.denizen.scripts.commands.BukkitCommandRegistry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -16,7 +15,6 @@ import net.trysomethingdev.twitchplugin.Commands.twitchChat.TwitchChatCommand;
 import net.trysomethingdev.twitchplugin.Commands.twitchChat.TwitchChatTabCompleter;
 import net.trysomethingdev.twitchplugin.Data.DataManager;
 import net.trysomethingdev.twitchplugin.Encryption.EncryptionManager;
-import net.trysomethingdev.twitchplugin.Twirk.BotMode;
 import net.trysomethingdev.twitchplugin.Twirk.TwitchBot;
 import net.citizensnpcs.util.Util;
 
@@ -35,10 +33,7 @@ import java.util.logging.Logger;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
-import net.trysomethingdev.devcraft.commands.TutorialCommands;
-import net.trysomethingdev.devcraft.denizen.FishTogetherCommand;
-import net.trysomethingdev.devcraft.denizen.FishTogetherTrait;
-import net.trysomethingdev.devcraft.fishtogethermode.FishTogetherModeManager;
+import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
 import net.trysomethingdev.devcraft.handlers.*;
 import net.trysomethingdev.devcraft.minetogethermode.MineTogetherModeManager;
 import net.trysomethingdev.devcraft.util.DelayedTask;
@@ -161,8 +156,7 @@ public final class DevCraftPlugin extends JavaPlugin {
 
 
 
-        // AresNote: Register the command which needs com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-        BukkitCommandRegistry.registerCommand(FishTogetherCommand.class);
+
 
         // Plugin startup logic
         //PUT YOUR MINECRAFT USERNAME HERE
@@ -171,27 +165,15 @@ public final class DevCraftPlugin extends JavaPlugin {
         String APIBaseURL = "http://localhost:3000";
 
         saveDefaultConfig();
-        var mineTogetherModeManager = new MineTogetherModeManager(this,yourMineCraftPlayerName);
-
-        var fishTogetherModeManager = new FishTogetherModeManager(this,yourMineCraftPlayerName,APIBaseURL);
-        //new EntityHandler(this);
 
 
-        //new onChatEvent(twitchChat);
 
         new FooHandler(this);
-       // new TorchHandler(this);
-        new ChestHandler(this,mineTogetherModeManager,fishTogetherModeManager);
-        new BlockBreakHandler(this,mineTogetherModeManager,fishTogetherModeManager);
 
-        // AresNote: Registered it the old-fashioned way.
         getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
 
         ItemManager.init(this);
         net.trysomethingdev.devcraft.minetogethermode.items.ItemManager.init(this);
-
-        getCommand("givechest").setExecutor(new TutorialCommands());
-        getCommand("givefishstation").setExecutor(new TutorialCommands());
 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MyTrait.class).withName("foo"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FishTogetherTrait.class).withName("fishtogether"));
