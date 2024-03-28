@@ -289,6 +289,7 @@ public class DevCraftTwitchUser {
     private static void RemoveTraits(NPC npc) {
         ResetHeadPosition(npc);
         RemoveToolFromInventorySpotZero(npc);
+
         if(npc.hasTrait(QuarryTrait.class)) npc.removeTrait(QuarryTrait.class);
         if(npc.hasTrait(FishTogetherTrait.class)) npc.removeTrait(FishTogetherTrait.class);
         if(npc.hasTrait(LoggingTreesTrait.class)) npc.removeTrait(LoggingTreesTrait.class);

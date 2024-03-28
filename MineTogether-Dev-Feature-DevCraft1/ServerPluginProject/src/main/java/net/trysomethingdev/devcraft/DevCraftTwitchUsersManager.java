@@ -180,7 +180,7 @@ public void Add(DevCraftTwitchUser twitchUser){
         //    if(command.startsWith("!GOTOBED") || command.startsWith("!BED") || command.startsWith("!SLEEP")) ExecuteGoToBedCommand(sender);
             if(command.startsWith("!FISH")) ExecuteFishCommand(sender);
          //   if(command.startsWith("!MINE")) ExecuteMineCommand(sender);
-         //   if(command.startsWith("!LOG") || command.startsWith("!CHOP")  || command.startsWith("!WOOD")) ExecuteLogCommand(sender);
+            if(command.startsWith("!LOG") || command.startsWith("!CHOP")  || command.startsWith("!WOOD")) ExecuteLogCommand(sender);
             if(command.startsWith("!EAT")) ExecuteEatCommand(sender);
             if(command.startsWith("!TEST")) ExecuteTestCommand(sender);
           //  if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);

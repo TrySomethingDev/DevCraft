@@ -128,11 +128,8 @@ public class FishTogetherTrait extends Trait {
       //  Log("Fire");
         //Pre-Checks
         if (!(npc.getEntity() instanceof Player)) return;
-      //  Log("Fire A");
         if (!npc.isSpawned()) return;
-     //   Log("Fire B");
         if (npc.getNavigator().isNavigating()) return;
-      //  Log("Fire D");
         if (!CitizensAPI.getNPCRegistry().isNPC(npc.getEntity())) return;
 
         if(scanning) return;

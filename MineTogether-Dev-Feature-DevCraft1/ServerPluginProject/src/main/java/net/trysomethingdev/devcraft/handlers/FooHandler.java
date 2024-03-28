@@ -5,13 +5,13 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.MyTrait;
+import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -119,12 +119,63 @@ public class FooHandler implements Listener {
             SpitOutAllInventory(npc);
 
         }
+        else if (block == Material.QUARTZ_BLOCK) {
+            var npc = GetNearestNPCToBlock(event.getBlock());
+            Bukkit.getLogger().info("Firing Coal_Block placed event");
+
+            var blockToAnalyze = event.getBlock().getRelative(BlockFace.NORTH);
+            AnalyzeTheTree(npc, blockToAnalyze);
+
+        }
 
 
 
 
 
 
+    }
+
+    private void AnalyzeTheTree(NPC npc, Block block) {
+        var result = isItATree(block);
+        if(result){
+            Bukkit.broadcastMessage("This is a Log");
+            CalculateTreeHeightAndOutputToChat(block);
+
+        }
+    }
+
+    private void CalculateTreeHeightAndOutputToChat(Block block) {
+
+
+        new DelayedTask(() -> {
+
+            int result = 0;
+            Block currentBlock = block;
+
+            //Funny thing happens if you build a tree all the way to build limit.
+            //There is no air blocks above the build limit.
+            //So added the max tree height of 378 so that it does not count forever
+
+            while(currentBlock.getType() != Material.AIR || result > 378)
+            {
+                currentBlock = currentBlock.getRelative(BlockFace.UP);
+                Bukkit.broadcastMessage("Height " + result);
+                result++;
+
+            }
+
+            Bukkit.broadcastMessage("The Tree is " + result + " blocks high");
+
+        }, 20 * 1);
+
+        int result = 0;
+
+
+
+    }
+
+    private boolean isItATree(Block block) {
+         return block.getType().name().toUpperCase().contains("_LOG");
     }
 
     private void SpitOutAllInventory(NPC npc) {

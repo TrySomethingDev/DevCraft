@@ -1,10 +1,13 @@
 package net.trysomethingdev.devcraft.traits;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.tree.StatusMapper;
+import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
@@ -15,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -69,40 +73,45 @@ import org.jetbrains.annotations.Nullable;
         private int delay;
         @Override
         public void run() {
+            if (!(npc.getEntity() instanceof Player)) return;
+            if (!npc.isSpawned()) return;
+            if(npc.getDefaultGoalController().isExecutingGoal()) return;
+            if (npc.getNavigator().isNavigating()) return;
+           // if(npc.getDefaultGoalController().isExecutingGoal()) return;
+            if (!CitizensAPI.getNPCRegistry().isNPC(npc.getEntity())) return;
 
-            if (!npc.isSpawned() || delay-- > 0)
-                return;
 
 
-            delay = 20;
 
-//            if(user == null)
-//            {
-//                //Assumption at this time...twitch username == npc.name
-//              user = plugin.getTwitchUsersManager().getUserByTwitchUserName(npc.getName());
-//              Log("Found Twitch User: " + user.twitchUserName);
-//              if(user == null)
-//              {
-//                  //We have to have a twitch user.
-//                  return;
-//              }
-//            }
-         tickCounter++;
+         //We want to search around the npc for wood of any kind
 
-         if(hasEnded)
-         {
-             npc.removeTrait(this.getClass());
-             return;
-         }
+            //we want to find
 
-            if(isFindingOakLog)
-            {
-                return;
-            } else{
-                 FindNearestOakLogAndGetIt() ;
+            if(!isFindingOakLog){
+                Log("Starting To find Oak trees");
+                isFindingOakLog = true;
+                Block block;
+
+                //GoBreakBlock(block);
+
             }
 
+
+//
+//            if(isFindingOakLog)
+//            {
+//                return;
+//            } else{
+//                FindNearestOakLogAndGetIt() ;
+//            }
+
         }
+
+    private void GoBreakBlock(Block block) {
+        blockBreakerConfiguration.radius(5);
+        BlockBreaker breaker = npc.getBlockBreaker(block, blockBreakerConfiguration);
+        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
+    }
 
     boolean isFindingOakLog = false;
         boolean hasEnded = false;
@@ -136,33 +145,14 @@ import org.jetbrains.annotations.Nullable;
                 if (nearestNPC.getNavigator().canNavigateTo(locationToNavigateTo))
                 {
                     Bukkit.broadcastMessage("We can reach location: " + locationToNavigateTo.toString() );
-                    nearestNPC.getNavigator().setTarget(locationToNavigateTo);
-                    nearestNPC.getNavigator().getDefaultParameters().baseSpeed(1.0f);
+                    mineBlock(oakLog,surfaceNextToBlock);
                 }
                 else
                 {
                     Bukkit.broadcastMessage("We cannot reach location: " + locationToNavigateTo.toString() );
                 }
 
-                // When the NPC reaches the oak log, remove the block and add an oak log to the NPC's inventory
 
-                NPC finalNearestNPC = nearestNPC;
-
-                ScheduleTaskToSeeIfWeHaveArrived(finalNearestNPC,oakLog);
-
-//
-//                    nearestNPC.getNavigator().getDefaultParameters().addSingleUseCallback((NavigatorCallback) (callback) -> {
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I am chopping the tree ");
-//                        oakLog.setType(Material.AIR);
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I am adding it to my inventory ");
-//
-//                        var itemStackArray = finalNearestNPC.getTrait(Inventory.class).getContents();
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I see" + itemStackArray[1].toString() + " in array 1");
-//
-//                        itemStackArray[1].add(1);
-//
-//                        //finalNearestNPC.getTrait(Inventory.class).setItem(1,new ItemStack(Material.OAK_LOG));
-//                    });
             }
         }
     }
@@ -206,84 +196,7 @@ import org.jetbrains.annotations.Nullable;
         return nearestNPC;
     }
 
-    private void ScheduleTaskToSeeIfWeHaveArrived(NPC finalNearestNPC, Block oakLog) {
 
-        BukkitScheduler scheduler = Bukkit.getScheduler();
-        scheduler = Bukkit.getScheduler();
-        BukkitScheduler finalScheduler = scheduler;
-        scheduler.runTaskLater(plugin, (x) -> {
-
-            if(oakLog == null)
-            {
-                x.cancel();
-                return;
-            }
-
-            if (finalNearestNPC.getNavigator().isNavigating()) {
-                //Wait
-                Bukkit.broadcastMessage("NPC Is travelling!");
-                ScheduleTaskToSeeIfWeHaveArrived(finalNearestNPC, oakLog);
-            } else {
-
-                Bukkit.broadcastMessage("NPC has stopped travelling");
-
-                var currentLocationOfNPC =  finalNearestNPC.getEntity().getLocation();
-
-
-                var oakLogLocation = oakLog.getLocation();
-
-                var distance = currentLocationOfNPC.distance(oakLogLocation);
-
-                if(distance > 5){
-                    Bukkit.broadcastMessage("NPC is too far from the log, cannot reach");
-                }
-                else {
-                    Bukkit.broadcastMessage("NPC has arrived at Destination!");
-                    finalNearestNPC.faceLocation(oakLog.getLocation());
-
-
-                    // Simulate the NPC swinging its arm for 3 seconds
-                    new BukkitRunnable() {
-                        int count = 0;
-
-                        @Override
-                        public void run() {
-                            if (count >= 60) { // 20 ticks = 1 second, so 60 ticks = 3 seconds
-                                if(oakLog == null)
-                                {
-                                    this.cancel();
-                                    return;
-                                }
-
-                                oakLog.setType(Material.AIR);
-                                FindNearestOakLogAndGetIt();
-                                this.cancel();
-                            }
-                            PlayerAnimation.ARM_SWING.play((Player) finalNearestNPC.getEntity());
-                            count++;
-                        }
-                    }.runTaskTimer(plugin, 0, 1); // Replace "MyPlugin" with your main plugin class
-
-
-                }
-
-
-
-
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I am adding it to my inventory ");
-//
-//                        var itemStackArray = finalNearestNPC.getTrait(Inventory.class).getContents();
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I see" + itemStackArray[1].toString() + " in array 1");
-//
-//                        itemStackArray[1].add(1);
-//
-//                        //finalNearestNPC.getTrait(Inventory.class).setItem(1,new ItemStack(Material.OAK_LOG));
-
-            }
-        }, 20L * 1L /*<-- the delay */);
-
-
-    }
 
 
 
@@ -309,7 +222,24 @@ import org.jetbrains.annotations.Nullable;
     private static void Log(String s) {
         Bukkit.getLogger().info(s);
     }
+    boolean hitBedrock = false;
+    BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
+    private void mineBlock(Block block,Block surfaceNextToBlock) {
 
+        if(surfaceNextToBlock.getLocation().distance(npc.getEntity().getLocation()) > 9)
+        {
+            npc.getNavigator().setTarget(surfaceNextToBlock.getLocation());
+            return;
+        }
+
+        blockBreakerConfiguration.radius(10);
+        BlockBreaker breaker = npc.getBlockBreaker(block, blockBreakerConfiguration);
+
+
+        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
+
+
+    }
     private void NPCJump() {
         new DelayedTask(() -> {
             npc.getEntity().setVelocity(new Vector(0,1f,0));
@@ -322,8 +252,10 @@ import org.jetbrains.annotations.Nullable;
         //This would be a good place to load configurable defaults for new NPCs.
         @Override
         public void onAttach() {
-       //     plugin.getServer().getLogger().info(npc.getName() + "has been assigned MyTrait!");
-     //       Bukkit.dispatchCommand(npc.getEntity(),"say I have a new trait.");
+            npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
+            var eq = npc.getOrAddTrait(Equipment.class);
+            eq.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.DIAMOND_AXE));
+
         }
 
         // Run code when the NPC is despawned. This is called before the entity actually despawns so npc.getEntity() is still valid.
