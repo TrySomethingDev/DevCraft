@@ -38,21 +38,12 @@ public class DevCraftTwitchUser {
 
     public boolean userWantsToPlay;
 
-
-
-    public DevCraftTwitchUser()
-    {
-
-    }
-
-
     public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName, Location spawnLocation) {
         this.twitchUserName = twitchUserName;
         this.minecraftSkinName = minecraftSkinName;
         lastActivityTime = LocalDateTime.now();
         npcGlobalSpawnPoint = spawnLocation;
         this.JustJoinedOrIsActive();
-
     }
 
     public void Chatted() {
@@ -91,26 +82,22 @@ public class DevCraftTwitchUser {
                 return npc;
             }
         }
-
         return null;
     }
 
     public void JustJoinedOrIsActive() {
 
-        if(IsOnIgnoreList() || !userWantsToPlay)
+        if(!userWantsToPlay)
         {
             return;
         }
-
         this.isJoined = true;
         this.isParted = false;
         this.lastActivityTime = LocalDateTime.now();
-
         if(markedForDespawn){
             Bukkit.broadcastMessage("Activity detected form Twitch user " + this.twitchUserName + "they are no longer marked for de-spawn");
             markedForDespawn = false;
         }
-
         NPC npc = getNPCThatMatchesName(this.twitchUserName);
         if(npc != null && npc.isSpawned()) return;
         else if (npc != null && !npc.isSpawned())
@@ -124,25 +111,9 @@ public class DevCraftTwitchUser {
             //If npc is null
             this.createNPCWAndSpawnIt();
         }
-
-
-
-
-
-
-
-
     }
 
-    private boolean IsOnIgnoreList() {
-        for (String userToIgnore :  usersToIgnoreList)
-        {
-            if(this.twitchUserName.toUpperCase().equals(userToIgnore.toUpperCase())) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     private NPC getNPCThatMatchesName(String twitchUserName) {
         for (var npc : CitizensAPI.getNPCRegistry()) {
@@ -150,14 +121,12 @@ public class DevCraftTwitchUser {
                 return npc;
             }
         }
-
         return null;
     }
 
     public void Parted() {
         this.isJoined = false;
         this.isParted = true;
-
     }
 
     public void markUserForDespawn() {
@@ -166,56 +135,20 @@ public class DevCraftTwitchUser {
     }
 
     public void changeSkin(String skin) {
-
         this.minecraftSkinName = skin;
-
             AddSkinTrait(skin);
-
-
-
     }
 
     private void AddSkinTrait(String skinName) {
         new DelayedTask(() -> {
-
             var npc = GetUserNPC();
             if(npc != null) {
-
                 SkinTrait foo = npc.getOrAddTrait(SkinTrait.class);
-
                 SkinTrait skinTrait = npc.getTrait(SkinTrait.class);
-
                 skinTrait.clearTexture();
                 skinTrait.setSkinName(skinName);
-
-//                Bukkit.getLogger().info("Adding SKIN");
-//                Bukkit.getLogger().info(npc.getName());
-//
-//                SkinTraitCustom skinTraitCustom = npc.getOrAddTrait(SkinTraitCustom.class);
-//                new DelayedTask(() -> {
-//
-//                    var npc1 = GetUserNPC();
-//                    if(npc1 != null) {
-//                        skinTraitCustom.setSkinName(skinName,true);
-//                        new DelayedTask(() -> {
-//
-//                            var npc2 = GetUserNPC();
-//                            if(npc2 != null) {
-//                                npc2.addTrait(skinTraitCustom);
-//                            }
-//                        }, 20 * 4);
-//                    }
-//                }, 20 * 3);
-//
-//
-//
-
-
-
-                Bukkit.getLogger().info(skinName);
-                Bukkit.getLogger().info("Done adding SKIN");
             }
-        }, 20 * 2);
+        }, 20 * 1);
     }
 
     public void StartFishingCommand() {
@@ -328,10 +261,6 @@ public class DevCraftTwitchUser {
 
             }
         }, 20 * 1);
-
-
-
-
     }
 
     public void FollowCommand() {

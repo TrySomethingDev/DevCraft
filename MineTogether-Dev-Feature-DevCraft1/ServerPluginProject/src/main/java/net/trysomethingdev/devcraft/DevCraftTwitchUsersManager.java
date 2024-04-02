@@ -30,12 +30,9 @@ public class DevCraftTwitchUsersManager {
         this.globalNpcSpawnPoint = npcGlobalSpawnPoint;
         LoadSavedList();
         SaveThisListToConfigEverySoManyMinutes(0.5);
-
-
     }
 
     private void LoadSavedList() {
-
         Gson gson = new GsonBuilder().setPrettyPrinting()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
@@ -52,12 +49,6 @@ public class DevCraftTwitchUsersManager {
 
     private void Save()
     {
-//        Bukkit.getLogger().info("PRINTED LIST****");
-//        for(var foo : devCraftTwitchUsers)
-//        {
-//           Bukkit.getLogger().info(foo.twitchUserName);
-//        }
-
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
                 .create();
         // Save to file
@@ -70,54 +61,11 @@ public class DevCraftTwitchUsersManager {
 
     private void SaveThisListToConfigEverySoManyMinutes(double minutesBetweenSaves) {
         new DelayedTask(() -> {
-
             Save();
             SaveThisListToConfigEverySoManyMinutes(0.5);
-
-
         }, (long) (20 * (minutesBetweenSaves * 60)));
-
     }
 
-//    public void DespawnTwitchUsersWhoHaveBeenInactiveTooLong() {
-//
-//        new DelayedTask(() -> {
-//
-//            for(var user : devCraftTwitchUsers)
-//            {
-//                Duration duration = Duration.between(user.lastActivityTime, LocalDateTime.now());
-//                long minutes = duration.toMinutes();
-//
-//                if(user.markedForDespawn)
-//                {
-//                    NPC npc = user.GetUserNPC();
-//                    if(npc != null && npc.isSpawned())
-//                    {
-//                        npc.despawn();
-//                    }
-//                }
-//
-//                else if(minutes > 20 && user.markedForDespawn)
-//                {
-//                    NPC npc = user.GetUserNPC();
-//                    if(npc != null && npc.isSpawned())
-//                    {
-//                        npc.despawn();
-//                    }
-//                }
-//                else if (minutes > 19 && !user.markedForDespawn)
-//                {
-//                    user.markUserForDespawn();
-//                }
-//
-//            }
-//
-//            //Call it again so it checks again after so much time.
-//            DespawnTwitchUsersWhoHaveBeenInactiveTooLong();
-//
-//
-//        }, 20 * 20);
-//    }
 
 
     //Add
@@ -147,9 +95,6 @@ public void Add(DevCraftTwitchUser twitchUser){
         {
             user.JustJoinedOrIsActive();
         }
-
-
-
     }
 
     public DevCraftTwitchUser getUserByTwitchUserName(String joinedNick) {
@@ -230,10 +175,7 @@ public void Add(DevCraftTwitchUser twitchUser){
     private void ExecuteDanceCommand(TwitchUser sender, String command) {
         var user = getUserByTwitchUserName(sender.getUserName());
         if(user == null) return;
-
             user.DanceCommand();
-
-
     }
 
     private void ExecuteQuarryCommand(TwitchUser sender, String command) {
@@ -258,10 +200,8 @@ public void Add(DevCraftTwitchUser twitchUser){
             catch( Exception e){
 
             }
-
             user.QuarryCommand(length,width,depth,plugin);
             }
-
         }
 
 
@@ -301,14 +241,11 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(sender.getUserName());
         user.StartFishingCommand();
         Bukkit.getLogger().info("Test Command Logged");
-
-
     }
 
     private void ExecuteGoToBedCommand(TwitchUser sender) {
         var user = getUserByTwitchUserName(sender.getUserName());
         if(user != null) user.userWantsToPlay = true;
-
     }
 
     private void ExecuteExitCommand(TwitchUser sender) {

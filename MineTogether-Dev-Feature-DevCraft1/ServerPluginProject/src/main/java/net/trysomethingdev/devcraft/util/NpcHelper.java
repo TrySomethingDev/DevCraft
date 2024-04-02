@@ -1,4 +1,4 @@
-package net.trysomethingdev.devcraft.handlers;
+package net.trysomethingdev.devcraft.util;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;

@@ -5,13 +5,12 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.MyTrait;
+import net.trysomethingdev.devcraft.util.NpcHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,9 +36,7 @@ public class FooHandler implements Listener {
         Material block = event.getBlock().getType();
 
         if (block == Material.TORCH) {
-          // NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Chowmeinnnnnn").getOrAddTrait(FishTogetherTrait.class).getNPC();
-          //  npc.spawn(event.getBlock().getLocation());
-           // event.getBlock().setType(Material.AIR);
+
 
         } else if (block == Material.BLACK_WOOL) {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {
@@ -62,8 +59,6 @@ public class FooHandler implements Listener {
             }
         } else if (block == Material.BLUE_WOOL) {
             FindNearestOakLogAndGetIt(player);
-        } else if (block == Material.RED_WOOL) {
-            MiningLogic.StartMining(event,player,block,_plugin);
         }
         else if (block == Material.GOLD_BLOCK) {
             NpcHelper.MoveClosestNPCOneBlockPostiveX(event,_plugin);
