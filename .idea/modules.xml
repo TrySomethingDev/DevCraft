@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/DevCraft.iml" filepath="$PROJECT_DIR$/.idea/DevCraft.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/TrySomethingDevAmazingPlugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TrySomethingDevAmazingPlugin.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TrySomethingDevAmazingPlugin.test.iml" filepath="$PROJECT_DIR$/.idea/modules/TrySomethingDevAmazingPlugin.test.iml" />
     </modules>
   </component>
 </project>

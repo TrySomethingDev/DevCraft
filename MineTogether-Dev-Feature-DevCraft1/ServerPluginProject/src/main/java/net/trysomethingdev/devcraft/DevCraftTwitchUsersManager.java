@@ -113,4 +113,15 @@ public class DevCraftTwitchUsersManager {
         var user = getUserByTwitchUserName(partedNick);
         if(user != null) user.Parted();
     }
+
+    public DevCraftTwitchUser getOrAddUser(String userName) {
+        var user = this.getUserByTwitchUserName(userName);
+        if(user == null)
+        {
+            this.Add(new DevCraftTwitchUser(userName,userName, plugin.getNpcGlobalSpawnPoint()));
+            user = this.getUserByTwitchUserName(userName);
+        }
+
+        return user;
+    }
 }

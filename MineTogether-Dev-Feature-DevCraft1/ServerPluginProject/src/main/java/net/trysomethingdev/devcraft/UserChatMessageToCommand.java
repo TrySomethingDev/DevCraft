@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import java.util.Arrays;
 
 public class UserChatMessageToCommand {
-    static void ProcessChatMessageFromSender(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin) {
+    public static void ProcessChatMessageFromSender(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin) {
 
         if(user == null) return;
 
@@ -36,9 +36,6 @@ public class UserChatMessageToCommand {
             //      || command.startsWith("!CLEAR")
             //          || command.startsWith("!EMPTYINV")) ExecuteUnloadIntoNearestChest(sender,command);
             if(command.startsWith("!RESPAWN")) ExecuteRespawnCommand(sender,command,user);
-
-
-
 
         }
         else {
