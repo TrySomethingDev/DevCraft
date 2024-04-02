@@ -83,27 +83,17 @@ public final class DevCraftPlugin extends JavaPlugin {
         twitchBot = new TwitchBot();
         boolean success = twitchBot.reload();
         if (!success) getLogger().log(Level.WARNING, "Unable to start twitch plugin fully. Please make sure it is fully configured!");
-
         getCommand("twitch").setExecutor(new TwitchCommand());
         getCommand("twitch").setTabCompleter(new TwitchTabCompleter());
-
         getCommand("twitchchat").setExecutor(new TwitchChatCommand());
         getCommand("twitchchat").setTabCompleter(new TwitchChatTabCompleter());
-
         getCommand("twitchchaton").setExecutor(new TwitchChatOnCommand());
         getCommand("twitchchaton").setTabCompleter(new TwitchChatOnTabCompleter());
-
         getCommand("twitchchatoff").setExecutor(new TwitchChatOffCommand());
         getCommand("twitchchatoff").setTabCompleter(new TwitchChatOffTabCompleter());
 
-
-
         new FooHandler(this);
-
         getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
-
-
-
         RegisterCitizensTraits();
     }
 
