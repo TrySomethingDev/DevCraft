@@ -12,12 +12,12 @@ import java.util.Collection;
 public class DevCraftChatHandler {
 
 
-    private final DevCraftPlugin pluggin;
+    private final DevCraftPlugin plugin;
     private final DevCraftTwitchUsersManager usersManager;
 
     public DevCraftChatHandler(DevCraftPlugin devCraftPlugin) {
-        pluggin = devCraftPlugin;
-        usersManager = pluggin.getTwitchUsersManager();
+        plugin = devCraftPlugin;
+        usersManager = plugin.getTwitchUsersManager();
     }
 
     public void handlChat(TwitchUser sender, TwitchMessage message) {
@@ -40,7 +40,7 @@ public class DevCraftChatHandler {
 
         for (var name : namesList) {
             Bukkit.getLogger().info(name);
-            usersManager.Add(new DevCraftTwitchUser(name,name,pluggin.getNpcGlobalSpawnPoint()));
+            usersManager.Add(new DevCraftTwitchUser(plugin,name,name,plugin.getNpcGlobalSpawnPoint()));
         }
 
     }

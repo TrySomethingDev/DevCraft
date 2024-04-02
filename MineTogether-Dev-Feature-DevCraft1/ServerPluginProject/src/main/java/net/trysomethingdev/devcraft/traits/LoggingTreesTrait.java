@@ -25,6 +25,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Enumeration;
+
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
@@ -71,6 +73,9 @@ import org.jetbrains.annotations.Nullable;
 
         DevCraftTwitchUser user;
         private int delay;
+
+        private TreeLoggingState treeLoggingState = TreeLoggingState.StageOne;
+
         @Override
         public void run() {
             if (!(npc.getEntity() instanceof Player)) return;
@@ -82,8 +87,29 @@ import org.jetbrains.annotations.Nullable;
 
 
 
+            if(treeLoggingState == TreeLoggingState.StageOne)
+            {
+                //Search For a Nearby Tree
 
-         //We want to search around the npc for wood of any kind
+                //OutputTheLocation of the southside of the tree trunk
+
+            }
+            else if(treeLoggingState == TreeLoggingState.StageTwo)
+            {
+                //Build Ladders and climb to the top of the tree.
+            }
+            else if(treeLoggingState == TreeLoggingState.StageThree)
+            {
+                //Chop down each layer of the tree
+                //Then walk around and gather items.
+            }
+            else if(treeLoggingState == TreeLoggingState.StageFour)
+            {
+                //Remove the trait
+            }
+
+
+            //We want to search around the npc for wood of any kind
 
             //we want to find
 

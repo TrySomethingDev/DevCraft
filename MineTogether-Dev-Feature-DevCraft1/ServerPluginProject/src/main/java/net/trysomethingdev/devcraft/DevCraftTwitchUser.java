@@ -13,12 +13,16 @@ import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static net.citizensnpcs.api.CitizensAPI.getDataFolder;
 import static net.trysomethingdev.devcraft.DevCraftPlugin.usersToIgnoreList;
 
 
@@ -26,6 +30,8 @@ public class DevCraftTwitchUser {
 
 
     private static Location npcGlobalSpawnPoint;
+    private final File playerDataFolder;
+    private DevCraftPlugin plugin;
     @Expose public String twitchUserName;
 
     @Expose public String minecraftSkinName;
@@ -35,24 +41,51 @@ public class DevCraftTwitchUser {
 
      public boolean isJoined;
      public boolean markedForDespawn;
+     public boolean userWantsToPlay;
 
-    public boolean userWantsToPlay;
-
-
-
-    public DevCraftTwitchUser()
-    {
-
-    }
+    public int blocksMined;
 
 
-    public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName, Location spawnLocation) {
+
+
+
+
+
+
+
+
+    public DevCraftTwitchUser(DevCraftPlugin plugin,String twitchUserName, String minecraftSkinName, Location spawnLocation) {
+        this.plugin = plugin;
         this.twitchUserName = twitchUserName;
         this.minecraftSkinName = minecraftSkinName;
         lastActivityTime = LocalDateTime.now();
         npcGlobalSpawnPoint = spawnLocation;
         this.JustJoinedOrIsActive();
 
+        var dataFolder = getDataFolder();
+        playerDataFolder = new File(dataFolder, "player_data");
+        playerDataFolder.mkdirs(); // Create the directory if it doesn't exist
+
+    }
+
+
+
+    public void minedABlock(){
+
+        File playerFile = new File(playerDataFolder, twitchUserName + ".yml");
+        YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+
+        int currentCount = playerConfig.getInt("mined_blocks", 0);
+        playerConfig.set("mined_blocks", currentCount + 1);
+
+
+        try {
+            playerConfig.save(playerFile); // Save the updated count
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Bukkit.broadcastMessage("User " + twitchUserName + " has mined " + currentCount + 1 + " Blocks");
     }
 
     public void Chatted() {
@@ -223,7 +256,7 @@ public class DevCraftTwitchUser {
             var npc = GetUserNPC();
             if(npc != null) {
 
-                RemoveTraits(npc);
+                ResetNPC(npc);
                 FishTogetherTrait testTrait = npc.getOrAddTrait(FishTogetherTrait.class);
             }
         }, 20 * 1);
@@ -245,7 +278,7 @@ public class DevCraftTwitchUser {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if(npc != null) {
-                RemoveTraits(npc);
+                ResetNPC(npc);
                 var trait = npc.getOrAddTrait(LoggingTreesTrait.class);
             }
         }, 20 * 1);
@@ -274,7 +307,7 @@ public class DevCraftTwitchUser {
                     npc.removeTrait(QuarryTrait.class);
                 }
                 ResetHeadPosition(npc);
-                RemoveTraits(npc);
+                ResetNPC(npc);
 
 
                 var quarry = new QuarryTrait(length,width,depth,plugin);
@@ -286,10 +319,11 @@ public class DevCraftTwitchUser {
 
     }
 
-    private static void RemoveTraits(NPC npc) {
+    private static void ResetNPC(NPC npc) {
         ResetHeadPosition(npc);
         RemoveToolFromInventorySpotZero(npc);
 
+        //Remove Traits that we want to make sure are not left on the NPC
         if(npc.hasTrait(QuarryTrait.class)) npc.removeTrait(QuarryTrait.class);
         if(npc.hasTrait(FishTogetherTrait.class)) npc.removeTrait(FishTogetherTrait.class);
         if(npc.hasTrait(LoggingTreesTrait.class)) npc.removeTrait(LoggingTreesTrait.class);
@@ -322,7 +356,7 @@ public class DevCraftTwitchUser {
 
 
                 ResetHeadPosition(npc);
-                RemoveTraits(npc);
+                ResetNPC(npc);
 
                 var dance = new DanceTrait();
                 npc.addTrait(dance);
@@ -345,7 +379,7 @@ public class DevCraftTwitchUser {
                     return;
                 }
                 ResetHeadPosition(npc);
-                RemoveTraits(npc);
+                ResetNPC(npc);
 
                 AddFollowerTrait(npc);
 
@@ -360,7 +394,7 @@ public class DevCraftTwitchUser {
             var npc = GetUserNPC();
             if (npc != null) {
                 ResetHeadPosition(npc);
-                RemoveTraits(npc);
+                ResetNPC(npc);
 
                 npc.getOrAddTrait(UnloadTrait.class);
 
@@ -375,7 +409,7 @@ public class DevCraftTwitchUser {
             var npc = GetUserNPC();
             if (npc != null) {
                 ResetHeadPosition(npc);
-                RemoveTraits(npc);
+                ResetNPC(npc);
                 npc.despawn();
 
                 //Respawn
@@ -387,5 +421,19 @@ public class DevCraftTwitchUser {
                 }, 20 * 2);
             }
         }, 20 * 1);
+    }
+
+    public void Push() {
+
+        new DelayedTask(() -> {
+            var npc = GetUserNPC();
+            if (npc != null) {
+                ResetHeadPosition(npc);
+                //RemoveTraits(npc);
+                var trait = npc.getOrAddTrait(PushTrait.class);
+                trait.pushNearestNPC();
+            }
+        }, 20 * 1);
+
     }
 }

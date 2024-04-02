@@ -141,7 +141,7 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(joinedNick);
         if(user == null)
         {  //If we make it here it means we did not find the user in the list. So we should add a user.
-            this.Add(new DevCraftTwitchUser(joinedNick,joinedNick,globalNpcSpawnPoint));
+            this.Add(new DevCraftTwitchUser(plugin,joinedNick,joinedNick,globalNpcSpawnPoint));
         }
         else
         {
@@ -155,10 +155,13 @@ public void Add(DevCraftTwitchUser twitchUser){
     public DevCraftTwitchUser getUserByTwitchUserName(String joinedNick) {
         for (var user : devCraftTwitchUsers)
         {
-            if(joinedNick.toUpperCase().equals(user.twitchUserName.toUpperCase())) {
+            if(joinedNick.equalsIgnoreCase(user.twitchUserName)) {
                 return user;
             }
+
         }
+
+        //If we could not find the user lets add them
         return null;
     }
 
@@ -192,6 +195,7 @@ public void Add(DevCraftTwitchUser twitchUser){
           //      || command.startsWith("!CLEAR")
           //          || command.startsWith("!EMPTYINV")) ExecuteUnloadIntoNearestChest(sender,command);
             if(command.startsWith("!RESPAWN")) ExecuteRespawnCommand(sender,command);
+            if(command.startsWith("!PUSH")) ExecutePushCommand(sender,command);
 
 
 
@@ -202,9 +206,17 @@ public void Add(DevCraftTwitchUser twitchUser){
         }
 
         var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName(),globalNpcSpawnPoint));
+        if(user == null) this.Add(new DevCraftTwitchUser(plugin,sender.getUserName(),sender.getUserName(),globalNpcSpawnPoint));
         else user.Chatted();
     }
+
+    private void ExecutePushCommand(TwitchUser sender, String command) {
+        var user = getUserByTwitchUserName(sender.getUserName());
+        if(user == null) return;
+
+        user.Push();
+    }
+
 
     private void ExecuteRespawnCommand(TwitchUser sender, String command) {
         var user = getUserByTwitchUserName(sender.getUserName());
@@ -318,7 +330,12 @@ public void Add(DevCraftTwitchUser twitchUser){
 
     private void ExecuteJoinCommand(TwitchUser sender) {
         var user = getUserByTwitchUserName(sender.getUserName());
+        if(user == null){
+            this.userJoined(sender.getUserName());
+            user = getUserByTwitchUserName(sender.getUserName());
+        }
         if(user != null) user.userWantsToPlay = true;
+
     }
 
     private void ExecuteChangeUserSkinCommand(TwitchUser sender, String command) {

@@ -8,14 +8,17 @@ import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.traits.MyTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -35,6 +38,7 @@ public class FooHandler implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         Material block = event.getBlock().getType();
+
 
         if (block == Material.TORCH) {
           // NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Chowmeinnnnnn").getOrAddTrait(FishTogetherTrait.class).getNPC();
@@ -127,12 +131,48 @@ public class FooHandler implements Listener {
             AnalyzeTheTree(npc, blockToAnalyze);
 
         }
+        else if (block == Material.AMETHYST_BLOCK) {
+            var npc = GetNearestNPCToBlock(event.getBlock());
+            Bukkit.getLogger().info("Found NPC: " + npc.getName() );
+            Bukkit.getLogger().info("Firing AMETHYST_BLOCK placed event");
+
+            event.getBlock().setType(Material.AIR);
+            var blockToAnalyze = event.getBlock().getRelative(BlockFace.NORTH);
+            AddTwoLaddersToTree(npc, blockToAnalyze,10);
+
+            TellNpcToClimbTree(npc,blockToAnalyze);
+        }
 
 
 
 
 
 
+    }
+
+    private void TellNpcToClimbTree(NPC npc, Block blockToAnalyze) {
+        var destination = new Location(npc.getEntity().getWorld(), 28.5,-52,88.5);
+
+       // npc.teleport(blockToAnalyze.getRelative(BlockFace.SOUTH).getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        npc.teleport(destination, PlayerTeleportEvent.TeleportCause.PLUGIN);
+       // npc.getNavigator().setTarget(blockToAnalyze.getRelative(BlockFace.SOUTH).getLocation());
+        //npc.getNavigator().setTarget(destination);
+    }
+
+    private void AddTwoLaddersToTree(NPC npc, Block blockToAnalyze,int height) {
+
+        for (int y = 0; y < height; y++) {
+            Block block = blockToAnalyze.getLocation().clone().add(0, y, 0).getBlock();
+        var ladderBlock =  block.getRelative(BlockFace.SOUTH);
+        ladderBlock.setType(Material.LADDER);
+
+        // Get the BlockData and set the direction
+        Directional ladderData = (Directional) ladderBlock.getBlockData();
+        ladderData.setFacing(BlockFace.SOUTH); // Set the desired direction
+
+        // Apply the modified BlockData to the block
+            ladderBlock.setBlockData(ladderData, true);
+        }
     }
 
     private void AnalyzeTheTree(NPC npc, Block block) {
@@ -161,18 +201,14 @@ public class FooHandler implements Listener {
                 currentBlock = currentBlock.getRelative(BlockFace.UP);
                 Bukkit.broadcastMessage("Height " + result);
                 result++;
-
             }
-
             Bukkit.broadcastMessage("The Tree is " + result + " blocks high");
+
+
 
         }, 20 * 1);
 
-        int result = 0;
-
-
-
-    }
+     }
 
     private boolean isItATree(Block block) {
          return block.getType().name().toUpperCase().contains("_LOG");

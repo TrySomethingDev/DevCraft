@@ -124,17 +124,41 @@ import java.util.Queue;
             if (npc.getNavigator().isNavigating()) return;
             if(npc.getDefaultGoalController().isExecutingGoal()) return;
 
-            //We need to arrive at the mining location
-            if(!arrivedAtMiningLocation)
+
+//            if(readyForNextBlock == false && delay > 20)
+//            {
+//                readyForNextBlock = true;
+//                delay = 0;
+//            }
+//            else{
+//                delay++;
+//            }
+
+            if(plugin == null)
             {
-                if(npc.getEntity().getLocation().distance(plugin.getMiningLocationStartPoint()) > 2)
-                {
-                    npc.getNavigator().setTarget(plugin.getMiningLocationStartPoint());
-                }
-                else{
-                    arrivedAtMiningLocation = true;
-                }
+                plugin = (DevCraftPlugin) Bukkit.getPluginManager().getPlugin("DevCraftPlugin");
             }
+
+            if(user == null)
+            {
+               user =  plugin.getTwitchUsersManager().getUserByTwitchUserName(npc.getName());
+            }
+
+
+//            //We need to arrive at the mining location
+//            if(!arrivedAtMiningLocation)
+//            {
+//                var distance = npc.getEntity().getLocation().distance(plugin.getMiningLocationStartPoint());
+//                Bukkit.broadcastMessage("Distance is: " + distance);
+//                if(npc.getEntity().getLocation().distance(plugin.getMiningLocationStartPoint()) > 10)
+//                {
+//                    npc.getNavigator().setTarget(plugin.getMiningLocationStartPoint());
+//                }
+//                else
+//                {
+//                    arrivedAtMiningLocation = true;
+//                }
+//            }
 
 
             if(miningLocation == null)
@@ -147,15 +171,15 @@ import java.util.Queue;
 
 
 
-            if(block !=null && block.getType().isSolid())
-            {
-                block.breakNaturally();
-                return;
-
-            } else if(block != null && !block.getType().isSolid())
-            {
-                readyForNextBlock = true;
-            }
+//            if(block !=null && block.getType().isSolid())
+//            {
+//
+//                return;
+//
+//            } else if(block != null && !block.getType().isSolid())
+//            {
+//                readyForNextBlock = true;
+//            }
 
 
             //If inventory is full or we reach our desired depth, or bedrock, then TP up to the surface and find the player.
@@ -166,16 +190,22 @@ import java.util.Queue;
                 npc.removeTrait(QuarryTrait.class);
                 npc.teleport(plugin.getNpcGlobalSpawnPoint(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 npc.getOrAddTrait(FollowTraitCustom.class);
-            } else if (readyForNextBlock){
+            } else {
 
-                 block = queueOfBlocks.poll();
+                 if(!block.getType().isSolid())
+                 {
+                     block = queueOfBlocks.poll();
+                 }
+
+                // readyForNextBlock = false;
+
                  if(block == null){
                   finishedQueue = true;
                  }
                  else{
 
                      mineBlock(block);
-
+                    user.minedABlock();
                  }
             }
         }
@@ -212,13 +242,13 @@ import java.util.Queue;
 //            npc.getDefaultGoalController().isExecutingGoal()
 //
 //        }, 20 * 1);
-                if(block.getLocation().distance(npc.getEntity().getLocation()) > 2)
-                {
-                    npc.getNavigator().setTarget(block.getLocation());
-                    return;
-                }
+//                if(block.getLocation().distance(npc.getEntity().getLocation()) > 2)
+//                {
+//                    npc.getNavigator().setTarget(block.getLocation());
+//                    return;
+//                }
 
-                blockBreakerConfiguration.radius(10);
+                blockBreakerConfiguration.radius(1);
                 BlockBreaker breaker = npc.getBlockBreaker(block, blockBreakerConfiguration);
 
 
