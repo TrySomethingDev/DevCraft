@@ -94,7 +94,7 @@ public class DevCraftTwitchUsersManager {
     public DevCraftTwitchUser getUserByTwitchUserName(String joinedNick) {
         for (var user : devCraftTwitchUsers)
         {
-            if(joinedNick.toUpperCase().equals(user.twitchUserName.toUpperCase())) {
+            if(joinedNick.equalsIgnoreCase(user.twitchUserName)) {
                 return user;
             }
         }
@@ -102,11 +102,9 @@ public class DevCraftTwitchUsersManager {
     }
 
     public void userChatted(TwitchUser sender, TwitchMessage message) {
-
         //What kind of Command is this?
         var user = getUserByTwitchUserName(sender.getUserName());
         ProcessChatMessageFromSender(sender, message, user,plugin);
-
         if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName(),plugin.getNpcGlobalSpawnPoint()));
         else user.Chatted();
     }
