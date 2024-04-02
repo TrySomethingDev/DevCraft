@@ -72,7 +72,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         dataManager = new DataManager();
         encryptionManager = new EncryptionManager();
 
-        twitchUsersManager = new DevCraftTwitchUsersManager(this, npcGlobalSpawnPoint );
+        twitchUsersManager = new DevCraftTwitchUsersManager(this);
         devCraftChatHandler =   new DevCraftChatHandler(this);
 
         twitchBot = new TwitchBot();

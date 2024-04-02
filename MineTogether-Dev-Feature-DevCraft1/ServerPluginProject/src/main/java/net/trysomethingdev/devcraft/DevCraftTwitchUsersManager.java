@@ -22,23 +22,17 @@ import static net.trysomethingdev.devcraft.UserChatMessageToCommand.ProcessChatM
 public class DevCraftTwitchUsersManager {
 
     private final DevCraftPlugin plugin;
-    //List of Twitch Users here
     List<DevCraftTwitchUser> devCraftTwitchUsers = new ArrayList<DevCraftTwitchUser>();
-    private Location globalNpcSpawnPoint;
 
-    public DevCraftTwitchUsersManager(DevCraftPlugin devCraftPlugin,Location npcGlobalSpawnPoint) {
-
+    public DevCraftTwitchUsersManager(DevCraftPlugin devCraftPlugin) {
         plugin = devCraftPlugin;
-        this.globalNpcSpawnPoint = npcGlobalSpawnPoint;
         LoadSavedList();
         SaveThisListToConfigEverySoManyMinutes(0.5);
     }
-
     private void LoadSavedList() {
         Gson gson = new GsonBuilder().setPrettyPrinting()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
-
         // Load from file
         try (Reader reader = new FileReader("DevCraftTwitchUsers.json")) {
             devCraftTwitchUsers = gson.fromJson(reader, new TypeToken<List<DevCraftTwitchUser>>(){}.getType());
@@ -46,7 +40,6 @@ public class DevCraftTwitchUsersManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void Save()
@@ -70,13 +63,13 @@ public class DevCraftTwitchUsersManager {
 
 
 
-    //Add
-public void Add(DevCraftTwitchUser twitchUser){
-    if (!devCraftTwitchUsers.contains(twitchUser))
-    {
-        devCraftTwitchUsers.add(twitchUser);
+        //Add
+    public void Add(DevCraftTwitchUser twitchUser){
+        if (!devCraftTwitchUsers.contains(twitchUser))
+        {
+            devCraftTwitchUsers.add(twitchUser);
+        }
     }
-}
 
     //Remove
     public void Remove(DevCraftTwitchUser twitchUser){
@@ -86,12 +79,11 @@ public void Add(DevCraftTwitchUser twitchUser){
         }
     }
 
-
     public void userJoined(String joinedNick) {
         var user = getUserByTwitchUserName(joinedNick);
         if(user == null)
         {  //If we make it here it means we did not find the user in the list. So we should add a user.
-            this.Add(new DevCraftTwitchUser(joinedNick,joinedNick,globalNpcSpawnPoint));
+            this.Add(new DevCraftTwitchUser(joinedNick,joinedNick,plugin.getNpcGlobalSpawnPoint()));
         }
         else
         {
@@ -115,7 +107,7 @@ public void Add(DevCraftTwitchUser twitchUser){
         var user = getUserByTwitchUserName(sender.getUserName());
         ProcessChatMessageFromSender(sender, message, user,plugin);
 
-        if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName(),globalNpcSpawnPoint));
+        if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName(),plugin.getNpcGlobalSpawnPoint()));
         else user.Chatted();
     }
 

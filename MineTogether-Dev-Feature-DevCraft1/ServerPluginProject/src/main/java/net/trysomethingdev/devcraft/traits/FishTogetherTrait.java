@@ -145,14 +145,12 @@ public class FishTogetherTrait extends Trait {
             reelCount++;
             if (reelCount >= reelTickRate) {
                 reel();
-            //    Log("Checking Inventory");
                 CheckIfInventoryIsFullAndIfFullSendThemBackToPlayer();
                 reelCount = 0;
                 castCount = 0;
             }
         }
         else {
-         //   Log("Else");
             castCount++;
             if (castCount >= castTickRate) {
                 cast();
