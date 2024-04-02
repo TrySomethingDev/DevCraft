@@ -27,7 +27,7 @@ public class DevCraftTwitchUser {
 
     @Expose public String minecraftSkinName;
 
-     public LocalDateTime lastActivityTime = LocalDateTime.now();
+     public LocalDateTime lastActivityTime;
      public boolean isParted;
 
      public boolean isJoined;
@@ -58,10 +58,7 @@ public class DevCraftTwitchUser {
 
     private static void SpawnNPC(NPC npc) {
         var nextInt = ThreadLocalRandom.current().nextInt( 1, 2);
-        new DelayedTask(() -> {
-            npc.spawn(npcGlobalSpawnPoint);
-
-        }, 20 * nextInt);
+        new DelayedTask(() -> npc.spawn(npcGlobalSpawnPoint), 20L * nextInt);
     }
 
     private static void AddFollowerTrait(NPC npc) {
@@ -95,24 +92,21 @@ public class DevCraftTwitchUser {
             Bukkit.broadcastMessage("Activity detected form Twitch user " + this.twitchUserName + "they are no longer marked for de-spawn");
             markedForDespawn = false;
         }
-        NPC npc = getNPCThatMatchesName(this.twitchUserName);
-        if(npc != null && npc.isSpawned()) return;
-        else if (npc != null && !npc.isSpawned())
-        {
+        NPC npc = getNPCThatMatchesName();
+
+        if (npc != null && !npc.isSpawned()) {
             SpawnNPC(npc);
            // AddFollowerTrait(npc);
             AddSkinTrait(this.minecraftSkinName);
         }
-        else
-        {
-            //If npc is null
+        else  {
             this.createNPCWAndSpawnIt();
         }
     }
 
 
 
-    private NPC getNPCThatMatchesName(String twitchUserName) {
+    private NPC getNPCThatMatchesName() {
         for (var npc : CitizensAPI.getNPCRegistry()) {
             if (this.twitchUserName.equals(npc.getName())) {
                 return npc;
@@ -126,10 +120,6 @@ public class DevCraftTwitchUser {
         this.isParted = true;
     }
 
-    public void markUserForDespawn() {
-        markedForDespawn = true;
-        Bukkit.broadcastMessage("No Twitch Activity Detected for user " + this.twitchUserName + "will de-spawn their player in 1 minute");
-    }
 
     public void changeSkin(String skin) {
         this.minecraftSkinName = skin;
@@ -140,34 +130,30 @@ public class DevCraftTwitchUser {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if(npc != null) {
-                SkinTrait foo = npc.getOrAddTrait(SkinTrait.class);
-                SkinTrait skinTrait = npc.getTrait(SkinTrait.class);
+                var skinTrait = npc.getOrAddTrait(SkinTrait.class);
                 skinTrait.clearTexture();
                 skinTrait.setSkinName(skinName);
             }
-        }, 20 * 1);
+        }, 20);
     }
 
     public void StartFishingCommand() {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if(npc != null) {
-
                 RemoveTraits(npc);
-                FishTogetherTrait testTrait = npc.getOrAddTrait(FishTogetherTrait.class);
+                npc.getOrAddTrait(FishTogetherTrait.class);
             }
-        }, 20 * 1);
-
-
+        }, 20);
     }
 
     public void StartMineCommand() {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if(npc != null) {
-                var trait = npc.getOrAddTrait(MinerTrait.class);
+               npc.getOrAddTrait(MinerTrait.class);
             }
-        }, 20 * 1);
+        }, 20);
 
     }
 
@@ -176,19 +162,18 @@ public class DevCraftTwitchUser {
             var npc = GetUserNPC();
             if(npc != null) {
                 RemoveTraits(npc);
-                var trait = npc.getOrAddTrait(LoggingTreesTrait.class);
+                npc.getOrAddTrait(LoggingTreesTrait.class);
             }
-        }, 20 * 1);
+        }, 20);
     }
 
     public void StartEatingCommand() {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if (npc != null) {
-                var trait = npc.getOrAddTrait(EatingTrait.class);
+                npc.getOrAddTrait(EatingTrait.class);
             }
-        }, 20 * 1);
-
+        }, 20);
     }
 
     public void StartBuildingCommand() {
@@ -198,22 +183,13 @@ public class DevCraftTwitchUser {
         new DelayedTask(() -> {
             var npc = GetUserNPC();
             if (npc != null) {
-
-                if(npc.hasTrait(QuarryTrait.class))
-                {
-                    npc.removeTrait(QuarryTrait.class);
-                }
+                if(npc.hasTrait(QuarryTrait.class)) npc.removeTrait(QuarryTrait.class);
                 ResetHeadPosition(npc);
                 RemoveTraits(npc);
-
-
                 var quarry = new QuarryTrait(length,width,depth,plugin);
                 npc.addTrait(quarry);
-
             }
-        }, 20 * 1);
-
-
+        }, 20);
     }
 
     private static void RemoveTraits(NPC npc) {
@@ -227,16 +203,13 @@ public class DevCraftTwitchUser {
         if(npc.hasTrait(UnloadTrait.class)) npc.removeTrait(UnloadTrait.class);
         if(npc.hasTrait(MinerTrait.class)) npc.removeTrait(MinerTrait.class);
         if(npc.hasTrait(StripMinerTrait.class)) npc.removeTrait(StripMinerTrait.class);
-
     }
 
     private static void ResetHeadPosition(NPC npc) {
         var rote = npc.getOrAddTrait(RotationTrait.class);
-        var ph = rote.getPhysicalSession();
         float pitch = 0;
         float yaw = 0;
         npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
-
     }
 
     private static void RemoveToolFromInventorySpotZero(NPC npc) {
@@ -257,7 +230,7 @@ public class DevCraftTwitchUser {
                 npc.addTrait(dance);
 
             }
-        }, 20 * 1);
+        }, 20);
     }
 
     public void FollowCommand() {
@@ -276,7 +249,7 @@ public class DevCraftTwitchUser {
 
 
             }
-        }, 20 * 1);
+        }, 20);
 
     }
 
@@ -292,7 +265,7 @@ public class DevCraftTwitchUser {
 
 
             }
-        }, 20 * 1);
+        }, 20);
     }
 
     public void Respawn() {
@@ -311,6 +284,6 @@ public class DevCraftTwitchUser {
                     }
                 }, 20 * 2);
             }
-        }, 20 * 1);
+        }, 20);
     }
 }
