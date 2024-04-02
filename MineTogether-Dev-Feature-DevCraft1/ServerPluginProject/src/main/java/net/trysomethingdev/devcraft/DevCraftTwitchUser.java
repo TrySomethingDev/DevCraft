@@ -20,21 +20,14 @@ import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DevCraftTwitchUser {
-
-
     private static Location npcGlobalSpawnPoint;
     @Expose public String twitchUserName;
-
     @Expose public String minecraftSkinName;
-
      public LocalDateTime lastActivityTime;
      public boolean isParted;
-
      public boolean isJoined;
      public boolean markedForDespawn;
-
     public boolean userWantsToPlay;
-
     public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName, Location spawnLocation) {
         this.twitchUserName = twitchUserName;
         this.minecraftSkinName = minecraftSkinName;
@@ -53,7 +46,7 @@ public class DevCraftTwitchUser {
             NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, this.twitchUserName);
             SpawnNPC(npc);
             AddSkinTrait(this.minecraftSkinName);
-        }, 20 * 2);
+        }, 20);
     }
 
     private static void SpawnNPC(NPC npc) {
@@ -65,7 +58,7 @@ public class DevCraftTwitchUser {
         new DelayedTask(() -> {
         FollowTraitCustom followTrait = new FollowTraitCustom(Bukkit.getPlayer("trysomethingdev"));
         npc.addTrait(followTrait);
-        }, 20 * 2);
+        }, 20);
     }
 
     public NPC GetUserNPC() {
@@ -103,8 +96,6 @@ public class DevCraftTwitchUser {
             this.createNPCWAndSpawnIt();
         }
     }
-
-
 
     private NPC getNPCThatMatchesName() {
         for (var npc : CitizensAPI.getNPCRegistry()) {
@@ -244,10 +235,7 @@ public class DevCraftTwitchUser {
                 }
                 ResetHeadPosition(npc);
                 RemoveTraits(npc);
-
                 AddFollowerTrait(npc);
-
-
             }
         }, 20);
 
@@ -259,11 +247,7 @@ public class DevCraftTwitchUser {
             if (npc != null) {
                 ResetHeadPosition(npc);
                 RemoveTraits(npc);
-
                 npc.getOrAddTrait(UnloadTrait.class);
-
-
-
             }
         }, 20);
     }
