@@ -12,14 +12,11 @@ import net.trysomethingdev.twitchplugin.Commands.twitchChat.TwitchChatTabComplet
 import net.trysomethingdev.twitchplugin.Data.DataManager;
 import net.trysomethingdev.twitchplugin.Encryption.EncryptionManager;
 import net.trysomethingdev.twitchplugin.Twirk.TwitchBot;
-import net.citizensnpcs.util.Util;
 
 
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.List;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,7 +87,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         getCommand("twitchchatoff").setExecutor(new TwitchChatOffCommand());
         getCommand("twitchchatoff").setTabCompleter(new TwitchChatOffTabCompleter());
 
-        new FooHandler(this);
+        new ExperimentalHandler(this);
         getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
         RegisterCitizensTraits();
     }
@@ -104,14 +101,12 @@ public final class DevCraftPlugin extends JavaPlugin {
 
 
     private static void RegisterCitizensTraits() {
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MyTrait.class).withName("foo"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FishTogetherTrait.class).withName("fishtogether"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MinerTrait.class).withName("miner"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StripMinerTrait.class).withName("stripminer"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FollowTraitCustom.class).withName("followtraitcustom"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SkinTraitCustom.class).withName("skintraitcustom"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GoToBedTrait.class).withName("gotobed"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TestTrait.class).withName("test"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LoggingTreesTrait.class).withName("loggingtrees"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(EatingTrait.class).withName("eating"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(QuarryTrait.class).withName("quarry"));

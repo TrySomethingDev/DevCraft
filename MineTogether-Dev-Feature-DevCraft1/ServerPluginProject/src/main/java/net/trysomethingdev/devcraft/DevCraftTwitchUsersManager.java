@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static net.trysomethingdev.devcraft.UserChatMessageToCommand.ProcessChatMessageFromSender;
+
 public class DevCraftTwitchUsersManager {
 
     private final DevCraftPlugin plugin;
@@ -110,162 +112,11 @@ public void Add(DevCraftTwitchUser twitchUser){
     public void userChatted(TwitchUser sender, TwitchMessage message) {
 
         //What kind of Command is this?
-
-        //!SKIN MINECRAFTNAME
-        Bukkit.getLogger().info("ReadingMessage");
-        Bukkit.getLogger().info(message.getContent());
-
-        if(message.getContent().startsWith("!"))
-        {
-            Bukkit.getLogger().info("This has message has been identified as a command");
-            var command = message.getContent().toUpperCase();
-            if(command.startsWith("!SKIN")) ExecuteChangeUserSkinCommand(sender, command);
-            if(command.startsWith("!JOIN") || command.startsWith("!PLAY")) ExecuteJoinCommand(sender);
-          //  if(command.startsWith("!EXIT") || command.startsWith("!QUIT")) ExecuteExitCommand(sender);
-        //    if(command.startsWith("!GOTOBED") || command.startsWith("!BED") || command.startsWith("!SLEEP")) ExecuteGoToBedCommand(sender);
-            if(command.startsWith("!FISH")) ExecuteFishCommand(sender);
-         //   if(command.startsWith("!MINE")) ExecuteMineCommand(sender);
-         //   if(command.startsWith("!LOG") || command.startsWith("!CHOP")  || command.startsWith("!WOOD")) ExecuteLogCommand(sender);
-            if(command.startsWith("!EAT")) ExecuteEatCommand(sender);
-            if(command.startsWith("!TEST")) ExecuteTestCommand(sender);
-          //  if(command.startsWith("!BUILD")) ExecuteBuildCommand(sender);
-            if(command.startsWith("!QUARRY")) ExecuteQuarryCommand(sender,command);
-            if(command.startsWith("!DANCE")) ExecuteDanceCommand(sender,command);
-            if(command.startsWith("!FOLLOW")) ExecuteFollowCommand(sender,command);
-          //  if(command.startsWith("!UNLOAD")
-           //      || command.startsWith("!EMPTY")
-          //      || command.startsWith("!CLEAR")
-          //          || command.startsWith("!EMPTYINV")) ExecuteUnloadIntoNearestChest(sender,command);
-            if(command.startsWith("!RESPAWN")) ExecuteRespawnCommand(sender,command);
-
-
-
-
-        }
-        else {
-            Bukkit.getLogger().info("Not identified as a command");
-        }
-
         var user = getUserByTwitchUserName(sender.getUserName());
+        ProcessChatMessageFromSender(sender, message, user,plugin);
+
         if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName(),globalNpcSpawnPoint));
         else user.Chatted();
-    }
-
-    private void ExecuteRespawnCommand(TwitchUser sender, String command) {
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) return;
-
-        user.Respawn();
-    }
-
-    private void ExecuteUnloadIntoNearestChest(TwitchUser sender, String command) {
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) return;
-
-        user.UnloadIntoNearestChest();
-    }
-
-    private void ExecuteFollowCommand(TwitchUser sender, String command) {
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) return;
-
-        user.FollowCommand();
-    }
-
-    private void ExecuteDanceCommand(TwitchUser sender, String command) {
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) return;
-            user.DanceCommand();
-    }
-
-    private void ExecuteQuarryCommand(TwitchUser sender, String command) {
-
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user == null) return;
-
-        var splitStringList = command.split(" ");
-        if (Arrays.stream(splitStringList).count() != 4)
-        {
-            //Just do default 1x1x1
-            user.QuarryCommand(80,80,400,plugin);
-        }
-        else {
-
-            int length = 80, width = 80,depth = 400;
-            try {
-                 length = Integer.parseInt(splitStringList[1]);
-                 width =  Integer.parseInt(splitStringList[2]);
-                 depth =  Integer.parseInt(splitStringList[3]);
-            }
-            catch( Exception e){
-
-            }
-            user.QuarryCommand(length,width,depth,plugin);
-            }
-        }
-
-
-
-    private void ExecuteFishCommand(TwitchUser sender) {
-        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Fish Mode ");
-        var user = getUserByTwitchUserName(sender.getUserName());
-        user.StartFishingCommand();
-    }
-
-    private void ExecuteMineCommand(TwitchUser sender) {
-        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Mine Mode ");
-        var user = getUserByTwitchUserName(sender.getUserName());
-        user.StartMineCommand();
-    }
-
-    private void ExecuteLogCommand(TwitchUser sender) {
-        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Log Mode ");
-        var user = getUserByTwitchUserName(sender.getUserName());
-        user.StartLoggingTreesCommand();
-    }
-
-    private void ExecuteEatCommand(TwitchUser sender) {
-        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Eat Mode ");
-        var user = getUserByTwitchUserName(sender.getUserName());
-        user.StartEatingCommand();
-    }
-
-    private void ExecuteBuildCommand(TwitchUser sender) {
-        Bukkit.getLogger().info("User " + sender.getUserName() + "tried to Activate Build Mode ");
-        var user = getUserByTwitchUserName(sender.getUserName());
-        user.StartBuildingCommand();
-    }
-
-    private void ExecuteTestCommand(TwitchUser sender) {
-
-        var user = getUserByTwitchUserName(sender.getUserName());
-        user.StartFishingCommand();
-        Bukkit.getLogger().info("Test Command Logged");
-    }
-
-    private void ExecuteGoToBedCommand(TwitchUser sender) {
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user != null) user.userWantsToPlay = true;
-    }
-
-    private void ExecuteExitCommand(TwitchUser sender) {
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user != null) user.userWantsToPlay = false;
-    }
-
-    private void ExecuteJoinCommand(TwitchUser sender) {
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user != null) user.userWantsToPlay = true;
-    }
-
-    private void ExecuteChangeUserSkinCommand(TwitchUser sender, String command) {
-        var splitStringList = command.split(" ");
-        //The Skin name we are going to use is the second word.
-        var skin = splitStringList[1];
-        var user = getUserByTwitchUserName(sender.getUserName());
-        if(user != null){
-            user.changeSkin(skin);
-        }
     }
 
     public void userParted(String partedNick) {

@@ -21,7 +21,6 @@ public class NpcFishHandler implements Listener {
                 .append(plainText)
                 .append(itemName)
                 .build();
-
         Bukkit.broadcast(broadcastMessage.toString(),"");
     }
 
