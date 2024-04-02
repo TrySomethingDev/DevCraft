@@ -19,9 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static net.trysomethingdev.devcraft.DevCraftPlugin.usersToIgnoreList;
-
-
 public class DevCraftTwitchUser {
 
 

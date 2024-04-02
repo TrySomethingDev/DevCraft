@@ -53,8 +53,6 @@ public final class DevCraftPlugin extends JavaPlugin {
 
     private DevCraftChatHandler devCraftChatHandler;
 
-    public static List<String> usersToIgnoreList;
-
     private Location npcGlobalSpawnPoint;
 
     private Location fishingAreaStartPoint;
