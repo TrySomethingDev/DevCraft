@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 
 import java.util.Collection;
 
-import static net.trysomethingdev.devcraft.UserChatMessageToCommand.ProcessChatMessageFromSender;
 
 public class DevCraftChatHandler {
 
@@ -18,14 +17,17 @@ public class DevCraftChatHandler {
     private final DevCraftPlugin pluggin;
     private final DevCraftTwitchUsersManager usersManager;
 
+    private final UserChatMessageToCommand userChatMessageToCommand;
+
     public DevCraftChatHandler(DevCraftPlugin devCraftPlugin) {
         pluggin = devCraftPlugin;
         usersManager = pluggin.getTwitchUsersManager();
+        userChatMessageToCommand = new UserChatMessageToCommand();
     }
 
     public void handlChat(TwitchUser sender, TwitchMessage message) {
         var user = usersManager.getOrAddUser(sender.getUserName());
-        ProcessChatMessageFromSender(sender,message,user,pluggin);
+        userChatMessageToCommand.processChatMessageFromSender(sender,message,user);
     }
 
     public void handleOnNamesList(Collection<String> namesList) {

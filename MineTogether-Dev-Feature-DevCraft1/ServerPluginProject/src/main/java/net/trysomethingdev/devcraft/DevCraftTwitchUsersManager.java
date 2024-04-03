@@ -1,23 +1,12 @@
 package net.trysomethingdev.devcraft;
-
-import com.gikk.twirk.types.twitchMessage.TwitchMessage;
-import com.gikk.twirk.types.users.TwitchUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import net.citizensnpcs.api.npc.NPC;
 import net.trysomethingdev.devcraft.util.DelayedTask;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 
 import java.io.*;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static net.trysomethingdev.devcraft.UserChatMessageToCommand.ProcessChatMessageFromSender;
 
 public class DevCraftTwitchUsersManager {
 
@@ -79,18 +68,6 @@ public class DevCraftTwitchUsersManager {
         }
     }
 
-    public void userJoined(String joinedNick) {
-        var user = getUserByTwitchUserName(joinedNick);
-        if(user == null)
-        {  //If we make it here it means we did not find the user in the list. So we should add a user.
-            this.Add(new DevCraftTwitchUser(joinedNick,joinedNick,plugin.getNpcGlobalSpawnPoint()));
-        }
-        else
-        {
-            user.JustJoinedOrIsActive();
-        }
-    }
-
     public DevCraftTwitchUser getUserByTwitchUserName(String joinedNick) {
         for (var user : devCraftTwitchUsers)
         {
@@ -101,13 +78,6 @@ public class DevCraftTwitchUsersManager {
         return null;
     }
 
-    public void userChatted(TwitchUser sender, TwitchMessage message) {
-        //What kind of Command is this?
-        var user = getUserByTwitchUserName(sender.getUserName());
-        ProcessChatMessageFromSender(sender, message, user,plugin);
-        if(user == null) this.Add(new DevCraftTwitchUser(sender.getUserName(),sender.getUserName(),plugin.getNpcGlobalSpawnPoint()));
-        else user.Chatted();
-    }
 
     public void userParted(String partedNick) {
         var user = getUserByTwitchUserName(partedNick);
@@ -118,7 +88,7 @@ public class DevCraftTwitchUsersManager {
         var user = this.getUserByTwitchUserName(userName);
         if(user == null)
         {
-            this.Add(new DevCraftTwitchUser(userName,userName, plugin.getNpcGlobalSpawnPoint()));
+            this.Add(new DevCraftTwitchUser(plugin,userName,userName, plugin.getNpcGlobalSpawnPoint()));
             user = this.getUserByTwitchUserName(userName);
         }
 

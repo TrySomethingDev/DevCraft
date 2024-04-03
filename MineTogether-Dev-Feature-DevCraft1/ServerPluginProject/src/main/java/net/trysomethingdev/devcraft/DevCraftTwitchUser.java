@@ -20,7 +20,8 @@ import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DevCraftTwitchUser {
-    private static Location npcGlobalSpawnPoint;
+
+    private final Location npcGlobalSpawnPoint;
     @Expose public String twitchUserName;
     @Expose public String minecraftSkinName;
      public LocalDateTime lastActivityTime;
@@ -28,12 +29,17 @@ public class DevCraftTwitchUser {
      public boolean isJoined;
      public boolean markedForDespawn;
     public boolean userWantsToPlay;
-    public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName, Location spawnLocation) {
+
+    public DevCraftPlugin plugin;
+    public DevCraftTwitchUser(DevCraftPlugin plugin,String twitchUserName, String minecraftSkinName, Location spawnLocation) {
+
+        this.plugin = plugin;
         this.twitchUserName = twitchUserName;
         this.minecraftSkinName = minecraftSkinName;
         lastActivityTime = LocalDateTime.now();
         npcGlobalSpawnPoint = spawnLocation;
         this.JustJoinedOrIsActive();
+
     }
 
     public void Chatted() {
@@ -49,7 +55,7 @@ public class DevCraftTwitchUser {
         }, 20);
     }
 
-    private static void SpawnNPC(NPC npc) {
+    private void SpawnNPC(NPC npc) {
         var nextInt = ThreadLocalRandom.current().nextInt( 1, 2);
         new DelayedTask(() -> npc.spawn(npcGlobalSpawnPoint), 20L * nextInt);
     }

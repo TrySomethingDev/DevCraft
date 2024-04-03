@@ -64,6 +64,8 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         miningLocationStartPoint = getLocationFromConfig(worldName, "MiningLocationStartPoint");
         npcGlobalSpawnPoint =  getLocationFromConfig(worldName, "NpcGlobalSpawnPoint");
+        Bukkit.getLogger().info("********************&&&&&&&");
+        Bukkit.getLogger().info(npcGlobalSpawnPoint.toString());
         fishingAreaStartPoint = getLocationFromConfig(worldName, "FishingAreaStartPoint");
 
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
