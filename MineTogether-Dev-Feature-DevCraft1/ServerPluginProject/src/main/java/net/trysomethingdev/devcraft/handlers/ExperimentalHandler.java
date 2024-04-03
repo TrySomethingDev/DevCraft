@@ -5,13 +5,11 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
-import net.trysomethingdev.devcraft.traits.MyTrait;
+import net.trysomethingdev.devcraft.util.NpcHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,11 +20,11 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-public class FooHandler implements Listener {
+public class ExperimentalHandler implements Listener {
     private final DevCraftPlugin _plugin;
     private NPC npc;
 
-    public FooHandler(DevCraftPlugin plugin){
+    public ExperimentalHandler(DevCraftPlugin plugin){
         Bukkit.getPluginManager().registerEvents(this, plugin);
         _plugin = plugin;
     }
@@ -37,9 +35,7 @@ public class FooHandler implements Listener {
         Material block = event.getBlock().getType();
 
         if (block == Material.TORCH) {
-          // NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Chowmeinnnnnn").getOrAddTrait(FishTogetherTrait.class).getNPC();
-          //  npc.spawn(event.getBlock().getLocation());
-           // event.getBlock().setType(Material.AIR);
+
 
         } else if (block == Material.BLACK_WOOL) {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {
@@ -62,8 +58,6 @@ public class FooHandler implements Listener {
             }
         } else if (block == Material.BLUE_WOOL) {
             FindNearestOakLogAndGetIt(player);
-        } else if (block == Material.RED_WOOL) {
-            MiningLogic.StartMining(event,player,block,_plugin);
         }
         else if (block == Material.GOLD_BLOCK) {
             NpcHelper.MoveClosestNPCOneBlockPostiveX(event,_plugin);
@@ -79,14 +73,6 @@ public class FooHandler implements Listener {
         else if (block == Material.COAL_BLOCK) {
             var npc = GetNearestNPCToBlock(event.getBlock());
             npc.getEntity().setVelocity(new Vector(0,0,0));
-
-        }
-        else if (block == Material.EMERALD_BLOCK) {
-            var npc = GetNearestNPCToBlock(event.getBlock());
-
-            var instanceOfTraitClass = new MyTrait();
-
-            npc.addTrait(instanceOfTraitClass);
 
         }
         else if (block == Material.HAY_BLOCK) {
@@ -119,12 +105,6 @@ public class FooHandler implements Listener {
             SpitOutAllInventory(npc);
 
         }
-
-
-
-
-
-
     }
 
     private void SpitOutAllInventory(NPC npc) {
@@ -140,14 +120,7 @@ public class FooHandler implements Listener {
             drop.setVelocity(npc.getEntity().getLocation().getDirection().multiply(.8));
 
             npcInv.setItem(i,new ItemStack(Material.STICK, 0));
-
-
-
-
-
         }
-
-
     }
 
     private void SpitOutOneInventory(NPC npc) {
@@ -177,27 +150,14 @@ public class FooHandler implements Listener {
                        npcItemStack = npcInv.getInventoryView().getItem(i);
                        if(npcItemStack == null) continue;
                 }
-
-
-
-
             }
-
-
-
-
-
-
             for(int n = 0; n < 27; ++n) {
                 ItemStack stack = npcInv.getInventoryView().getItem(n);;
                 if(stack == null) continue;
                 chestInventory.setItem(n, stack) ;
 
             }
-
-
         }
-
     }
 
     private void clearAllItemsFromNPCInventory(NPC npc) {
@@ -244,10 +204,6 @@ public class FooHandler implements Listener {
 
             };
             npcInv.setContents(itemStacks);
-
-
-
-
     }
 
     public void findChestAndTransferItems(NPC npc) {
@@ -255,25 +211,14 @@ public class FooHandler implements Listener {
 
         Bukkit.getLogger().info(block.toString());
         if (block.getType() == Material.CHEST) {
-
-
             Chest chest = (Chest) block.getState();
             var chestInventory = chest.getInventory();
-
-
             var npcInv = npc.getOrAddTrait(Inventory.class);
-
-
-
-
             for(int n = 0; n < 27; ++n) {
                 ItemStack stack = npcInv.getInventoryView().getItem(n);;
                 if(stack == null) continue;
                 chestInventory.setItem(n, stack) ;
-
             }
-
-
         }
     }
     private void HaveNPCSwingAxeFor3Seconds(NPC npc) {
@@ -309,9 +254,6 @@ public class FooHandler implements Listener {
 
                 //We have the location of the floating Log
                 //Now we need to get the location of ground next to it.
-
-
-
                 var locationToNavigateTo = surfaceNextToBlock.getLocation();
                 if (nearestNPC.getNavigator().canNavigateTo(locationToNavigateTo))
                 {
@@ -323,26 +265,10 @@ public class FooHandler implements Listener {
                 {
                     Bukkit.broadcastMessage("We cannot reach location: " + locationToNavigateTo.toString() );
                 }
-
                  // When the NPC reaches the oak log, remove the block and add an oak log to the NPC's inventory
 
                 NPC finalNearestNPC = nearestNPC;
-
                 ScheduleTaskToSeeIfWeHaveArrived(finalNearestNPC,oakLog,player);
-
-//
-//                    nearestNPC.getNavigator().getDefaultParameters().addSingleUseCallback((NavigatorCallback) (callback) -> {
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I am chopping the tree ");
-//                        oakLog.setType(Material.AIR);
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I am adding it to my inventory ");
-//
-//                        var itemStackArray = finalNearestNPC.getTrait(Inventory.class).getContents();
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I see" + itemStackArray[1].toString() + " in array 1");
-//
-//                        itemStackArray[1].add(1);
-//
-//                        //finalNearestNPC.getTrait(Inventory.class).setItem(1,new ItemStack(Material.OAK_LOG));
-//                    });
             }
         }
     }
@@ -365,11 +291,8 @@ public class FooHandler implements Listener {
 
                     return nextBlock;
                 }
-
             }
-
             return null;
-
     }
 
     @Nullable
@@ -434,7 +357,6 @@ public class FooHandler implements Listener {
                                         this.cancel();
                                         return;
                                     }
-
                                     oakLog.setType(Material.AIR);
                                     FindNearestOakLogAndGetIt(player);
                                     this.cancel();
@@ -446,26 +368,9 @@ public class FooHandler implements Listener {
 
 
                 }
-
-
-
-
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I am adding it to my inventory ");
-//
-//                        var itemStackArray = finalNearestNPC.getTrait(Inventory.class).getContents();
-//                        Bukkit.dispatchCommand(Bukkit.getPlayer("TrySomethingDev"), "say I see" + itemStackArray[1].toString() + " in array 1");
-//
-//                        itemStackArray[1].add(1);
-//
-//                        //finalNearestNPC.getTrait(Inventory.class).setItem(1,new ItemStack(Material.OAK_LOG));
-
             }
         }, 20L * 1L /*<-- the delay */);
-
-
     }
-
-
 
     public Block findNearestOakLog(Player player) {
         Block playerBlock = player.getLocation().getBlock();
