@@ -3,10 +3,8 @@ package net.trysomethingdev.devcraft.handlers;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.DevCraftTwitchUsersManager;
-import net.trysomethingdev.devcraft.UserChatMessageToCommand;
-import org.bukkit.Bukkit;
+import net.trysomethingdev.devcraft.services.DevCraftTwitchUsersManager;
+import net.trysomethingdev.devcraft.services.UserChatMessageToCommand;
 
 import java.util.Collection;
 

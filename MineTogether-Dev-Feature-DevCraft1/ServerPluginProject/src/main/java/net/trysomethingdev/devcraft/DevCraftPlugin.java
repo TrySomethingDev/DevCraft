@@ -1,5 +1,6 @@
 package net.trysomethingdev.devcraft;
 
+import net.trysomethingdev.devcraft.services.DevCraftTwitchUsersManager;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffCommand;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffTabCompleter;

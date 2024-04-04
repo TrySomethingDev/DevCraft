@@ -1,7 +1,6 @@
 package net.trysomethingdev.devcraft.traits;
 
 import net.citizensnpcs.Settings;
-import net.citizensnpcs.api.ai.tree.Sequence;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
@@ -11,7 +10,7 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.util.DataKey;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.DevCraftTwitchUser;
+import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

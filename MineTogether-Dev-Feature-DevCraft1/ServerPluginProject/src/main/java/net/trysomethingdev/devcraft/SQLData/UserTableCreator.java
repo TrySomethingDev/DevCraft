@@ -1,4 +1,6 @@
-package net.trysomethingdev.devcraft;
+package net.trysomethingdev.devcraft.SQLData;
+
+import net.trysomethingdev.devcraft.SQLData.DatabaseManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;

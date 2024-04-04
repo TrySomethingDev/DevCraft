@@ -1,28 +1,15 @@
 package net.trysomethingdev.devcraft.traits;
 
-import net.citizensnpcs.Settings;
-import net.citizensnpcs.api.ai.tree.StatusMapper;
-import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.util.Vector;
-
-import java.util.LinkedList;
-import java.util.Queue;
 
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
