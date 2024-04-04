@@ -1,4 +1,4 @@
-package net.trysomethingdev.devcraft;
+package net.trysomethingdev.devcraft.models;
 
 
 import com.google.gson.annotations.Expose;
@@ -7,6 +7,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.SkinTrait;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.devcraft.util.DelayedTask;

@@ -1,4 +1,4 @@
-package net.trysomethingdev.devcraft;
+package net.trysomethingdev.devcraft.SQLData;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

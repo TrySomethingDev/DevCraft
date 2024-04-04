@@ -1,12 +1,12 @@
-package net.trysomethingdev.devcraft;
+package net.trysomethingdev.devcraft.command;
 
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
-import org.bukkit.Bukkit;
+import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 
-public class MineCommand implements Command {
+public class FishingCommand implements Command {
     @Override
     public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user) {
-        user.StartMineCommand();
+        user.StartFishingCommand();
     }
 }

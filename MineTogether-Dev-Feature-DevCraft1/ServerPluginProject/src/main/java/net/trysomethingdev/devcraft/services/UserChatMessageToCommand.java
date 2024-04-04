@@ -1,7 +1,9 @@
-package net.trysomethingdev.devcraft;
+package net.trysomethingdev.devcraft.services;
 
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
+import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
+import net.trysomethingdev.devcraft.command.*;
 import org.bukkit.Bukkit;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +17,7 @@ public class UserChatMessageToCommand {
         commandRegistry.put("!SKIN", new SkinChangeCommand());
         commandRegistry.put("!JOIN", new JoinCommand());
         commandRegistry.put("!RESPAWN", new RespawnCommand());
-        commandRegistry.put("!EMPTY", new EmptyInventory());
+        commandRegistry.put("!EMPTY", new EmptyInventoryCommand());
         commandRegistry.put("!FOLLOW", new FollowPlayerCommand());
         commandRegistry.put("!DANCE", new DanceCommand());
         commandRegistry.put("!FISH", new FishingCommand());

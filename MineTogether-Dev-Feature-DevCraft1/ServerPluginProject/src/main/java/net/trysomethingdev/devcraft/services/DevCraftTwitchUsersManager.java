@@ -1,7 +1,9 @@
-package net.trysomethingdev.devcraft;
+package net.trysomethingdev.devcraft.services;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import net.trysomethingdev.devcraft.DevCraftPlugin;
+import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 
 import java.io.*;
