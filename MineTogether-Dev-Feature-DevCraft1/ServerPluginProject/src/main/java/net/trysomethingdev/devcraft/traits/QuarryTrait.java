@@ -40,11 +40,12 @@ import java.util.Queue;
     private Block block;
     private boolean scanning;
     private boolean arrivedAtMiningLocation;
+    private boolean finishedMining;
+    private boolean creatingMiningPlan;
+    private int stillSolidCounter;
+    private int stuckExecuting;
 
-    public QuarryTrait() {
-        super("quarry");
-        inventory = Bukkit.createInventory(null, 27); // Create a new inventory for the NPC
-    }
+
 
         DevCraftPlugin plugin = null;
 
@@ -61,8 +62,35 @@ import java.util.Queue;
 
         int minSize = 4;
         int maxSize = 80;
+
+    public QuarryTrait() {
+        super("quarry");
+
+        var length = 80;
+        var width = 80;
+        var depth = 400;
+
+
+        if(length < minSize) length = minSize;
+        if(width < minSize) width = minSize;
+        if(depth < minSize) depth = minSize;
+
+        if(length > maxSize) length = maxSize;
+        if(width > maxSize) width = maxSize;
+        if(depth > 400) depth = 400;
+
+        this.length = length;
+        this.width = width;
+        this.depth = depth;
+        inventory = Bukkit.createInventory(null, 27); // Create a new inventory for the NPC
+
+
+    }
+
+
     public QuarryTrait(int length, int width, int depth, DevCraftPlugin plugin) {
         super("quarry");
+
 
         this.plugin = plugin;
 
@@ -117,43 +145,76 @@ import java.util.Queue;
     private Inventory inventory;
         @Override
         public void run() {
-            
-            if (!npc.isSpawned())  return;
-            if (npc.getNavigator().isNavigating()) return;
-            if(npc.getDefaultGoalController().isExecutingGoal()) return;
 
-            //We need to arrive at the mining location
-            if(!arrivedAtMiningLocation)
-            {
-                if(npc.getEntity().getLocation().distance(plugin.getMiningLocationStartPoint()) > 2)
+
+         //   Bukkit.broadcastMessage("Running A");
+            if (!npc.isSpawned())  return;
+            if (npc.getNavigator().isNavigating()) {
                 {
-                    npc.getNavigator().setTarget(plugin.getMiningLocationStartPoint());
+                    if(block != null &&  npc.getEntity().getLocation().distance(block.getLocation() )< 2)
+                    {
+                        npc.getNavigator().cancelNavigation();
+                    }
+
+
+
                 }
-                else{
-                    arrivedAtMiningLocation = true;
-                }
+             Bukkit.broadcastMessage("Navigating");
+                return;
             }
+
+            if(npc.getDefaultGoalController().isExecutingGoal()) {
+                Bukkit.broadcastMessage("ExecutingGoal");
+                stuckExecuting++;
+                if(stuckExecuting > 100)
+                {
+                    Bukkit.broadcastMessage("Stuck Executing");
+                    Bukkit.broadcastMessage(block.toString());
+
+                }
+                return;
+            }
+            else {
+                stuckExecuting = 0;
+            }
+
+            if(finishedMining) {
+                Bukkit.broadcastMessage("finishedMining");
+                return;
+            }
+            if(creatingMiningPlan) {
+                Bukkit.broadcastMessage("creating mining plan");
+                return;
+            }
+
+          //  Bukkit.broadcastMessage("Running B");
+            //We need to arrive at the mining location
+//            if(!arrivedAtMiningLocation)
+//            {
+//                Bukkit.broadcastMessage("We have not arrive at mining location");
+//                if(npc.getEntity().getLocation().distance(plugin.getMiningLocationStartPoint()) > 2)
+//                {
+//                    Bukkit.broadcastMessage("Going to Mining Location Start Point");
+//                    npc.getNavigator().setTarget(plugin.getMiningLocationStartPoint());
+//                }
+//                else{
+//                    Bukkit.broadcastMessage("Arrived at Mining location");
+//                    arrivedAtMiningLocation = true;
+//                }
+//            }
 
 
             if(miningLocation == null)
             {
+                creatingMiningPlan = true;
+                Bukkit.broadcastMessage("Setting Mining Location");
                 miningLocation = plugin.getMiningLocationStartPoint();
+                Bukkit.broadcastMessage("Mining Location= " + miningLocation);
                 CreateListOfLocationsToMine(miningLocation);
                 readyForNextBlock = true;
+                creatingMiningPlan = false;
             }
 
-
-
-
-            if(block !=null && block.getType().isSolid())
-            {
-                block.breakNaturally();
-                return;
-
-            } else if(block != null && !block.getType().isSolid())
-            {
-                readyForNextBlock = true;
-            }
 
 
             //If inventory is full or we reach our desired depth, or bedrock, then TP up to the surface and find the player.
@@ -161,17 +222,67 @@ import java.util.Queue;
                     inventory.firstEmpty() == -1 ||
                     finishedQueue || hitBedrock || currentDepth >= depth) { // Check if the inventory is full
                // returnToSurface();
-                npc.removeTrait(QuarryTrait.class);
-                npc.teleport(plugin.getNpcGlobalSpawnPoint(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                npc.getOrAddTrait(FollowTraitCustom.class);
-            } else if (readyForNextBlock){
+                 finishedMining = true;
+                 miningLocation = null;
+                 Bukkit.broadcastMessage("Finished Mining Going Back to Player");
 
+                npc.teleport(plugin.getNpcGlobalSpawnPoint(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+              //  npc.getOrAddTrait(FollowTraitCustom.class);
+
+                 npc.removeTrait(QuarryTrait.class);
+            } else {
+
+                 Bukkit.broadcastMessage("Queue Size: "  + queueOfBlocks.size());
+                             if(block != null && block.getType().isSolid())
+               {
+                   stillSolidCounter++;
+                   Bukkit.broadcastMessage("Block is still solid");
+                   if(stillSolidCounter > 20)
+                   {
+                       stillSolidCounter = 0;
+                       if(npc.getEntity().getLocation().distance(block.getLocation()) > 2)
+                         {
+                             Bukkit.broadcastMessage("WE Need to Try To get there");
+                             Bukkit.broadcastMessage(block.getLocation().toString());
+                             Bukkit.broadcastMessage(String.valueOf(npc.getNavigator().canNavigateTo(block.getLocation())));
+                             npc.getNavigator().setTarget(block.getLocation());
+                         }
+                       else
+                       {
+                          mineBlock(block);
+                       }
+
+                   }
+                   return;
+               }
+//                 if(block != null && block.getType().isSolid())
+//                 {
+//                     Bukkit.broadcastMessage("Block is still solid");
+//                     stillSolidCounter++;
+//                     if(stillSolidCounter > 10)
+//                     {
+//                         stillSolidCounter = 0;
+//                         if(npc.getEntity().getLocation().distance(block.getLocation()) < 2)
+//                         {
+//                             mineBlock(block);
+//                         }
+//                         else {
+//                             Bukkit.broadcastMessage("WE Need to Try To get there");
+//                             Bukkit.broadcastMessage(block.getLocation().toString());
+//                             Bukkit.broadcastMessage(String.valueOf(npc.getNavigator().canNavigateTo(block.getLocation())));
+//                             npc.getNavigator().setTarget(block.getLocation());
+//                         }
+//
+//                     }
+//                     return;
+//                 }
                  block = queueOfBlocks.poll();
                  if(block == null){
+                     Bukkit.broadcastMessage("Finished Queue");
                   finishedQueue = true;
                  }
                  else{
-
+                   Bukkit.broadcastMessage("Mining Block");
                      mineBlock(block);
 
                  }
@@ -180,6 +291,7 @@ import java.util.Queue;
 
     private void CreateListOfLocationsToMine(Location miningLocation) {
         queueOfBlocks = new LinkedList<>();
+        Bukkit.broadcastMessage("Creating Queue of blocks");
         for(int y = 0; y < depth; y++  )
             for (int x = 0; x < width; x++) {
                 for (int z = 0; z < length; z++) {
@@ -196,6 +308,7 @@ import java.util.Queue;
                 }
             }
         }
+        Bukkit.broadcastMessage("Finished Creating Queue of blocks");
        // currentDepth++;
     }
 
@@ -210,17 +323,29 @@ import java.util.Queue;
 //            npc.getDefaultGoalController().isExecutingGoal()
 //
 //        }, 20 * 1);
-                if(block.getLocation().distance(npc.getEntity().getLocation()) > 2)
+
+                if(block.getLocation().getBlock() != null && block.getLocation().getBlock().getType() == Material.AIR)
                 {
-                    npc.getNavigator().setTarget(block.getLocation());
+                    Bukkit.broadcastMessage("Block is Air, Skipping");
                     return;
                 }
+//
 
-                blockBreakerConfiguration.radius(10);
-                BlockBreaker breaker = npc.getBlockBreaker(block, blockBreakerConfiguration);
+        blockBreakerConfiguration.radius(3);
+        BlockBreaker breaker = npc.getBlockBreaker(block, blockBreakerConfiguration);
+        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
+
+//        if(npc.getEntity().getLocation().distance(block.getLocation()) < 2)
+//        {
+//            blockBreakerConfiguration.radius(3);
+//            BlockBreaker breaker = npc.getBlockBreaker(block, blockBreakerConfiguration);
+//            npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
+//        }
+//        else {
+//            npc.getNavigator().setTarget(block.getLocation());
+//        }
 
 
-                npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
 
 
     }
@@ -307,7 +432,11 @@ import java.util.Queue;
         @Override
         public void onAttach() {
 
-
+            Bukkit.broadcastMessage("OnAttach");
+            if(plugin == null)
+          {
+              plugin = (DevCraftPlugin) Bukkit.getPluginManager().getPlugin("DevCraftPlugin");
+            }
             npc.removeTrait(FollowTraitCustom.class);
             npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
 
@@ -327,6 +456,29 @@ import java.util.Queue;
         @Override
         public void onSpawn() {
         //    Bukkit.dispatchCommand(npc.getEntity(),"say Hi I have loaded.");
+            Bukkit.broadcastMessage("OnSpawn");
+            if(plugin == null)
+            {
+                plugin = (DevCraftPlugin) Bukkit.getPluginManager().getPlugin("DevCraftPlugin");
+            }
+
+//            if(plugin == null)
+//            {
+//                plugin = (DevCraftPlugin) Bukkit.getPluginManager().getPlugin("DevCraftPlugin");
+//            }
+//            npc.removeTrait(FollowTraitCustom.class);
+//            npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
+//
+//            //   inventory = Bukkit.createInventory(null, 36); // Create a new inventory for the NPC
+//            var eq = npc.getOrAddTrait(Equipment.class);
+//            eq.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.DIAMOND_PICKAXE));
+//            miningLocation = null;
+//            queueOfBlocks = null;
+//
+//            miningLocation = plugin.getMiningLocationStartPoint();
+//            creatingMiningPlan = true;
+//            CreateListOfLocationsToMine(miningLocation);
+//            creatingMiningPlan = false;
         }
 
         //run code when the NPC is removed. Use this to tear down any repeating tasks.

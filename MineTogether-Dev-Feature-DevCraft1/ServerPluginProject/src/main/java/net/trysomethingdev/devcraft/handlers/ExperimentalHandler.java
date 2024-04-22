@@ -31,6 +31,8 @@ public class ExperimentalHandler implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
+
+        var npcHelper = new NpcHelper();
         Player player = event.getPlayer();
         Material block = event.getBlock().getType();
 
@@ -60,10 +62,10 @@ public class ExperimentalHandler implements Listener {
             FindNearestOakLogAndGetIt(player);
         }
         else if (block == Material.GOLD_BLOCK) {
-            NpcHelper.MoveClosestNPCOneBlockPostiveX(event,_plugin);
+            npcHelper.moveClosestNPCOneBlockPostiveX(event,_plugin);
         }
         else if (block == Material.DIAMOND_BLOCK) {
-            NpcHelper.MoveClosestNPCOneBlockNegativeX(event,_plugin);
+            npcHelper.moveClosestNPCOneBlockNegativeX(event,_plugin);
         }
         else if (block == Material.BONE_BLOCK) {
             var npc = GetNearestNPCToBlock(event.getBlock());

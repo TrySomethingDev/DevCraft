@@ -99,6 +99,7 @@ public class FollowTraitCustom extends Trait {
 
     @Override
     public void run() {
+        Bukkit.broadcastMessage("Follow Trait Custom is running");
         if (player == null || !player.isValid()) {
             if (followingUUID == null)
                 return;

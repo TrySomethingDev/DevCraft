@@ -1,6 +1,7 @@
 package net.trysomethingdev.devcraft;
 
-import net.trysomethingdev.devcraft.services.DevCraftTwitchUsersManager;
+import net.trysomethingdev.devcraft.services.UserChatMessageToCommandService;
+import net.trysomethingdev.devcraft.services.UserService;
 import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffCommand;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffTabCompleter;
@@ -39,25 +40,22 @@ public final class DevCraftPlugin extends JavaPlugin {
     public static Logger log = Logger.getLogger("Minecraft");
     /** Name of the plugin, used in output messages */
     protected static String name = "Spawn";
-
     public final static String TWITCH_SETUP_PERMISSION = "twitchchat.setup";
     public final static String TWITCH_CHAT_PERMISSION = "twitchchat.chat";
     public final static String TWITCH_TOGGLE_PERMISSION = "twitchchat.toggle";
-
     private DataManager dataManager;
     private EncryptionManager encryptionManager;
     private TwitchBot twitchBot;
-    private DevCraftTwitchUsersManager twitchUsersManager;
-
-    private DevCraftChatHandler devCraftChatHandler;
-
+    private UserService userService;
+    private ChatHandler chatHandler;
+    private UserChatMessageToCommandService userChatMessageToCommandService;
     private Location npcGlobalSpawnPoint;
-
     private Location fishingAreaStartPoint;
     private Location miningLocationStartPoint;
 
     @Override
     public void onEnable() {
+        Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
 
         saveDefaultConfig();
         String worldName = getConfig().getString("WorldName");
@@ -65,21 +63,20 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         miningLocationStartPoint = getLocationFromConfig(worldName, "MiningLocationStartPoint");
         npcGlobalSpawnPoint =  getLocationFromConfig(worldName, "NpcGlobalSpawnPoint");
-        Bukkit.getLogger().info("********************&&&&&&&");
-        Bukkit.getLogger().info(npcGlobalSpawnPoint.toString());
         fishingAreaStartPoint = getLocationFromConfig(worldName, "FishingAreaStartPoint");
 
-        Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
+
 
         new DelayedTask(this);
+
         dataManager = new DataManager();
         encryptionManager = new EncryptionManager();
-
-        twitchUsersManager = new DevCraftTwitchUsersManager(this);
-        devCraftChatHandler =   new DevCraftChatHandler(this);
-
+        userService = new UserService(this);
+        chatHandler =   new ChatHandler(this);
+        userChatMessageToCommandService = new UserChatMessageToCommandService(this);
         twitchBot = new TwitchBot();
         boolean success = twitchBot.reload();
+
         if (!success) getLogger().log(Level.WARNING, "Unable to start twitch plugin fully. Please make sure it is fully configured!");
         getCommand("twitch").setExecutor(new TwitchCommand());
         getCommand("twitch").setTabCompleter(new TwitchTabCompleter());
@@ -92,6 +89,7 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         new ExperimentalHandler(this);
         getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
+
         RegisterCitizensTraits();
     }
 
@@ -124,7 +122,5 @@ public final class DevCraftPlugin extends JavaPlugin {
         if (twitchBot != null) twitchBot.getTwirk().close();
         twitchBot = null;
     }
-
-
 
 }
