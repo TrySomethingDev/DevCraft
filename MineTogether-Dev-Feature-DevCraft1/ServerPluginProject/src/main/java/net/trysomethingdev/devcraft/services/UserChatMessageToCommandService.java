@@ -29,6 +29,7 @@ public class UserChatMessageToCommandService {
         commandRegistry.put("!MINE", new MineCommand());
         commandRegistry.put("!QUARRY", new QuarryCommand());
         commandRegistry.put("!EXIT", new ExitCommand());
+        commandRegistry.put("!WAVE", new WaveCommand());
     }
 
     public void processChatMessageFromSender(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user) {

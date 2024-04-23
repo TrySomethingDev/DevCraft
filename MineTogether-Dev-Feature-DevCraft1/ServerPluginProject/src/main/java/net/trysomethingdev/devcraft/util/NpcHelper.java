@@ -75,6 +75,9 @@ public class NpcHelper {
         if(npc.hasTrait(UnloadTrait.class)) npc.removeTrait(UnloadTrait.class);
         if(npc.hasTrait(MinerTrait.class)) npc.removeTrait(MinerTrait.class);
         if(npc.hasTrait(StripMinerTrait.class)) npc.removeTrait(StripMinerTrait.class);
+
+        if(npc.hasTrait(WaveTrait.class)) npc.removeTrait(WaveTrait.class);
+
     }
 
     public void resetHeadPosition(NPC npc) {
