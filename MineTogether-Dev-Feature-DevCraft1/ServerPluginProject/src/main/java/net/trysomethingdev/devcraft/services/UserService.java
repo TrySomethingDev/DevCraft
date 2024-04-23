@@ -2,23 +2,37 @@ package net.trysomethingdev.devcraft.services;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.SkinTrait;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
+import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.devcraft.util.DelayedTask;
+import net.trysomethingdev.devcraft.util.NpcHelper;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class DevCraftTwitchUsersManager {
+public class UserService {
 
     private final DevCraftPlugin plugin;
     List<DevCraftTwitchUser> devCraftTwitchUsers = new ArrayList<DevCraftTwitchUser>();
 
-    public DevCraftTwitchUsersManager(DevCraftPlugin devCraftPlugin) {
+    public UserService(DevCraftPlugin devCraftPlugin) {
         plugin = devCraftPlugin;
         LoadSavedList();
-        SaveThisListToConfigEverySoManyMinutes(0.5);
+        SaveThisListToConfigEverySoManyMinutes(0.1);
     }
     private void LoadSavedList() {
         Gson gson = new GsonBuilder().setPrettyPrinting()
@@ -52,8 +66,6 @@ public class DevCraftTwitchUsersManager {
         }, (long) (20 * (minutesBetweenSaves * 60)));
     }
 
-
-
         //Add
     public void Add(DevCraftTwitchUser twitchUser){
         if (!devCraftTwitchUsers.contains(twitchUser))
@@ -70,30 +82,33 @@ public class DevCraftTwitchUsersManager {
         }
     }
 
-    public DevCraftTwitchUser getUserByTwitchUserName(String joinedNick) {
+    public DevCraftTwitchUser getUserByTwitchUserName(String twitchUserName) {
         for (var user : devCraftTwitchUsers)
         {
-            if(joinedNick.equalsIgnoreCase(user.twitchUserName)) {
+            if(twitchUserName.equalsIgnoreCase(user.twitchUserName)) {
                 return user;
             }
         }
         return null;
     }
 
-
-    public void userParted(String partedNick) {
-        var user = getUserByTwitchUserName(partedNick);
-        if(user != null) user.Parted();
-    }
-
     public DevCraftTwitchUser getOrAddUser(String userName) {
         var user = this.getUserByTwitchUserName(userName);
         if(user == null)
         {
-            this.Add(new DevCraftTwitchUser(plugin,userName,userName, plugin.getNpcGlobalSpawnPoint()));
+            this.Add(new DevCraftTwitchUser(userName,userName));
             user = this.getUserByTwitchUserName(userName);
         }
-
         return user;
     }
+
+
+
+
+
+
+
+
+
+
 }

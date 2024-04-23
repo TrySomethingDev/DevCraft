@@ -7,7 +7,7 @@ import com.gikk.twirk.types.users.TwitchUser;
 import net.md_5.bungee.api.ChatColor;
 
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.handlers.DevCraftChatHandler;
+import net.trysomethingdev.devcraft.handlers.ChatHandler;
 import net.trysomethingdev.twitchplugin.Data.DataManager;
 import net.trysomethingdev.twitchplugin.Utilites.Colorizer;
 import org.bukkit.Bukkit;
@@ -19,13 +19,13 @@ public class onChatEvent implements TwirkListener {
 
 
     DevCraftPlugin plugin;
-    private final DevCraftChatHandler devCraftChatHandler;
+    private final ChatHandler devCraftChatHandler;
     DataManager dataManager;
 
     public onChatEvent() {
         plugin = DevCraftPlugin.getPlugin(DevCraftPlugin.class);
         this.dataManager = plugin.getDataManager();
-        this.devCraftChatHandler = plugin.getDevCraftChatHandler();
+        this.devCraftChatHandler = plugin.getChatHandler();
     }
 
     @Override
