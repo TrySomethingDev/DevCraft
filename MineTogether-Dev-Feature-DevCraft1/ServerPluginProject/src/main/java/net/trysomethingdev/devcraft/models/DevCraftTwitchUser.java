@@ -25,6 +25,8 @@ public class DevCraftTwitchUser {
     @Expose public String minecraftSkinName;
     @Expose public int blocksMined;
 
+    @Expose public int fishCaught;
+
 
     public DevCraftTwitchUser(String twitchUserName, String minecraftSkinName) {
         this.twitchUserName = twitchUserName;

@@ -52,6 +52,7 @@ public final class DevCraftPlugin extends JavaPlugin {
     private Location npcGlobalSpawnPoint;
     private Location fishingAreaStartPoint;
     private Location miningLocationStartPoint;
+    private String mainPlayerUserName;
 
     @Override
     public void onEnable() {
@@ -64,7 +65,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         miningLocationStartPoint = getLocationFromConfig(worldName, "MiningLocationStartPoint");
         npcGlobalSpawnPoint =  getLocationFromConfig(worldName, "NpcGlobalSpawnPoint");
         fishingAreaStartPoint = getLocationFromConfig(worldName, "FishingAreaStartPoint");
-
+        mainPlayerUserName = getConfig().getString("MainPlayerUserName");
 
 
         new DelayedTask(this);
@@ -124,4 +125,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         twitchBot = null;
     }
 
+    public String getMainPlayerUserName() {
+        return mainPlayerUserName;
+    }
 }

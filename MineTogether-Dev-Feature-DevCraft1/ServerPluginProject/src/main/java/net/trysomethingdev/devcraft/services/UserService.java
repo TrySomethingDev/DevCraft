@@ -102,14 +102,6 @@ public class UserService {
         return user;
     }
 
-    private NPC getNPCThatMatchesName(DevCraftTwitchUser user) {
-        for (var npc : CitizensAPI.getNPCRegistry()) {
-            if (user.twitchUserName.equals(npc.getName())) {
-                return npc;
-            }
-        }
-        return null;
-    }
 
 
 

@@ -491,6 +491,8 @@ public class FishTogetherTrait extends Trait {
 
         if (catchPercent > chance && fishHook != null &&  catchType != null && catchType != FishingHelper.CatchType.NONE) {
             try {
+                var user = plugin.getUserService().getOrAddUser(npc.getName());
+                user.fishCaught++;
                 fish.remove();
             }
             catch (Exception e) {
