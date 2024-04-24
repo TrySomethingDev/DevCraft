@@ -2,6 +2,7 @@ package net.trysomethingdev.devcraft.traits;
 
 import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
+import net.citizensnpcs.api.event.NPCCombustByBlockEvent;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -334,6 +335,9 @@ import java.util.Queue;
         blockBreakerConfiguration.radius(3);
         BlockBreaker breaker = npc.getBlockBreaker(block, blockBreakerConfiguration);
         npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
+
+        //This is where we add the block broken to User Stats
+        plugin.getUserService().getOrAddUser(npc.getName()).blockBrokenByUser(block.getType());
 
 //        if(npc.getEntity().getLocation().distance(block.getLocation()) < 2)
 //        {

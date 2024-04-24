@@ -26,11 +26,20 @@ public class StatsCommand implements Command {
 
                //Put code here that will get the current user and type to chat how many fish they have caught
 
-            Bukkit.broadcastMessage("Starting Stat Command");
-            Bukkit.broadcastMessage("MainPlayerUserName is:" + plugin.getMainPlayerUserName());
+           // Bukkit.broadcastMessage("Starting Stat Command");
+          //  Bukkit.broadcastMessage("MainPlayerUserName is:" + plugin.getMainPlayerUserName());
 
-            Bukkit.dispatchCommand(Bukkit.getPlayer(plugin.getMainPlayerUserName()), "tc Stats for player " + user.twitchUserName + ": " + " Fish Caught: " + user.fishCaught );
-            Bukkit.broadcastMessage("Ending Stat Command");
+            Bukkit.dispatchCommand(Bukkit.getPlayer(plugin.getMainPlayerUserName()), "tc Stats for player " + user.twitchUserName + ": "
+                    + " Fish: " + user.fishCaught
+                    + " Total Blocks Broken: " + user.blocksMined
+                    + " Stone: " + user.blocksMinedStone
+                    + " Iron: " + user.blocksMinedIron
+                    + " Copper: " + user.blocksMinedCopper
+                    + " RedStone: " + user.blocksMinedRedstone
+                    + " Lapis: " + user.blocksMinedLapis
+                    + " Diamond: " + user.blocksMinedDiamonds
+            );
+         //   Bukkit.broadcastMessage("Ending Stat Command");
 
         }, 20);
 

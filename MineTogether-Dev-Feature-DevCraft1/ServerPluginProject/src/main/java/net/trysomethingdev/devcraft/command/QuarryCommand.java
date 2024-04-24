@@ -28,11 +28,11 @@ public class QuarryCommand implements Command {
         if (Arrays.stream(splitStringList).count() != 4)
         {
             //Just do default 1x1x1
-            StartQuarryTrait(80,80,400,user,plugin);
+            StartQuarryTrait(10,10,400,user,plugin);
         }
         else {
 
-            int length = 80, width = 80,depth = 400;
+            int length = 10, width = 10,depth = 400;
             try {
                 length = Integer.parseInt(splitStringList[1]);
                 width =  Integer.parseInt(splitStringList[2]);
