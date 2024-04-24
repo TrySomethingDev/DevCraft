@@ -70,6 +70,8 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         new DelayedTask(this);
 
+       // new NpcBlockBreakCustomHandler(this);
+
         dataManager = new DataManager();
         encryptionManager = new EncryptionManager();
         userService = new UserService(this);
