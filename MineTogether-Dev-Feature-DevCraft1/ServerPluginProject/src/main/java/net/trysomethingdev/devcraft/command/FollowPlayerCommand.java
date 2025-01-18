@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
 
 public class FollowPlayerCommand implements Command {
     @Override
-    public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin) {
+    public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin, String arguments) {
 
         new DelayedTask(() -> {
             var npcHelper = new NpcHelper();

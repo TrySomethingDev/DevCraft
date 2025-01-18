@@ -19,7 +19,7 @@ public class GenericCommand implements Command {
     }
 
     @Override
-    public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin) {
+    public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin, String arguments) {
         new DelayedTask(() -> {
             var npcHelper = new NpcHelper();
             var npc = npcHelper.getNPCThatMatchesUser(user);

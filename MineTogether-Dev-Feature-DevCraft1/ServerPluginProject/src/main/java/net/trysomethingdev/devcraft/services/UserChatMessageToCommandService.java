@@ -57,15 +57,36 @@ public class UserChatMessageToCommandService {
         commandRegistry.put(commandName, command);
     }
 
+//    public void processChatMessageFromSender(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user) {
+//        if (user == null) return;
+//
+//        if (message.getContent().startsWith("!")) {
+//            var command = commandRegistry.get(message.getContent().toUpperCase());
+//            if (command != null) {
+//                command.execute(sender, message, user, plugin);
+//            } else {
+//                Bukkit.getLogger().info("Unknown command: " + message.getContent());
+//            }
+//        }
+//    }
+
     public void processChatMessageFromSender(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user) {
         if (user == null) return;
 
+        // Only process messages starting with "!"
         if (message.getContent().startsWith("!")) {
-            var command = commandRegistry.get(message.getContent().toUpperCase());
+            // Split the message by spaces to separate command and arguments
+            String[] parts = message.getContent().split(" ", 2);
+            String commandName = parts[0].toUpperCase(); // The command itself
+            String arguments = parts.length > 1 ? parts[1] : ""; // The arguments (if any)
+
+            // Look for the command in the registry
+            var command = commandRegistry.get(commandName);
             if (command != null) {
-                command.execute(sender, message, user, plugin);
+                // Pass the arguments (if any) to the command
+                command.execute(sender, message, user, plugin, arguments);
             } else {
-                Bukkit.getLogger().info("Unknown command: " + message.getContent());
+                Bukkit.getLogger().info("Unknown command: " + commandName);
             }
         }
     }

@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
 
 public class ExitCommand implements Command {
     @Override
-    public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin) {
+    public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin, String arguments) {
 
         new DelayedTask(() -> {
 
@@ -28,4 +28,5 @@ public class ExitCommand implements Command {
 
 
     }
+
 }

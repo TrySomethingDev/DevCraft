@@ -63,7 +63,7 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         saveDefaultConfig();
         String worldName = getConfig().getString("WorldName");
-        assert worldName != null;
+        //assert worldName != null;
 
         miningLocationStartPoint = getLocationFromConfig(worldName, "MiningLocationStartPoint");
         npcGlobalSpawnPoint =  getLocationFromConfig(worldName, "NpcGlobalSpawnPoint");

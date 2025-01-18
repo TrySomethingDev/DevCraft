@@ -18,7 +18,7 @@ import static net.trysomethingdev.devcraft.util.NpcHelper.*;
 
 public class QuarryCommand implements Command {
     @Override
-    public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin) {
+    public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin, String arguments) {
 
         StartQuarryTrait(80, 80, 400, user, plugin);
 

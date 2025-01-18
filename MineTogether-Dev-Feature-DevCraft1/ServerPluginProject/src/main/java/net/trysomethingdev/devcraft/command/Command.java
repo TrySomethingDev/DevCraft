@@ -6,5 +6,5 @@ import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 
 public interface Command {
-    void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin);
+    void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin, String arguments);
 }
