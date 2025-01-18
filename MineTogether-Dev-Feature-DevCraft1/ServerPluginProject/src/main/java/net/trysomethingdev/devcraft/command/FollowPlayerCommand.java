@@ -16,29 +16,16 @@ public class FollowPlayerCommand implements Command {
         new DelayedTask(() -> {
             var npcHelper = new NpcHelper();
             var npc = npcHelper.getNPCThatMatchesUser(user);
-            if(npc == null){
+            if (npc == null) {
                 if (npc == null) Bukkit.broadcastMessage("Could not find NPC with Name " + user.twitchUserName);
                 return;
             }
 
             //This is special logic. As we use this command to toggle following. So if you the npc already has the follow trait we just want to remove it.
-            npcHelper.resetHeadPosition(npc);
-                if(npc.hasTrait(FollowCustomTrait.class))
-                {
-
-                    npcHelper.removeTraits(npc);
-                }
-                else {
-                    npcHelper.removeTraits(npc);
-                    npcHelper.addFollowerTrait(npc);
-                }
-
-
-
-
-
+            npcHelper.removeTraitsResetHeadPositionAndRemoveToolFromInventory(npc);
+            if (!npc.hasTrait(FollowCustomTrait.class)) {
+                npcHelper.addFollowerTrait(npc);
+            }
         }, 20);
-
-
     }
 }

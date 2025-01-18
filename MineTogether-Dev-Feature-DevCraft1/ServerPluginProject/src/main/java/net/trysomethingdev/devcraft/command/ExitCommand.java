@@ -21,9 +21,7 @@ public class ExitCommand implements Command {
                 if (npc == null) Bukkit.broadcastMessage("Could not find NPC with Name " + user.twitchUserName);
                 return;
             }
-
-            npcHelper.resetHeadPosition(npc);
-            npcHelper.removeTraits(npc);
+            npcHelper.removeTraitsResetHeadPositionAndRemoveToolFromInventory(npc);
             if(npc.isSpawned()) npc.despawn();
 
         }, 20);

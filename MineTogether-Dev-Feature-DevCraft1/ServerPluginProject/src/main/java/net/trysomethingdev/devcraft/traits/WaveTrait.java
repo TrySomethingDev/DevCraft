@@ -18,131 +18,42 @@ import org.bukkit.util.Vector;
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-    @TraitName("wavetrait")
-    public class WaveTrait extends Trait {
+@TraitName("wavetrait")
+public class WaveTrait extends BaseTrait {
 
     private int jumpDelay;
 
     public WaveTrait() {
         super("wavetrait");
-       }
-
-        DevCraftPlugin plugin = null;
-
-        boolean SomeSetting = false;
-
-        // see the 'Persistence API' section
-        @Persist("mysettingname") boolean automaticallyPersistedSetting = false;
-
-        int length = 1;
-        int width = 1;
-        int depth = 1;
-
-        int currentDepth = 0;
-
-        int maxSize = 10;
-    public WaveTrait(int length, int width, int depth) {
-        super("wavetrait");
-
-
-
     }
 
-    // Here you should load up any values you have previously saved (optional).
-        // This does NOT get called when applying the trait for the first time, only loading onto an existing npc at server start.
-        // This is called AFTER onAttach so you can load defaults in onAttach and they will be overridden here.
-        // This is called BEFORE onSpawn, npc.getEntity() will return null.
-        public void load(DataKey key) {
-            SomeSetting = key.getBoolean("SomeSetting", false);
-        }
 
-        // Save settings for this NPC (optional). These values will be persisted to the Citizens saves file
-        public void save(DataKey key) {
-            key.setBoolean("SomeSetting",SomeSetting);
-        }
-
-        // An example event handler. All traits will be registered automatically as Spigot event Listeners
-        @EventHandler
-        public void click(net.citizensnpcs.api.event.NPCRightClickEvent event){
-            //Handle a click on a NPC. The event has a getNPC() method.
-            //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
-            if(event.getNPC() == this.getNPC() )
-            {
-               Bukkit.getLogger().info("NPC CLICKED ON - wave");
-                NPCJump();
-            }
-        }
-
-        private int tickCounter = 1;
-
-    private int rotation = 0;
-
-
-        @Override
-        public void run() {
-            
-//            if (!npc.isSpawned())  return;
-//
-//            if(npc.getNavigator().isNavigating())
-//            {
-//                return;
-//            }
-//
-//            rotation = (rotation + 500) % 360;
-//            npc.faceLocation(npc.getEntity().getLocation().add(Math.cos(Math.toRadians(rotation)), 0, Math.sin(Math.toRadians(rotation))));
-//
-//            if (jumpDelay <= 0) {
-//                LivingEntity entity = (LivingEntity) npc.getEntity();
-//                entity.setVelocity(entity.getVelocity().setY(1));  // Makes the NPC jump
-//                jumpDelay = 10000;  // Makes the NPC jump once per second
-//            } else {
-//                jumpDelay--;
-//            }
-
-        }
-
-
-
-
-
-    private static void Log(String s) {
-        Bukkit.getLogger().info(s);
+    @EventHandler
+    public void click(net.citizensnpcs.api.event.NPCRightClickEvent event) {
     }
 
-    private void NPCJump() {
-
+    @Override
+    public void run() {
     }
 
     boolean alternator;
     int counter = 0;
+
     private void Wave() {
-       // Bukkit.broadcastMessage("Counter: " + counter);
-        if(counter > 10) {
+        // Bukkit.broadcastMessage("Counter: " + counter);
+        if (counter > 10) {
             npc.removeTrait(WaveTrait.class);
             return;
         }
         counter++;
 
         new DelayedTask(() -> {
-
-
-
-            //npc.getOrAddTrait(FollowTraitCustom.class);
-
-
             alternator = !alternator;
-
-            if(alternator)
-            {
+            if (alternator) {
                 PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
-             //   PlayerAnimation.SNEAK.play((Player) npc.getEntity());
-            }
-            else{
+            } else {
                 PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
-              //  PlayerAnimation.STOP_SNEAKING.play((Player) npc.getEntity());
             }
-
-
             Wave();
 
         }, 3 * 1);
@@ -150,35 +61,32 @@ import org.bukkit.util.Vector;
 
 
     //Run code when your trait is attached to a NPC.
-        //This is called BEFORE onSpawn, so npc.getEntity() will return null
-        //This would be a good place to load configurable defaults for new NPCs.
-        @Override
-        public void onAttach() {
-       //     plugin.getServer().getLogger().info(npc.getName() + "has been assigned MyTrait!");
-     //       Bukkit.dispatchCommand(npc.getEntity(),"say I have a new trait.");
-            Wave();
-        }
-
-        // Run code when the NPC is despawned. This is called before the entity actually despawns so npc.getEntity() is still valid.
-        @Override
-        public void onDespawn() {
-       //     Bukkit.dispatchCommand(npc.getEntity(),"say Hi I have unloaded.");
-        }
-
-        //Run code when the NPC is spawned. Note that npc.getEntity() will be null until this method is called.
-        //This is called AFTER onAttach and AFTER Load when the server is started.
-        @Override
-        public void onSpawn() {
-        //    Bukkit.dispatchCommand(npc.getEntity(),"say Hi I have loaded.");
-
-        }
-
-        //run code when the NPC is removed. Use this to tear down any repeating tasks.
-        @Override
-        public void onRemove() {
-        }
-
+    //This is called BEFORE onSpawn, so npc.getEntity() will return null
+    //This would be a good place to load configurable defaults for new NPCs.
+    @Override
+    public void onAttach() {
+        Wave();
     }
+
+    // Run code when the NPC is despawned. This is called before the entity actually despawns so npc.getEntity() is still valid.
+    @Override
+    public void onDespawn() {
+        //     Bukkit.dispatchCommand(npc.getEntity(),"say Hi I have unloaded.");
+    }
+
+    //Run code when the NPC is spawned. Note that npc.getEntity() will be null until this method is called.
+    //This is called AFTER onAttach and AFTER Load when the server is started.
+    @Override
+    public void onSpawn() {
+        //    Bukkit.dispatchCommand(npc.getEntity(),"say Hi I have loaded.");
+    }
+
+    //run code when the NPC is removed. Use this to tear down any repeating tasks.
+    @Override
+    public void onRemove() {
+    }
+
+}
 
 
 

@@ -3,9 +3,9 @@ package net.trysomethingdev.devcraft.services;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.command.*;
-import net.trysomethingdev.devcraft.traits.Dance3Trait;
+import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
+import net.trysomethingdev.devcraft.traits.*;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
@@ -17,49 +17,59 @@ public class UserChatMessageToCommandService {
     private final DevCraftPlugin plugin;
 
     public UserChatMessageToCommandService(DevCraftPlugin devCraftPlugin) {
-
         plugin = devCraftPlugin;
 
-        commandRegistry.put("!SKIN", new SkinChangeCommand());
-        commandRegistry.put("!JOIN", new JoinCommand());
-        commandRegistry.put("!RESPAWN", new RespawnCommand());
-        commandRegistry.put("!EMPTY", new EmptyInventoryCommand());
-        commandRegistry.put("!FOLLOW", new FollowPlayerCommand());
-        commandRegistry.put("!DANCE", new DanceCommand());
-        commandRegistry.put("!DANCE2", new Dance2Command());
-        commandRegistry.put("!DANCE3", new Dance3Command());
-        commandRegistry.put("!FISH", new FishingCommand());
-        commandRegistry.put("!MINE", new MineCommand());
-        commandRegistry.put("!QUARRY", new QuarryCommand());
-        commandRegistry.put("!EXIT", new ExitCommand());
-        commandRegistry.put("!WAVE", new WaveCommand());
-        commandRegistry.put("!STATS", new StatsCommand());
-        commandRegistry.put("!SPIN", new SpinCommand());
-        commandRegistry.put("!FINDCHEST", new FindChestCommand());
+        // If you want a unique command then create a command based on BaseCommand
 
+        // If you want to just add a new Trait you can build a trait on base trait and also register that here.
+
+       registerCommand("!SKIN",new SkinChangeCommand());
+       registerCommand("!JOIN", new JoinCommand());
+       registerCommand("!RESPAWN", new RespawnCommand());
+
+       registerCommand("!FOLLOW", new FollowPlayerCommand());
+
+
+       registerCommand("!MINE", new MineCommand());
+       registerCommand("!QUARRY", new QuarryCommand());
+
+
+        registerCommand("!EXIT", new ExitCommand());
+       registerCommand("!STATS", new StatsCommand());
+
+        registerCommand("!EMPTY", UnloadTrait.class);
+        registerCommand("!DANCE", DanceTrait.class);
+        registerCommand("!DANCE2", Dance2Trait.class);
+        registerCommand("!DANCE3", Dance3Trait.class);
+        registerCommand("!FISH", FishTogetherTrait.class);
+        registerCommand("!WAVE", WaveTrait.class);
+        registerCommand("!SPIN", SpinTrait.class);
+        registerCommand("!FINDCHEST", FindChestTrait.class);
+        registerCommand("!TAKEITEMFROMCHEST", TakeItemFromChestTrait.class);
+    }
+
+    private void registerCommand(String commandName, Class<? extends BaseTrait> traitClass) {
+        commandRegistry.put(commandName, new GenericCommand(commandName, traitClass));
+    }
+
+    private void registerCommand(String commandName, Command command) {
+        commandRegistry.put(commandName, command);
     }
 
     public void processChatMessageFromSender(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user) {
         if (user == null) return;
 
-        Bukkit.getLogger().info("Reading Message");
-        Bukkit.getLogger().info(message.getContent());
-
         if (message.getContent().startsWith("!")) {
-            var contentToUpperCase = message.getContent().toUpperCase();
-            var contentSplitArray = contentToUpperCase.split(" ");
-            var firstWord = contentSplitArray[0];
-            Command command = commandRegistry.get(firstWord);
+            var command = commandRegistry.get(message.getContent().toUpperCase());
             if (command != null) {
                 command.execute(sender, message, user, plugin);
             } else {
-                Bukkit.getLogger().info("Unknown command: " + firstWord);
+                Bukkit.getLogger().info("Unknown command: " + message.getContent());
             }
-        } else {
-            Bukkit.getLogger().info("Not identified as a command");
         }
     }
 }
+
 
 
 

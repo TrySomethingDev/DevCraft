@@ -20,7 +20,7 @@ public class RespawnCommand implements Command {
             }
 
             npcHelper.resetHeadPosition(npc);
-            npcHelper.removeTraits(npc);
+            npcHelper.removeTraitsResetHeadPositionAndRemoveToolFromInventory(npc);
 
             Bukkit.broadcastMessage("Despawning" + npc.getName());
             npc.despawn();

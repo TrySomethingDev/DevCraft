@@ -4,14 +4,20 @@ import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.traits.DanceTrait;
-import net.trysomethingdev.devcraft.traits.WaveTrait;
+import net.trysomethingdev.devcraft.traits.BaseTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import net.trysomethingdev.devcraft.util.NpcHelper;
 import org.bukkit.Bukkit;
 
+public class GenericCommand implements Command {
+    private final Class<? extends BaseTrait> traitClass;
+    private final String commandName;
 
-public class WaveCommand implements Command {
+    public GenericCommand(String commandName, Class<? extends BaseTrait> traitClass) {
+        this.commandName = commandName;
+        this.traitClass = traitClass;
+    }
+
     @Override
     public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin) {
         new DelayedTask(() -> {
@@ -22,16 +28,16 @@ public class WaveCommand implements Command {
                 return;
             }
 
-            npcHelper.resetHeadPosition(npc);
-            npcHelper.removeTraits(npc);
+            npcHelper.removeTraitsResetHeadPositionAndRemoveToolFromInventory(npc);
 
-                var trait = new WaveTrait();
+            try {
+                var trait = traitClass.getDeclaredConstructor().newInstance();
                 npc.addTrait(trait);
-
-
+                Bukkit.getLogger().info("Command executed: " + commandName + " | Trait applied: " + traitClass.getSimpleName());
+            } catch (Exception e) {
+                Bukkit.getLogger().severe("Error applying trait: " + e.getMessage());
+                e.printStackTrace();
+            }
         }, 20);
-
-
-
     }
 }

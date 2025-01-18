@@ -1,5 +1,7 @@
 package net.trysomethingdev.devcraft.traits;
 
+//
+
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -7,20 +9,26 @@ import net.citizensnpcs.api.util.DataKey;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
-import org.bukkit.util.Vector;
+import org.bukkit.block.Chest;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-    @TraitName("spintrait")
-    public class SpinTrait extends BaseTrait {
+    @TraitName("takeitemfromchesttrait")
+    public class TakeItemFromChestTrait extends BaseTrait {
 
+    @Persist("sneaking")
+    private boolean sneaking = false;
     private int jumpDelay;
 
-    public SpinTrait() {
-        super("spintrait");
+    public TakeItemFromChestTrait() {
+        super("takeitemfromchesttrait");
        }
 
         DevCraftPlugin plugin = null;
@@ -37,9 +45,7 @@ import org.bukkit.util.Vector;
         int currentDepth = 0;
 
         int maxSize = 10;
-    public SpinTrait(int length, int width, int depth) {
-        super("spin");
-    }
+
 
     // Here you should load up any values you have previously saved (optional).
         // This does NOT get called when applying the trait for the first time, only loading onto an existing npc at server start.
@@ -61,16 +67,14 @@ import org.bukkit.util.Vector;
             //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
             if(event.getNPC() == this.getNPC() )
             {
-               Bukkit.getLogger().info("NPC CLICKED ON - SPIN");
-                NPCJump();
+               Bukkit.getLogger().info("NPC CLICKED ON - Find Chest Trait");
             }
         }
-
         private int tickCounter = 1;
 
     private int rotation = 0;
 
-
+    private boolean hasRun = false;
         @Override
         public void run() {
             
@@ -81,28 +85,85 @@ import org.bukkit.util.Vector;
                 return;
             }
 
-            rotation = (rotation + 10) % 360;
-            npc.faceLocation(npc.getEntity().getLocation().add(Math.cos(Math.toRadians(rotation)), 0, Math.sin(Math.toRadians(rotation))));
+            if(hasRun){ return; }
 
+            hasRun = true;
+            //Find Chest Logic goes here.
+            new DelayedTask(() -> {
+                var chestLocation = findNearestChest(npc.getEntity().getLocation());
 
+                if (chestLocation != null) {
+                    removeItemFromChest(chestLocation, Material.DIAMOND, 5); // Remove 5 diamonds
+                } else {
+                    Log("No chest nearby.");
+                }
+            }, 20 * 1);
         }
 
+    private Location findNearestChest(Location startingLocation) {
 
+        Material blockTypeWeAreLookingFor = Material.CHEST;
+        int radius = 100; // Define the radius for the search
 
+        var closestChest = SearchForMaterialInRaidus(startingLocation, radius, blockTypeWeAreLookingFor);
 
+        return closestChest != null ? closestChest.getLocation() : null;
+    }
+
+    private static Block SearchForMaterialInRaidus(Location location, int radius, Material blockTypeWeAreLookingFor) {
+        Block closestBlockOfSpecifiedMaterial = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    Block block = location.getWorld().getBlockAt(location.getBlockX() + x, location.getBlockY() + y, location.getBlockZ() + z);
+                    if (block.getType() == blockTypeWeAreLookingFor) {
+
+                        double distance = block.getLocation().distance(location);
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestBlockOfSpecifiedMaterial = block;
+                        }
+                    }
+                }
+            }
+        }
+        return closestBlockOfSpecifiedMaterial;
+    }
+
+    private void removeItemFromChest(Location chestLocation, Material itemType, int amount) {
+        if (chestLocation == null) {
+            Log("No chest found near the NPC.");
+            return;
+        }
+
+        Block block = chestLocation.getBlock();
+        if (block.getType() != Material.CHEST) {
+            Log("The block at the location is not a chest.");
+            return;
+        }
+
+        // Access the chest inventory
+        Chest chest = (Chest) block.getState();
+        Inventory inventory = chest.getBlockInventory();
+
+        // Check if the inventory contains the item
+        if (inventory.contains(itemType)) {
+            int removedAmount = inventory.removeItem(new ItemStack(itemType, amount))
+                    .values()
+                    .stream()
+                    .mapToInt(ItemStack::getAmount)
+                    .sum();
+
+            Log("Removed " + removedAmount + " " + itemType + "(s) from the chest.");
+        } else {
+            Log("The chest does not contain " + itemType);
+        }
+    }
 
     private static void Log(String s) {
         Bukkit.getLogger().info(s);
     }
-
-    private void NPCJump() {
-        new DelayedTask(() -> {
-            npc.getEntity().setVelocity(new Vector(0,1f,0));
-
-        }, 20 * 1);
-       }
-
-
 
     //Run code when your trait is attached to a NPC.
         //This is called BEFORE onSpawn, so npc.getEntity() will return null

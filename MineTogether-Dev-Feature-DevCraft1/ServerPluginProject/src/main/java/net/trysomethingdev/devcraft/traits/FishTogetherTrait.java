@@ -32,7 +32,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FishTogetherTrait extends Trait {
+public class FishTogetherTrait extends BaseTrait {
     private final DevCraftPlugin plugin;
     private boolean lookingForLocation = false;
     private boolean scanning;

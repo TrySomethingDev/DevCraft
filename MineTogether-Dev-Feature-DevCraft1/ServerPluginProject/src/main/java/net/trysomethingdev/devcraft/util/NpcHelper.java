@@ -2,8 +2,8 @@ package net.trysomethingdev.devcraft.util;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.SkinTrait;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
@@ -61,25 +61,32 @@ public class NpcHelper {
     }
 
 
-    public void removeTraits(NPC npc) {
+    public void removeTraitsResetHeadPositionAndRemoveToolFromInventory(NPC npc) {
         Bukkit.broadcastMessage("Removing All Traits");
         resetHeadPosition(npc);
         removeToolFromInventorySpotZero(npc);
-        if(npc.hasTrait(QuarryTrait.class)) npc.removeTrait(QuarryTrait.class);
-        if(npc.hasTrait(FishTogetherTrait.class)) npc.removeTrait(FishTogetherTrait.class);
-        if(npc.hasTrait(LoggingTreesTrait.class)) npc.removeTrait(LoggingTreesTrait.class);
-        if(npc.hasTrait(DanceTrait.class)) npc.removeTrait(DanceTrait.class);
-        if(npc.hasTrait(Dance2Trait.class)) npc.removeTrait(Dance2Trait.class);
-        if(npc.hasTrait(Dance3Trait.class)) npc.removeTrait(Dance3Trait.class);
-        if(npc.hasTrait(FollowTrait.class)) npc.removeTrait(FollowTrait.class);
-        if(npc.hasTrait(FollowCustomTrait.class)) npc.removeTrait(FollowCustomTrait.class);
-        if(npc.hasTrait(UnloadTrait.class)) npc.removeTrait(UnloadTrait.class);
-        if(npc.hasTrait(MinerTrait.class)) npc.removeTrait(MinerTrait.class);
-        if(npc.hasTrait(StripMinerTrait.class)) npc.removeTrait(StripMinerTrait.class);
 
-        if(npc.hasTrait(WaveTrait.class)) npc.removeTrait(WaveTrait.class);
-        if(npc.hasTrait(SpinTrait.class)) npc.removeTrait(SpinTrait.class);
 
+        for(Trait trait : npc.getTraits())
+        {
+            npc.removeTrait(trait.getClass());
+        }
+
+//        if(npc.hasTrait(QuarryTrait.class)) npc.removeTrait(QuarryTrait.class);
+//        if(npc.hasTrait(FishTogetherTrait.class)) npc.removeTrait(FishTogetherTrait.class);
+//        if(npc.hasTrait(LoggingTreesTrait.class)) npc.removeTrait(LoggingTreesTrait.class);
+//        if(npc.hasTrait(DanceTrait.class)) npc.removeTrait(DanceTrait.class);
+//        if(npc.hasTrait(Dance2Trait.class)) npc.removeTrait(Dance2Trait.class);
+//        if(npc.hasTrait(Dance3Trait.class)) npc.removeTrait(Dance3Trait.class);
+//        if(npc.hasTrait(FollowTrait.class)) npc.removeTrait(FollowTrait.class);
+//        if(npc.hasTrait(FollowCustomTrait.class)) npc.removeTrait(FollowCustomTrait.class);
+//        if(npc.hasTrait(UnloadTrait.class)) npc.removeTrait(UnloadTrait.class);
+//        if(npc.hasTrait(MinerTrait.class)) npc.removeTrait(MinerTrait.class);
+//        if(npc.hasTrait(StripMinerTrait.class)) npc.removeTrait(StripMinerTrait.class);
+//
+//        if(npc.hasTrait(WaveTrait.class)) npc.removeTrait(WaveTrait.class);
+//        if(npc.hasTrait(SpinTrait.class)) npc.removeTrait(SpinTrait.class);
+//        if(npc.hasTrait(TakeItemFromChestTrait.class)) npc.removeTrait(TakeItemFromChestTrait.class);
     }
 
     public void resetHeadPosition(NPC npc) {

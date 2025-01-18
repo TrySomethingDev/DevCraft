@@ -20,9 +20,7 @@ public class QuarryCommand implements Command {
     @Override
     public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin) {
 
-
         StartQuarryTrait(80, 80, 400, user, plugin);
-
 
         var splitStringList = message.getContent().split(" ");
         if (Arrays.stream(splitStringList).count() != 4)
@@ -54,11 +52,9 @@ public class QuarryCommand implements Command {
                 Bukkit.broadcastMessage("Could not find NPC with Name " + user.twitchUserName);
                 return;
             }
-            if(npc.hasTrait(QuarryTrait.class)) npc.removeTrait(QuarryTrait.class);
-            npcHelper.resetHeadPosition(npc);
-            npcHelper.removeTraits(npc);
-            var quarry = new QuarryTrait(length,width,depth, plugin);
-            npc.addTrait(quarry);
+            npcHelper.removeTraitsResetHeadPositionAndRemoveToolFromInventory(npc);
+
+            npc.addTrait(new QuarryTrait(length,width,depth, plugin));
 
         }, 20 * 1);
 
