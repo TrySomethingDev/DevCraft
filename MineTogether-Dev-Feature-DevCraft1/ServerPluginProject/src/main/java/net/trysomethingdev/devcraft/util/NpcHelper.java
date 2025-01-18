@@ -16,6 +16,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class NpcHelper {
@@ -62,12 +64,14 @@ public class NpcHelper {
 
 
     public void removeTraitsResetHeadPositionAndRemoveToolFromInventory(NPC npc) {
-        Bukkit.broadcastMessage("Removing All Traits");
+        //Bukkit.broadcastMessage("Removing All Traits");
         resetHeadPosition(npc);
         removeToolFromInventorySpotZero(npc);
 
+        List<Trait> traits = new ArrayList<>();
+        npc.getTraits().forEach(traits::add);
 
-        for(Trait trait : npc.getTraits())
+        for (Trait trait : traits)
         {
             npc.removeTrait(trait.getClass());
         }

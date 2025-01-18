@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
     @TraitName("takeitemfromchesttrait")
-    public class TakeItemFromChestTrait extends BaseTrait {
+    public class TakeItemFromChestTrait extends Trait {
 
     @Persist("sneaking")
     private boolean sneaking = false;

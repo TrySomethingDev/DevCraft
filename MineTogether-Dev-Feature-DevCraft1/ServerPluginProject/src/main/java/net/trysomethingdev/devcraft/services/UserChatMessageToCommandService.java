@@ -2,6 +2,7 @@ package net.trysomethingdev.devcraft.services;
 
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
+import net.citizensnpcs.api.trait.Trait;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.command.*;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
@@ -48,7 +49,7 @@ public class UserChatMessageToCommandService {
         registerCommand("!TAKEITEMFROMCHEST", TakeItemFromChestTrait.class);
     }
 
-    private void registerCommand(String commandName, Class<? extends BaseTrait> traitClass) {
+    private void registerCommand(String commandName, Class<? extends Trait> traitClass) {
         commandRegistry.put(commandName, new GenericCommand(commandName, traitClass));
     }
 

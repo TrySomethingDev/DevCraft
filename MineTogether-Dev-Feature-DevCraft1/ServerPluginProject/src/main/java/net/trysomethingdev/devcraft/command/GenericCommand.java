@@ -2,18 +2,18 @@ package net.trysomethingdev.devcraft.command;
 
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
+import net.citizensnpcs.api.trait.Trait;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.traits.BaseTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import net.trysomethingdev.devcraft.util.NpcHelper;
 import org.bukkit.Bukkit;
 
 public class GenericCommand implements Command {
-    private final Class<? extends BaseTrait> traitClass;
+    private final Class<? extends Trait> traitClass;
     private final String commandName;
 
-    public GenericCommand(String commandName, Class<? extends BaseTrait> traitClass) {
+    public GenericCommand(String commandName, Class<? extends Trait> traitClass) {
         this.commandName = commandName;
         this.traitClass = traitClass;
     }

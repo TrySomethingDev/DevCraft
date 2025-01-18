@@ -26,7 +26,7 @@ import static com.denizenscript.denizen.npc.DenizenNPCHelper.getInventory;
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
     @TraitName("unloadtrait")
-    public class UnloadTrait extends BaseTrait {
+    public class UnloadTrait extends Trait {
 
     private int jumpDelay;
     private boolean unloadingInventoryStarted;

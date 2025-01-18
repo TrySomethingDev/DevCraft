@@ -19,7 +19,7 @@ import org.bukkit.util.Vector;
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
 @TraitName("wavetrait")
-public class WaveTrait extends BaseTrait {
+public class WaveTrait extends Trait {
 
     private int jumpDelay;
 
