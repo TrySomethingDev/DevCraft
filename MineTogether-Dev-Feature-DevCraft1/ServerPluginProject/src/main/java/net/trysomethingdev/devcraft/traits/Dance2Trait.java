@@ -1,5 +1,10 @@
 package net.trysomethingdev.devcraft.traits;
 
+//
+import com.denizenscript.denizen.nms.NMSHandler;
+import com.denizenscript.denizen.objects.NPCTag;
+import org.bukkit.event.Listener;
+//
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -7,6 +12,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.util.Vector;
@@ -14,13 +20,15 @@ import org.bukkit.util.Vector;
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-    @TraitName("dancetrait")
-    public class DanceTrait extends Trait {
+    @TraitName("dance2trait")
+    public class Dance2Trait extends Trait {
 
+    @Persist("sneaking")
+    private boolean sneaking = false;
     private int jumpDelay;
 
-    public DanceTrait() {
-        super("dancetrait");
+    public Dance2Trait() {
+        super("dance2trait");
        }
 
         DevCraftPlugin plugin = null;
@@ -37,8 +45,8 @@ import org.bukkit.util.Vector;
         int currentDepth = 0;
 
         int maxSize = 10;
-    public DanceTrait(int length, int width, int depth) {
-        super("dancetrait");
+    public Dance2Trait(int length, int width, int depth) {
+        super("dance2trait");
 
 
 
@@ -64,7 +72,7 @@ import org.bukkit.util.Vector;
             //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
             if(event.getNPC() == this.getNPC() )
             {
-               Bukkit.getLogger().info("NPC CLICKED ON - Dance");
+               Bukkit.getLogger().info("NPC CLICKED ON - Dance 2");
                 NPCJump();
             }
         }
@@ -84,19 +92,54 @@ import org.bukkit.util.Vector;
                 return;
             }
 
-            rotation = (rotation + 10) % 360;
+            if(isSneaking())
+            sneak();
+
+
+            rotation = (rotation + 1) % 360;
             npc.faceLocation(npc.getEntity().getLocation().add(Math.cos(Math.toRadians(rotation)), 0, Math.sin(Math.toRadians(rotation))));
 
             if (jumpDelay <= 0) {
                 LivingEntity entity = (LivingEntity) npc.getEntity();
-                entity.setVelocity(entity.getVelocity().setY(1));  // Makes the NPC jump
-                jumpDelay = 120;  // Makes the NPC jump once per second
+                //entity.setVelocity(entity.getVelocity().setY(1));  // Makes the NPC jump
+
+                if(isSneaking()) stand();
+                else sneak();
+
+                jumpDelay = 10;  // Makes the NPC jump once per second
             } else {
                 jumpDelay--;
             }
-
         }
 
+
+    public void sneak() {
+        new NPCTag(npc).action("sneak", null);
+        if (npc.getEntity().getType() != EntityType.PLAYER) {
+            return;
+        }
+        NMSHandler.entityHelper.setSneaking(npc.getEntity(), true);
+        sneaking = true;
+    }
+
+    /**
+     * Makes the NPC stand
+     */
+    public void stand() {
+        // Notated in SittingTrait
+        new NPCTag(npc).action("stand", null);
+        NMSHandler.entityHelper.setSneaking(npc.getEntity(), false);
+        sneaking = false;
+    }
+
+    /**
+     * Checks if the NPC is currently sneaking
+     *
+     * @return boolean
+     */
+    public boolean isSneaking() {
+        return sneaking;
+    }
 
 
 

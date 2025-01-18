@@ -2,7 +2,6 @@ package net.trysomethingdev.devcraft.traits;
 
 import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
-import net.citizensnpcs.api.event.NPCCombustByBlockEvent;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -31,7 +30,7 @@ import java.util.Queue;
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-    @TraitName("quarry")
+    @TraitName("quarrytrait")
     public class QuarryTrait extends Trait {
 
 
@@ -65,7 +64,7 @@ import java.util.Queue;
         int maxSize = 80;
 
     public QuarryTrait() {
-        super("quarry");
+        super("quarrytrait");
 
         var length = 80;
         var width = 80;
@@ -441,7 +440,7 @@ import java.util.Queue;
           {
               plugin = (DevCraftPlugin) Bukkit.getPluginManager().getPlugin("DevCraftPlugin");
             }
-            npc.removeTrait(FollowTraitCustom.class);
+            npc.removeTrait(FollowCustomTrait.class);
             npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
 
             //   inventory = Bukkit.createInventory(null, 36); // Create a new inventory for the NPC

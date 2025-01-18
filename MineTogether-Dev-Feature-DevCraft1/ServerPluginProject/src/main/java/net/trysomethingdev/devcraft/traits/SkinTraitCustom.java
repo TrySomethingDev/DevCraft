@@ -20,7 +20,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 
-@TraitName("skintraitcustom")
+@TraitName("skincustomtrait")
 public class SkinTraitCustom extends Trait {
     @Persist
     private boolean fetchDefaultSkin = true;
@@ -36,7 +36,7 @@ public class SkinTraitCustom extends Trait {
     private boolean updateSkins;
 
     public SkinTraitCustom() {
-        super("skintraitcustom");
+        super("skincustomtrait");
         this.updateSkins = Setting.NPC_SKIN_USE_LATEST.asBoolean();
     }
 

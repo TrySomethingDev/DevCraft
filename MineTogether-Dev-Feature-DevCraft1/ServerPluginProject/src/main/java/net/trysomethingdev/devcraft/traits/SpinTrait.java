@@ -14,13 +14,13 @@ import org.bukkit.util.Vector;
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-    @TraitName("dancetrait")
-    public class DanceTrait extends Trait {
+    @TraitName("spintrait")
+    public class SpinTrait extends Trait {
 
     private int jumpDelay;
 
-    public DanceTrait() {
-        super("dancetrait");
+    public SpinTrait() {
+        super("spintrait");
        }
 
         DevCraftPlugin plugin = null;
@@ -37,11 +37,8 @@ import org.bukkit.util.Vector;
         int currentDepth = 0;
 
         int maxSize = 10;
-    public DanceTrait(int length, int width, int depth) {
-        super("dancetrait");
-
-
-
+    public SpinTrait(int length, int width, int depth) {
+        super("spin");
     }
 
     // Here you should load up any values you have previously saved (optional).
@@ -64,7 +61,7 @@ import org.bukkit.util.Vector;
             //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
             if(event.getNPC() == this.getNPC() )
             {
-               Bukkit.getLogger().info("NPC CLICKED ON - Dance");
+               Bukkit.getLogger().info("NPC CLICKED ON - SPIN");
                 NPCJump();
             }
         }
@@ -87,13 +84,6 @@ import org.bukkit.util.Vector;
             rotation = (rotation + 10) % 360;
             npc.faceLocation(npc.getEntity().getLocation().add(Math.cos(Math.toRadians(rotation)), 0, Math.sin(Math.toRadians(rotation))));
 
-            if (jumpDelay <= 0) {
-                LivingEntity entity = (LivingEntity) npc.getEntity();
-                entity.setVelocity(entity.getVelocity().setY(1));  // Makes the NPC jump
-                jumpDelay = 120;  // Makes the NPC jump once per second
-            } else {
-                jumpDelay--;
-            }
 
         }
 

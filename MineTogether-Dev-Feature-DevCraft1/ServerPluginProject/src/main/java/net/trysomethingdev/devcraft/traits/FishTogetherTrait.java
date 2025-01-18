@@ -39,7 +39,7 @@ public class FishTogetherTrait extends Trait {
     public static NPC npcLookingForSpot;
 
     public FishTogetherTrait() {
-        super("fishtogether");
+        super("fishtogethertrait");
             plugin = JavaPlugin.getPlugin(DevCraftPlugin.class);
     }
     private List<BlockFace> blockFacesToCheck = new ArrayList<>();
@@ -63,7 +63,7 @@ public class FishTogetherTrait extends Trait {
     public boolean isCast = false;
     @Override
     public void onAttach() {
-        npc.removeTrait(FollowTraitCustom.class);
+        npc.removeTrait(FollowCustomTrait.class);
         npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
 
         //   inventory = Bukkit.createInventory(null, 36); // Create a new inventory for the NPC
@@ -89,7 +89,7 @@ public class FishTogetherTrait extends Trait {
         InitializeBlockFacedToChecklist();
         isCast = false;
         Log("****ONSPAWN*****");
-        npc.removeTrait(FollowTraitCustom.class);
+        npc.removeTrait(FollowCustomTrait.class);
         npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS,true);
      //   inventory = Bukkit.createInventory(null, 36); // Create a new inventory for the NPC
         var eq = npc.getOrAddTrait(Equipment.class);
@@ -180,7 +180,7 @@ public class FishTogetherTrait extends Trait {
             npc.removeTrait(FishTogetherTrait.class);
             var eqip = npc.getOrAddTrait(Equipment.class);
             eqip.set(0, null);
-          var trait =  npc.getOrAddTrait(FollowTraitCustom.class);
+          var trait =  npc.getOrAddTrait(FollowCustomTrait.class);
 
         }
     }
@@ -378,7 +378,7 @@ public class FishTogetherTrait extends Trait {
     private void WalkToLocationTask(Location destination)
     {
 
-        npc.removeTrait(FollowTraitCustom.class);
+        npc.removeTrait(FollowCustomTrait.class);
         npc.removeTrait(FollowTrait.class);
 
         new DelayedTask(() -> {

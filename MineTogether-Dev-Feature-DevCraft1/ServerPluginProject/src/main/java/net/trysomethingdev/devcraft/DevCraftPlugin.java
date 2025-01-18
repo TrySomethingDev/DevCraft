@@ -1,5 +1,6 @@
 package net.trysomethingdev.devcraft;
 
+import net.citizensnpcs.api.trait.Trait;
 import net.trysomethingdev.devcraft.services.UserChatMessageToCommandService;
 import net.trysomethingdev.devcraft.services.UserService;
 import net.trysomethingdev.devcraft.traits.*;
@@ -20,6 +21,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +32,7 @@ import net.trysomethingdev.devcraft.handlers.*;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 
 import org.bukkit.Bukkit;
+import org.reflections.Reflections;
 
 import static java.lang.Character.getType;
 
@@ -93,7 +96,7 @@ public final class DevCraftPlugin extends JavaPlugin {
         new ExperimentalHandler(this);
         getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
 
-        RegisterCitizensTraits();
+        registerCitizensTraits();
     }
 
     private Location getLocationFromConfig(String worldName,String locationKey) {
@@ -103,20 +106,15 @@ public final class DevCraftPlugin extends JavaPlugin {
         return  new Location(Bukkit.getWorld(worldName),x,y,z);
     }
 
+    private void registerCitizensTraits() {
+        Reflections reflections = new Reflections("net.trysomethingdev.devcraft.traits");
+        Set<Class<? extends Trait>> traitClasses = reflections.getSubTypesOf(Trait.class);
 
-    private static void RegisterCitizensTraits() {
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FishTogetherTrait.class).withName("fishtogether"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MinerTrait.class).withName("miner"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StripMinerTrait.class).withName("stripminer"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FollowTraitCustom.class).withName("followtraitcustom"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SkinTraitCustom.class).withName("skintraitcustom"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GoToBedTrait.class).withName("gotobed"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LoggingTreesTrait.class).withName("loggingtrees"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(EatingTrait.class).withName("eating"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(QuarryTrait.class).withName("quarry"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(DanceTrait.class).withName("dance"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(UnloadTrait.class).withName("unload"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(UnloadTrait.class).withName("wave"));
+        for (Class<? extends Trait> traitClass : traitClasses) {
+            String traitName = traitClass.getSimpleName().toLowerCase();
+            CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(traitClass).withName(traitName));
+            log.info("Registered trait: " + traitName);
+        }
     }
 
 

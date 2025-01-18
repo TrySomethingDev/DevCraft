@@ -19,10 +19,10 @@ import org.bukkit.util.Vector;
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-    @TraitName("stripminer")
+    @TraitName("stripminertrait")
     public class StripMinerTrait extends Trait {
         public StripMinerTrait() {
-            super("stripminer");
+            super("stripminertrait");
             plugin = JavaPlugin.getPlugin(DevCraftPlugin.class);
         }
 

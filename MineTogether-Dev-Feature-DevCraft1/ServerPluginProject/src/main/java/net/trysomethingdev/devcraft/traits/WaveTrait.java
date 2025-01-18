@@ -18,13 +18,13 @@ import org.bukkit.util.Vector;
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-    @TraitName("wave")
+    @TraitName("wavetrait")
     public class WaveTrait extends Trait {
 
     private int jumpDelay;
 
     public WaveTrait() {
-        super("wave");
+        super("wavetrait");
        }
 
         DevCraftPlugin plugin = null;
@@ -42,7 +42,7 @@ import org.bukkit.util.Vector;
 
         int maxSize = 10;
     public WaveTrait(int length, int width, int depth) {
-        super("wave");
+        super("wavetrait");
 
 
 

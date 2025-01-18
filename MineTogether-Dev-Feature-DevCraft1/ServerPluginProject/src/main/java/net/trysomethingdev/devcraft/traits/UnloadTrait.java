@@ -25,14 +25,14 @@ import static com.denizenscript.denizen.npc.DenizenNPCHelper.getInventory;
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-    @TraitName("unload")
+    @TraitName("unloadtrait")
     public class UnloadTrait extends Trait {
 
     private int jumpDelay;
     private boolean unloadingInventoryStarted;
 
     public UnloadTrait() {
-        super("unload");
+        super("unloadtrait");
        }
 
         DevCraftPlugin plugin = null;
@@ -50,7 +50,7 @@ import static com.denizenscript.denizen.npc.DenizenNPCHelper.getInventory;
 
         int maxSize = 10;
     public UnloadTrait(int length, int width, int depth) {
-        super("unload");
+        super("unloadtrait");
 
 
 

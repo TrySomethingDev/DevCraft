@@ -5,6 +5,7 @@ import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.command.*;
+import net.trysomethingdev.devcraft.traits.Dance3Trait;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
@@ -25,12 +26,16 @@ public class UserChatMessageToCommandService {
         commandRegistry.put("!EMPTY", new EmptyInventoryCommand());
         commandRegistry.put("!FOLLOW", new FollowPlayerCommand());
         commandRegistry.put("!DANCE", new DanceCommand());
+        commandRegistry.put("!DANCE2", new Dance2Command());
+        commandRegistry.put("!DANCE3", new Dance3Command());
         commandRegistry.put("!FISH", new FishingCommand());
         commandRegistry.put("!MINE", new MineCommand());
         commandRegistry.put("!QUARRY", new QuarryCommand());
         commandRegistry.put("!EXIT", new ExitCommand());
         commandRegistry.put("!WAVE", new WaveCommand());
         commandRegistry.put("!STATS", new StatsCommand());
+        commandRegistry.put("!SPIN", new SpinCommand());
+
     }
 
     public void processChatMessageFromSender(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user) {

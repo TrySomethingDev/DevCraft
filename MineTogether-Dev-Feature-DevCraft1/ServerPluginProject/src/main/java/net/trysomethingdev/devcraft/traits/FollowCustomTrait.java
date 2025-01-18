@@ -1,6 +1,5 @@
 package net.trysomethingdev.devcraft.traits;
 
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -19,7 +18,7 @@ import net.citizensnpcs.api.ai.flocking.SeparationBehavior;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 
-public class FollowTraitCustom extends Trait {
+public class FollowCustomTrait extends Trait {
 
     @Persist("active")
     private boolean enabled = true;
@@ -32,9 +31,9 @@ public class FollowTraitCustom extends Trait {
 
     @Persist
     private double margin = 5;
-    public FollowTraitCustom() {
+    public FollowCustomTrait() {
 
-        super("followtraitcustom");
+        super("followcustomtrait");
         player = Bukkit.getPlayer("TrySomethingDev");
     }
 
@@ -42,19 +41,19 @@ public class FollowTraitCustom extends Trait {
 
 
 
-    public FollowTraitCustom(Player player) {
-        super("followtraitcustom");
+    public FollowCustomTrait(Player player) {
+        super("followcustomtrait");
         this.player = player;
     }
-    public FollowTraitCustom(Player player, double margin) {
-        super("followtraitcustom");
+    public FollowCustomTrait(Player player, double margin) {
+        super("followcustomtrait");
         this.player = player;
 
         this.margin = margin *  ThreadLocalRandom.current().nextDouble(0.5, 1.0);;
     }
 
-    public FollowTraitCustom(Player player, boolean protect) {
-        super("followtraitcustom");
+    public FollowCustomTrait(Player player, boolean protect) {
+        super("followcustomtrait");
         this.player = player;
     }
 
@@ -99,7 +98,7 @@ public class FollowTraitCustom extends Trait {
 
     @Override
     public void run() {
-        Bukkit.broadcastMessage("Follow Trait Custom is running");
+        //Bukkit.broadcastMessage("Follow Trait Custom is running");
         if (player == null || !player.isValid()) {
             if (followingUUID == null)
                 return;
@@ -127,7 +126,7 @@ public class FollowTraitCustom extends Trait {
         }
     }
 
-    /**
+    /**++
      * Toggles and/or sets the {@link OfflinePlayer} to follow and whether to protect them (similar to wolves in
      * Minecraft, attack whoever attacks the player).
      * <p>
