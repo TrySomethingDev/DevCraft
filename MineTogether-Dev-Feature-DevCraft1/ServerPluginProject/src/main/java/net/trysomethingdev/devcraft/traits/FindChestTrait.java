@@ -98,6 +98,7 @@ import org.bukkit.util.Vector;
 
                 Bukkit.broadcastMessage(chestLocation.toString());
 
+                npc.getNavigator().setTarget(chestLocation);
 
                 if(npc.getEntity().getLocation().distance(chestLocation) < 5 )
                 {
