@@ -35,6 +35,7 @@ public class UserChatMessageToCommandService {
         commandRegistry.put("!WAVE", new WaveCommand());
         commandRegistry.put("!STATS", new StatsCommand());
         commandRegistry.put("!SPIN", new SpinCommand());
+        commandRegistry.put("!FINDCHEST", new FindChestCommand());
 
     }
 
