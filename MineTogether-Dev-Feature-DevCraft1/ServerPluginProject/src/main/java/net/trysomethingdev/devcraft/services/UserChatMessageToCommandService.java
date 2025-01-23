@@ -46,7 +46,8 @@ public class UserChatMessageToCommandService {
         registerCommand("!WAVE", WaveTrait.class);
         registerCommand("!SPIN", SpinTrait.class);
         registerCommand("!FINDCHEST", FindChestTrait.class);
-        registerCommand("!TAKEITEMFROMCHEST", TakeItemFromChestTrait.class);
+        registerCommand("!TAKE", TakeItemFromChestTrait.class);
+        registerCommand("!SORT", new SortingCommand());
     }
 
     private void registerCommand(String commandName, Class<? extends Trait> traitClass) {

@@ -12,10 +12,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
@@ -67,7 +70,7 @@ import org.bukkit.inventory.ItemStack;
             //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
             if(event.getNPC() == this.getNPC() )
             {
-               Bukkit.getLogger().info("NPC CLICKED ON - Find Chest Trait");
+               Bukkit.getLogger().info("NPC CLICKED ON - Take Item from Chest Trait");
             }
         }
         private int tickCounter = 1;
@@ -131,6 +134,45 @@ import org.bukkit.inventory.ItemStack;
         return closestBlockOfSpecifiedMaterial;
     }
 
+//    private void removeItemFromChest(Location chestLocation, Material itemType, int amount) {
+//        if (chestLocation == null) {
+//            Log("No chest found near the NPC.");
+//            return;
+//        }
+//
+//        Block block = chestLocation.getBlock();
+//        if (block.getType() != Material.CHEST) {
+//            Log("The block at the location is not a chest.");
+//            return;
+//        }
+//
+//        // Access the chest inventory
+//        Chest chest = (Chest) block.getState();
+//        Inventory inventory = chest.getBlockInventory();
+//
+//        // Check if the inventory contains the item
+//        if (inventory.contains(itemType)) {
+//            var removedAmount = inventory.removeItem(new ItemStack(itemType, amount))
+//                    .values()
+//                    .stream()
+//                    .mapToInt(ItemStack::getAmount)
+//                    .sum();
+//
+//            Log("Removed " + removedAmount + " " + itemType + "(s) from the chest.");
+//
+//            // Add removed amount to NPC Inventory
+//            if (npc.getEntity() instanceof Player) {
+//                org.bukkit.entity.Player player = (Player) npc.getEntity();
+//                player.getInventory().addItem(new ItemStack(itemType, 5));
+//                Log("Added " + removedAmount + " " + itemType + "(s) to NPC inventory.");
+//            } else {
+//                Log("NPC is not a player entity, cannot add items to inventory.");
+//            }
+//        } else {
+//            Log("The chest does not contain " + itemType);
+//        }
+//    }
+
     private void removeItemFromChest(Location chestLocation, Material itemType, int amount) {
         if (chestLocation == null) {
             Log("No chest found near the NPC.");
@@ -149,13 +191,30 @@ import org.bukkit.inventory.ItemStack;
 
         // Check if the inventory contains the item
         if (inventory.contains(itemType)) {
-            int removedAmount = inventory.removeItem(new ItemStack(itemType, amount))
-                    .values()
-                    .stream()
-                    .mapToInt(ItemStack::getAmount)
-                    .sum();
+            // Remove the items from the chest
+            var removed = inventory.removeItem(new ItemStack(itemType, amount));
 
-            Log("Removed " + removedAmount + " " + itemType + "(s) from the chest.");
+            Log("Removed " + amount + " " + itemType + "(s) from the chest.");
+
+            // Add removed amount to NPC Inventory
+            if (npc.getEntity() instanceof Player) {
+                Player player = (Player) npc.getEntity();
+                // Check if NPC already has diamonds in their inventory
+                ItemStack existingItem = player.getInventory().getItem(player.getInventory().first(itemType));
+
+                if (existingItem != null) {
+                    // If the item exists, increase the amount
+                    int newAmount = existingItem.getAmount() + amount;
+                    existingItem.setAmount(newAmount);
+                } else {
+                    // If the item doesn't exist, add a new item stack
+                    player.getInventory().addItem(new ItemStack(itemType, amount));
+                }
+
+                Log("Added " + amount + " " + itemType + "(s) to NPC inventory.");
+            } else {
+                Log("NPC is not a player entity, cannot add items to inventory.");
+            }
         } else {
             Log("The chest does not contain " + itemType);
         }
