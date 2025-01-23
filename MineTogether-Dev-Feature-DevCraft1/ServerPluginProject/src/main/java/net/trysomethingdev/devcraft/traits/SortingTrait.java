@@ -15,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
@@ -103,7 +105,8 @@ public class SortingTrait extends Trait {
                 // Add traits to NPC
                 npc.getOrAddTrait(LookClose.class).lookClose(true);
                 npc.getOrAddTrait(Inventory.class);
-                GoToUnsortedChest(_unsortedChestLocation);
+                FindAndGoToUnsortedChest();
+
             }, 20 * 1);
 
         } else if (_currentPhase == 2 && !_phase2Triggered) {
@@ -150,7 +153,7 @@ public class SortingTrait extends Trait {
 
         }
 
-        ;
+
 
 
 
@@ -159,6 +162,51 @@ public class SortingTrait extends Trait {
         //Find Chest Logic goes here.
 
 
+    }
+
+    private void FindAndGoToUnsortedChest() {
+
+        _unsortedChestLocation = findInboxNearNPC(npc.getEntity().getLocation(),30);
+
+        GoToUnsortedChest(_unsortedChestLocation);
+
+    }
+
+    public Location findInboxNearNPC(Location searchStartLocation, int radius) {
+        Location npcLocation = searchStartLocation;
+        int startX = npcLocation.getBlockX() - radius;
+        int startY = npcLocation.getBlockY() - radius;
+        int startZ = npcLocation.getBlockZ() - radius;
+
+        int endX = npcLocation.getBlockX() + radius;
+        int endY = npcLocation.getBlockY() + radius;
+        int endZ = npcLocation.getBlockZ() + radius;
+
+        // Loop through blocks in the defined cube around the NPC
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) {
+                for (int z = startZ; z <= endZ; z++) {
+                    Block block = npcLocation.getWorld().getBlockAt(x, y, z);
+
+                    // Check if the block is a sign
+                    if (block.getState() instanceof Sign) {
+                        Sign sign = (Sign) block.getState();
+
+                        // Check if the sign contains the word "INBOX"
+                        for (String line : sign.getLines()) {
+                            if (line.equalsIgnoreCase("INBOX")) {
+                                // Get the attached chest
+                                Location chestLocation = getAttachedChest(sign);
+                                if (chestLocation != null) {
+                                    return chestLocation; // Return the first chest found
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null; // No "INBOX" sign with an attached chest found in the area
     }
 
     private void PlaceItemInChest(ItemStack stackToSort, Location locationOfTargetChestToPlaceItemIn) {
@@ -261,6 +309,21 @@ public class SortingTrait extends Trait {
             }
         }
         return null;
+    }
+
+
+    public Location getAttachedChest(Sign sign) {
+        // Ensure the sign is a wall sign
+        if (sign.getBlock().getBlockData() instanceof WallSign) {
+            WallSign wallSign = (WallSign) sign.getBlock().getBlockData();
+            Block attachedBlock = sign.getBlock().getRelative(wallSign.getFacing().getOppositeFace());
+
+            // Check if the attached block is a chest
+            if (attachedBlock.getType() == Material.CHEST || attachedBlock.getType() == Material.TRAPPED_CHEST) {
+                return attachedBlock.getLocation();
+            }
+        }
+        return null; // No chest attached
     }
 
     private boolean removeItemFromChest(Chest chest, ItemStack stack) {
