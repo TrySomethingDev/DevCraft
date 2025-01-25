@@ -244,10 +244,13 @@ public class SortingTrait extends Trait {
     }
 
     private void DanceForSeconds(int i) {
-        npc.addTrait(DanceTrait.class);
+        new DelayedTask(() -> {
+            npc.addTrait(DanceTrait.class);
+        }, 20 * 2);
+
         new DelayedTask(() -> {
             npc.removeTrait(DanceTrait.class);
-        }, 20 * i);
+        }, 20 * (i + 1));
     }
 
     private void RemoveTrait() {

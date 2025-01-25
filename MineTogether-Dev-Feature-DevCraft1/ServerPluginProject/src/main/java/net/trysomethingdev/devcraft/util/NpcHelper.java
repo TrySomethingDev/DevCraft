@@ -94,6 +94,9 @@ public class NpcHelper {
         if(npc.hasTrait(TakeItemFromChestTrait.class)) npc.removeTrait(TakeItemFromChestTrait.class);
         if(npc.hasTrait(FindChestTrait.class)) npc.removeTrait(FindChestTrait.class);
         if(npc.hasTrait(SortingTrait.class)) npc.removeTrait(SortingTrait.class);
+        if(npc.hasTrait(ThrowItemTrait.class)) npc.removeTrait(ThrowItemTrait.class);
+
+
     }
 
     public void resetHeadPosition(NPC npc) {
