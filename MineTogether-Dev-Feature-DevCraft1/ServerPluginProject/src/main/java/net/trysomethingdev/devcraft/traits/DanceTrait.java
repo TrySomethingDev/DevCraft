@@ -84,7 +84,7 @@ import org.bukkit.util.Vector;
                 return;
             }
 
-            rotation = (rotation + 10) % 360;
+            rotation = (rotation + 30) % 360;
             npc.faceLocation(npc.getEntity().getLocation().add(Math.cos(Math.toRadians(rotation)), 0, Math.sin(Math.toRadians(rotation))));
 
             if (jumpDelay <= 0) {

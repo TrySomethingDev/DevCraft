@@ -40,6 +40,8 @@ import static java.lang.Character.getType;
 @Getter
 public final class DevCraftPlugin extends JavaPlugin {
 
+    private static DevCraftPlugin instance;
+
     public static Logger log = Logger.getLogger("Minecraft");
     /** Name of the plugin, used in output messages */
     protected static String name = "Spawn";
@@ -59,6 +61,8 @@ public final class DevCraftPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this; // Save the instance
+
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
 
         saveDefaultConfig();
@@ -75,26 +79,26 @@ public final class DevCraftPlugin extends JavaPlugin {
 
        // new NpcBlockBreakCustomHandler(this);
 
-        dataManager = new DataManager();
-        encryptionManager = new EncryptionManager();
-        userService = new UserService(this);
-        chatHandler =   new ChatHandler(this);
-        userChatMessageToCommandService = new UserChatMessageToCommandService(this);
-        twitchBot = new TwitchBot();
-        boolean success = twitchBot.reload();
+       // dataManager = new DataManager();
+      //  encryptionManager = new EncryptionManager();
+       // userService = new UserService(this);
+//        chatHandler =   new ChatHandler(this);
+//        userChatMessageToCommandService = new UserChatMessageToCommandService(this);
+//        twitchBot = new TwitchBot();
+//        boolean success = twitchBot.reload();
 
-        if (!success) getLogger().log(Level.WARNING, "Unable to start twitch plugin fully. Please make sure it is fully configured!");
-        getCommand("twitch").setExecutor(new TwitchCommand());
-        getCommand("twitch").setTabCompleter(new TwitchTabCompleter());
-        getCommand("twitchchat").setExecutor(new TwitchChatCommand());
-        getCommand("twitchchat").setTabCompleter(new TwitchChatTabCompleter());
-        getCommand("twitchchaton").setExecutor(new TwitchChatOnCommand());
-        getCommand("twitchchaton").setTabCompleter(new TwitchChatOnTabCompleter());
-        getCommand("twitchchatoff").setExecutor(new TwitchChatOffCommand());
-        getCommand("twitchchatoff").setTabCompleter(new TwitchChatOffTabCompleter());
-
-        new ExperimentalHandler(this);
-        getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
+//        if (!success) getLogger().log(Level.WARNING, "Unable to start twitch plugin fully. Please make sure it is fully configured!");
+//        getCommand("twitch").setExecutor(new TwitchCommand());
+//        getCommand("twitch").setTabCompleter(new TwitchTabCompleter());
+//        getCommand("twitchchat").setExecutor(new TwitchChatCommand());
+//        getCommand("twitchchat").setTabCompleter(new TwitchChatTabCompleter());
+//        getCommand("twitchchaton").setExecutor(new TwitchChatOnCommand());
+//        getCommand("twitchchaton").setTabCompleter(new TwitchChatOnTabCompleter());
+//        getCommand("twitchchatoff").setExecutor(new TwitchChatOffCommand());
+//        getCommand("twitchchatoff").setTabCompleter(new TwitchChatOffTabCompleter());
+//
+//        new ExperimentalHandler(this);
+//        getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
 
         registerCitizensTraits();
     }
@@ -121,10 +125,13 @@ public final class DevCraftPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        instance = null; // Clear the instance
         if (twitchBot != null) twitchBot.getTwirk().close();
         twitchBot = null;
     }
-
+    public static DevCraftPlugin getInstance() {
+        return instance;
+    }
     public String getMainPlayerUserName() {
         return mainPlayerUserName;
     }

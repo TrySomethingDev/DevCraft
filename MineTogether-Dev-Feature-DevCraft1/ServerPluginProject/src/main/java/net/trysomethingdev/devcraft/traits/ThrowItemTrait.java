@@ -27,7 +27,7 @@ public class ThrowItemTrait extends Trait {
     public void run() {
         if (npc == null || !npc.isSpawned()) return;
         if(hasRun)return;
-        Bukkit.broadcastMessage("Thinking");
+        Bukkit.broadcastMessage("Flinfsdfskdfsdindg");
         if(timeElapsed < 100) {
             timeElapsed++;
             return;

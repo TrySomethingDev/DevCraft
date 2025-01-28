@@ -5,32 +5,29 @@ import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.services.NPCState;
-import net.trysomethingdev.devcraft.traits.FollowCustomTrait;
 import net.trysomethingdev.devcraft.traits.NPCBehaviorTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import net.trysomethingdev.devcraft.util.NpcHelper;
-import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
-public class FollowPlayerCommand implements Command {
+public class NothingCommand implements Command {
     @Override
     public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin, String arguments) {
 
         new DelayedTask(() -> {
             var npcHelper = new NpcHelper();
             var npc = npcHelper.getNPCThatMatchesUser(user);
-            if (npc == null) {
-                if (npc == null) Bukkit.broadcastMessage("Could not find NPC with Name " + user.twitchUserName);
-                return;
-            }
 
             NPCBehaviorTrait behavior = npc.getOrAddTrait(NPCBehaviorTrait.class);
 
-            behavior.setState(NPCState.FOLLOWING);
-//            //This is special logic. As we use this command to toggle following. So if you the npc already has the follow trait we just want to remove it.
-//            npcHelper.removeTraitsResetHeadPositionAndRemoveToolFromInventory(npc);
-//            if (!npc.hasTrait(FollowCustomTrait.class)) {
-//                npcHelper.addFollowerTrait(npc);
-//            }
+            behavior.setState(NPCState.NOTHING);
         }, 20);
+
     }
+
+
 }

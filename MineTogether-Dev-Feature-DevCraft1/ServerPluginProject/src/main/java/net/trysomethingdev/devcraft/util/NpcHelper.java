@@ -95,6 +95,8 @@ public class NpcHelper {
         if(npc.hasTrait(FindChestTrait.class)) npc.removeTrait(FindChestTrait.class);
         if(npc.hasTrait(SortingTrait.class)) npc.removeTrait(SortingTrait.class);
         if(npc.hasTrait(ThrowItemTrait.class)) npc.removeTrait(ThrowItemTrait.class);
+        if(npc.hasTrait(NPCBehaviorTrait.class)) npc.removeTrait(NPCBehaviorTrait.class);
+        if(npc.hasTrait(ThrowTrait.class)) npc.removeTrait(ThrowTrait.class);
 
 
     }

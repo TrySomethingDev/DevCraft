@@ -30,8 +30,9 @@ public class UserChatMessageToCommandService {
 
        registerCommand("!FOLLOW", new FollowPlayerCommand());
 
-
+       registerCommand("!CHOP", new ChopCommand());
        registerCommand("!MINE", new MineCommand());
+        registerCommand("!NOTHING", new NothingCommand());
        registerCommand("!QUARRY", new QuarryCommand());
 
 
@@ -48,6 +49,12 @@ public class UserChatMessageToCommandService {
         registerCommand("!FINDCHEST", FindChestTrait.class);
         registerCommand("!TAKE", TakeItemFromChestTrait.class);
         registerCommand("!SORT", new SortingCommand());
+
+        registerCommand("!THROW", ThrowTrait.class);
+        registerCommand("!GIVECAKE", GiveTrait.class);
+        registerCommand("!GIVESIGN", GiveSignTrait.class);
+        registerCommand("!FINDMINE", FindMineTrait.class);
+
     }
 
     private void registerCommand(String commandName, Class<? extends Trait> traitClass) {

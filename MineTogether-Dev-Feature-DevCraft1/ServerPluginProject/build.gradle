@@ -100,6 +100,33 @@ tasks {
     }
 }
 
+
+
+tasks.register('withRemote') {
+    dependsOn 'shadowJar'
+
+    finalizedBy 'runRemote'
+}
+
+tasks.register("runRemote") {
+    doLast {
+        def command = "curl http://localhost:8080/command?cmd=reload+confirm"
+        println "Executing: $command"
+        def process = command.execute()
+        def output = new StringBuffer()
+        //process.consumeProcessOutput(output, System.in)
+        process.waitFor()
+
+        if (process.exitValue() == 0) {
+            println "Command executed successfully:\n$output"
+        } else {
+            println "Command failed with exit code ${process.exitValue()}."
+        }
+
+    }
+}
+
+
 test {
     useJUnitPlatform()
 }

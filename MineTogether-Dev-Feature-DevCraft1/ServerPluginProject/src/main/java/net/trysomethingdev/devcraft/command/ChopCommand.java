@@ -5,13 +5,12 @@ import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.services.NPCState;
-import net.trysomethingdev.devcraft.traits.FollowCustomTrait;
 import net.trysomethingdev.devcraft.traits.NPCBehaviorTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import net.trysomethingdev.devcraft.util.NpcHelper;
 import org.bukkit.Bukkit;
 
-public class FollowPlayerCommand implements Command {
+public class ChopCommand implements Command {
     @Override
     public void execute(TwitchUser sender, TwitchMessage message, DevCraftTwitchUser user, DevCraftPlugin plugin, String arguments) {
 
@@ -25,7 +24,7 @@ public class FollowPlayerCommand implements Command {
 
             NPCBehaviorTrait behavior = npc.getOrAddTrait(NPCBehaviorTrait.class);
 
-            behavior.setState(NPCState.FOLLOWING);
+            behavior.setState(NPCState.CHOPPING);
 //            //This is special logic. As we use this command to toggle following. So if you the npc already has the follow trait we just want to remove it.
 //            npcHelper.removeTraitsResetHeadPositionAndRemoveToolFromInventory(npc);
 //            if (!npc.hasTrait(FollowCustomTrait.class)) {
