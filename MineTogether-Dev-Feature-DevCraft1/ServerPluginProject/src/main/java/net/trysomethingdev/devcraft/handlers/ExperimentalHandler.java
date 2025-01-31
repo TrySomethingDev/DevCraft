@@ -2,14 +2,18 @@ package net.trysomethingdev.devcraft.handlers;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.util.NpcHelper;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -43,6 +47,10 @@ public class ExperimentalHandler implements Listener {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {
                 npc.getNavigator().setTarget(player, true);
             }
+        } else if (block == Material.SEA_LANTERN) {
+            Bukkit.broadcastMessage("Sea Lantern was placed");
+            spawnDogNPC(event);
+
         } else if (block == Material.WHITE_WOOL) {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {
                 npc.getNavigator().cancelNavigation();
@@ -108,6 +116,22 @@ public class ExperimentalHandler implements Listener {
 
         }
     }
+
+private void spawnDogNPC(BlockPlaceEvent event) {
+    NPCRegistry registry = CitizensAPI.getNPCRegistry();
+    Bukkit.broadcastMessage("Spawning Dog");
+
+    var spawnLocation = event.getBlock().getLocation();
+
+    // Create the NPC with type WOLF
+    NPC dogNPC = registry.createNPC(EntityType.WOLF, "Ares");
+
+    // Spawn the NPC at the location
+    dogNPC.spawn(spawnLocation);
+
+    // Additional customization
+    dogNPC.data().setPersistent("type", "dog"); // Custom metadata
+}
 
     private void SpitOutAllInventory(NPC npc) {
 

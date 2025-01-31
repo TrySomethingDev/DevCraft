@@ -1,7 +1,5 @@
 package net.trysomethingdev.devcraft.traits;
 
-import com.denizenscript.denizen.objects.properties.entity.EntityDirection;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
@@ -9,19 +7,14 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.util.Pose;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.util.DelayedTask;
-import net.trysomethingdev.devcraft.util.NpcHelper;
 import net.trysomethingdev.devcraft.util.NpcMiningHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -30,13 +23,13 @@ import static org.bukkit.Bukkit.getServer;
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
 //The Trait class also implements Listener so you can add EventHandlers directly to your trait.
-@TraitName("straightminingtrait")
-public class StraightMiningTrait extends Trait {
+@TraitName("forwardanddownminingtrait")
+public class ForwardAndDownMiningTrait extends Trait {
 
     private final NpcMiningHelper _npcMiningHelper;
 
-    public StraightMiningTrait() {
-        super("straightminingtrait");
+    public ForwardAndDownMiningTrait() {
+        super("forwardanddownminingtrait");
         _npcMiningHelper = new NpcMiningHelper(npc);
 
     }
@@ -75,7 +68,7 @@ public class StraightMiningTrait extends Trait {
 
     private void RunMiner() {
 
-        getServer().getScheduler().runTaskLater(DevCraftPlugin.getInstance(), this::animateNPC, 10L); // Delay 1 second
+        getServer().getScheduler().runTaskLater(DevCraftPlugin.getInstance(), this::animateNPC, 20L); // Delay 1 second
     }
 
     private int tickCounter = 1;
@@ -102,6 +95,7 @@ public class StraightMiningTrait extends Trait {
     int footHeightY = -1;
 
     int xToMine = -1;
+    int stuckExecuting = 0;
 
     int stepsForwardWithoutBreakingBlock = 0;
     public void animateNPC() {
@@ -126,96 +120,38 @@ public class StraightMiningTrait extends Trait {
             int step = 0;
             Block blockToMineHeadHeight;
             Block blockToMineFootHeight;
+            Block blockToMineBelowFootHeight;
             BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
-
-
-
-//            @Override
-//            public void run() {
-//
-//              //  Bukkit.broadcastMessage("Bukkit Runnable is running");
-//
-//                if (!npc.isSpawned()) {
-//                    cancel();
-//                    return;
-//                }
-//
-//                switch (step) {
-//                    case 0: // Step 1: Get Next Block
-//
-//                        footHeightY = (int)npc.getEntity().getY();
-//                        headHeightY = footHeightY + 1;
-//
-//                        xToMine = (int)npc.getEntity().getLocation().toCenterLocation().getX();
-//                        zToMine = (int)npc.getEntity().getZ() + 1;
-//                        //is there a blcok at 65
-//                        blockToMineHeadHeight = npc.getEntity().getWorld().getBlockAt(xToMine, headHeightY, zToMine);
-//                        Bukkit.broadcastMessage("Block to Mine Head Height: " + blockToMineHeadHeight );
-//                        //is there a block at 64
-//                        blockToMineFootHeight = npc.getEntity().getWorld().getBlockAt(xToMine, footHeightY, zToMine);
-//
-//                        //if Not move forward
-//                        if(blockToMineFootHeight.getType().isAir() && blockToMineHeadHeight.getType().isAir()) {
-//
-//                           // If we have reached this twice, and we have not broken a block then end.
-//                            if(stepsForwardWithoutBreakingBlock > 1)
-//                            {
-//                                cancel();
-//                                break;
-//                            }
-//                            Location targetLocation = npc.getEntity().getLocation().add(0, 0, 1); // Move 1 blocks forward
-//                            Bukkit.broadcastMessage(targetLocation.toString());
-//                            npc.getNavigator().setTarget(targetLocation);
-//                            stepsForwardWithoutBreakingBlock++;
-//                            zToMine++;
-//                            RunMiner();
-//                            cancel(); // End the sequence
-//                            break;
-//                        }
-//
-//                        break;
-//
-//                    case 1: // Step 2: Break first block
-//                        Bukkit.broadcastMessage("Step 1");
-//                        blockBreakerConfiguration.radius(3);
-//                        BlockBreaker breaker = npc.getBlockBreaker(blockToMineHeadHeight, blockBreakerConfiguration);
-//                        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
-//                        break;
-//                    case 2: // Step 3: Break Foot Block
-//                        Bukkit.broadcastMessage("Step 2");
-//                        blockBreakerConfiguration.radius(3);
-//                        BlockBreaker breaker1 = npc.getBlockBreaker(blockToMineFootHeight, blockBreakerConfiguration);
-//                        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker1), 1);
-//                        stepsForwardWithoutBreakingBlock = 0;
-//                        break;
-//                    case 3: // Step 4:
-//                        Bukkit.broadcastMessage("Step 3");
-//                        RunMiner();
-//                        cancel(); // End the sequence
-//                        break;
-//                    default:
-//                        Bukkit.broadcastMessage("Step Default");
-//                        cancel(); // End the sequence
-//                        return;
-//                }
-//                step++;
-//            }
-//        }.runTaskTimer(DevCraftPlugin.getInstance(), 0L, 20L); // 20 ticks (1 second) between each step
-//    }
-
 
 
             @Override
             public void run() {
 
 
-                //  Bukkit.broadcastMessage("Bukkit Runnable is running");
-
                 if (!npc.isSpawned()) {
                     cancel();
                     return;
                 }
 
+                if (npc.getNavigator().isNavigating()) {
+                    return;
+                }
+
+                if(npc.getDefaultGoalController().isExecutingGoal()) {
+
+
+                    //     Bukkit.broadcastMessage("ExecutingGoal");
+                    stuckExecuting++;
+
+                    if(stuckExecuting > 100)
+                    {
+                        npc.getDefaultGoalController().cancelCurrentExecution();
+                    }
+                    return;
+                }
+                else {
+                    stuckExecuting = 0;
+                }
 
                 if(_npcMiningHelper.getNPC() == null)
                 {
@@ -235,14 +171,14 @@ public class StraightMiningTrait extends Trait {
                         zToMine = (int)npc.getEntity().getZ() + 1;
                         //is there a blcok at 65
                         blockToMineHeadHeight = _npcMiningHelper.getBlockInFrontAtHeadHeight();
-                        Bukkit.broadcastMessage("Block to Mine Head Height: " + blockToMineHeadHeight );
                         //is there a block at 64
                         blockToMineFootHeight = _npcMiningHelper.getBlockInFrontAtFootHeight();
-
-
+                        blockToMineBelowFootHeight = _npcMiningHelper.getBlockInFrontAtBelowFootHeight();
 
                         //if Not move forward
-                        if(blockToMineFootHeight.getType().isAir() && blockToMineHeadHeight.getType().isAir()) {
+                        if(blockToMineFootHeight.getType().isSolid()
+                                && blockToMineHeadHeight.getType().isSolid()
+                                && blockToMineBelowFootHeight.getType().isSolid() ) {
 
                             // If we have reached this twice, and we have not broken a block then end.
                             if(stepsForwardWithoutBreakingBlock > 1)
@@ -251,7 +187,6 @@ public class StraightMiningTrait extends Trait {
                                 break;
                             }
                             Location targetLocation = npc.getEntity().getLocation().add(0, 0, 1); // Move 1 blocks forward
-                            Bukkit.broadcastMessage(targetLocation.toString());
                             npc.getNavigator().setTarget(targetLocation);
                             stepsForwardWithoutBreakingBlock++;
                             zToMine++;
@@ -275,8 +210,14 @@ public class StraightMiningTrait extends Trait {
                         npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker1), 1);
                         stepsForwardWithoutBreakingBlock = 0;
                         break;
-                    case 3: // Step 4:
+                    case 3: // Step 3: Break Below Foot Block
                         Bukkit.broadcastMessage("Step 3");
+                        blockBreakerConfiguration.radius(3);
+                        BlockBreaker breaker2 = npc.getBlockBreaker(blockToMineBelowFootHeight, blockBreakerConfiguration);
+                        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker2), 1);
+                        stepsForwardWithoutBreakingBlock = 0;
+                        break;
+                    case 4: // Step 4:
                         RunMiner();
                         cancel(); // End the sequence
                         break;
@@ -287,7 +228,7 @@ public class StraightMiningTrait extends Trait {
                 }
                 step++;
             }
-        }.runTaskTimer(DevCraftPlugin.getInstance(), 0L, 10L); // 20 ticks (1 second) between each step
+        }.runTaskTimer(DevCraftPlugin.getInstance(), 0L, 20L); // 20 ticks (1 second) between each step
     }
 
     private static void Log(String s) {

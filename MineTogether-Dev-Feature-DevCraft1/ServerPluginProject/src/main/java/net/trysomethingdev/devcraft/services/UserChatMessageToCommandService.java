@@ -24,36 +24,57 @@ public class UserChatMessageToCommandService {
 
         // If you want to just add a new Trait you can build a trait on base trait and also register that here.
 
-       registerCommand("!SKIN",new SkinChangeCommand());
-       registerCommand("!JOIN", new JoinCommand());
-       registerCommand("!RESPAWN", new RespawnCommand());
+        //How should this work.
+        //!HelpDev
 
-       registerCommand("!FOLLOW", new FollowPlayerCommand());
+        //!Mine  !M
 
-       registerCommand("!CHOP", new ChopCommand());
-       registerCommand("!MINE", new MineCommand());
-        registerCommand("!NOTHING", new NothingCommand());
-       registerCommand("!QUARRY", new QuarryCommand());
+        //!Fish !F
 
 
-        registerCommand("!EXIT", new ExitCommand());
-       registerCommand("!STATS", new StatsCommand());
+        //!Chop !C
 
-        registerCommand("!EMPTY", UnloadTrait.class);
-        registerCommand("!DANCE", DanceTrait.class);
-        registerCommand("!DANCE2", Dance2Trait.class);
-        registerCommand("!DANCE3", Dance3Trait.class);
-        registerCommand("!FISH", FishTogetherTrait.class);
-        registerCommand("!WAVE", WaveTrait.class);
-        registerCommand("!SPIN", SpinTrait.class);
-        registerCommand("!FINDCHEST", FindChestTrait.class);
-        registerCommand("!TAKE", TakeItemFromChestTrait.class);
-        registerCommand("!SORT", new SortingCommand());
 
-        registerCommand("!THROW", ThrowTrait.class);
-        registerCommand("!GIVECAKE", GiveTrait.class);
-        registerCommand("!GIVESIGN", GiveSignTrait.class);
-        registerCommand("!FINDMINE", FindMineTrait.class);
+        //!Sort !S
+
+        //!Upgrade !U
+
+        //!Energy  !E
+
+
+
+//       registerCommand("!SKIN",new SkinChangeCommand());
+         registerCommand("!JOIN", new JoinCommand());
+        registerCommand("!J", new JoinCommand());
+//       registerCommand("!RESPAWN", new RespawnCommand());
+//
+//       registerCommand("!FOLLOW", new FollowPlayerCommand());
+//
+//       registerCommand("!CHOP", new ChopCommand());
+         registerCommand("!MINE", new MineCommand());
+         registerCommand("!M", new MineCommand());
+//        registerCommand("!NOTHING", new NothingCommand());
+//       registerCommand("!QUARRY", new QuarryCommand());
+//
+//
+//        registerCommand("!EXIT", new ExitCommand());
+//       registerCommand("!STATS", new StatsCommand());
+//
+//        registerCommand("!EMPTY", UnloadTrait.class);
+//        registerCommand("!DANCE", DanceTrait.class);
+//        registerCommand("!DANCE2", Dance2Trait.class);
+//        registerCommand("!DANCE3", Dance3Trait.class);
+//        registerCommand("!FISH", FishTogetherTrait.class);
+//        registerCommand("!WAVE", WaveTrait.class);
+//        registerCommand("!SPIN", SpinTrait.class);
+//        registerCommand("!FINDCHEST", FindChestTrait.class);
+//        registerCommand("!TAKE", TakeItemFromChestTrait.class);
+//        registerCommand("!SORT", new SortingCommand());
+//
+//        registerCommand("!THROW", ThrowTrait.class);
+//        registerCommand("!GIVECAKE", GiveTrait.class);
+//        registerCommand("!GIVESIGN", GiveSignTrait.class);
+//        registerCommand("!FINDMINE", FindMineTrait.class);
 
     }
 
