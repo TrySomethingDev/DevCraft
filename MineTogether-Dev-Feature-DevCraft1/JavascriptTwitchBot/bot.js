@@ -1,158 +1,315 @@
+/**
+ * TMI-based Twitch bot for "Mine Together Mode"
+ * - Adds players to a "mining list"
+ * - Deducts their points using the StreamElements API
+ * - Handles when the mode starts and ends
+ */
+
 const tmi = require("tmi.js");
 const yaml = require("js-yaml");
 const fs = require("fs");
-// Define configuration options
+const axios = require("axios");
 
-//To get the token I am using the twitch Command Line Tool
-//  twitch token -u -s 'chat:edit chat:read'
-
-const opts = {
+/**
+ * Twitch client configuration
+ * 'password' = OAuth Token from the Twitch CLI (token with chat:edit and chat:read scopes)
+ */
+const twitchOptions = {
   identity: {
     username: "<YourTwitchUserNameHere>",
-    password: "<YourTwitchAppUserTokenWith chat:edit and chat:read scopes>",
+    password: "<YourTwitchAppUserTokenWithChatScopes>",
   },
-  channels: ["<YourChannelName>"],
+  channels: ["<YourTwitchChannelName>"],
 };
 
-const streamElementsToken =
-  "<StreamElements API Token>";
+/**
+ * StreamElements configuration
+ */
+const streamElementsToken = "<YourStreamElementsAPIToken>";
+const streamElementsChannelId = "<YourStreamElementsChannelID>"; // e.g. 736d4840273adbf10b5b6541
 
-const streamElementsChannelId = "<Channel ID goes here>"; // Lookes something like this 736d4840273adbf10b5b6541, can be found on your stream elements profile page.
+/**
+ * Path to your plugin's config.yml file
+ * Example: C:\\Files\\Servers\\PaperServerDev1\\plugins\\TrySomethingDevAmazingPlugin\\config.yml
+ */
+const pluginConfigPath = "<PathToYourConfigYML>";
 
-// Create a client with our options
-const client = new tmi.client(opts);
+/**
+ * The name of the channel owner (admin),
+ * who is authorized to execute the !mineclear command
+ */
+const adminName = "<YourTwitchChannelName>";
 
-// Register our event handlers (defined below)
+/** Create a TMI client */
+const client = new tmi.Client(twitchOptions);
+
+/** Flag indicating if "Mine Together Mode" is active */
+let isMineTogetherModeActive = false;
+
+/** Connect to Twitch chat and register event handlers */
+client.connect();
 client.on("message", onMessageHandler);
 client.on("connected", onConnectedHandler);
 
-// Connect to Twitch:
-client.connect();
+/* ==============================
+   Event Handlers
+   ============================== */
 
-let IsMineTogetherModeAcivated = false;
-
- // Your Minecraft Server Plugin File Path for TrySomethingDevAmazingPlugin Config.yml Here is an example C:\\Files\\Servers\\PaperServerDev1\\plugins\\TrySomethingDevAmazingPlugin\\config.yml
-let path =
-  "<Plugin Config.YML Path">;
-
-  const adminName = "<Your Twitch Channel Name>";
-
-// Called every time a message comes in
+/**
+ * Handler for incoming chat messages
+ */
 async function onMessageHandler(target, context, msg, self) {
-  if (self) return; // Ignore messages from the bot
+  if (self) return; // Ignore messages from the bot itself
 
   const commandName = msg.trim();
 
-  CheckMineTogetherModeStatus(target, msg);
-  ClearMinerListCommand(commandName, context, msg, target);
-  await AddMinerCommand(commandName, context, msg, target);
+  // Check or update the status of "Mine Together Mode"
+  await checkMineTogetherModeStatus(target);
 
-  async function AddMinerCommand(command, context, msg, target) {
-    var str = commandName;
-    var prefix = "!MINE";
+  // Handle commands
+  handleMineClearCommand(commandName, context, target);
+  await handleAddMinerCommand(commandName, context, target);
+}
 
-    if (str.toUpperCase().startsWith(prefix)) {
-      // do something if the string starts with "!Mine"
-      // !mine
-      // !mine Notch 100
-      // !mine 100
-      // !mine Notch
-      // !mine 100 Notch
+/**
+ * Handler for successful connection to the Twitch chat
+ */
+function onConnectedHandler(addr, port) {
+  console.log(`* Connected to ${addr}:${port}`);
+}
 
-      let my_string = commandName;
-      let { playerName, MinecraftSkin, NumberOfBlocksToMine } =
-        ParseAddMinerCommandFromChat(my_string, commandName, context);
+/* ==============================
+   Command Handlers
+   ============================== */
 
-      if (!IsMineTogetherModeAcivated) {
-        client.say(
-          target,
-          "Cannot add you to miner list, because 'Mine Together Mode' is not currently active."
-        );
-        return;
-      }
-
-      //Check StreamElementsToMakeSureThisPlayerHasEnough Points
-
-      //If they have enough points we should remove those points from their account.
-
-      async function getPointsPlayersHasOnStreamElements(playerName) {
-        const axios = require("axios");
-
-        const url = `https://api.streamelements.com/kappa/v2/points/${streamElementsChannelId}/${playerName}`;
-
-        await axios
-          .get(url)
-          .then((response) => {
-            // Extract the 'points' property from the response data
-            const points = response.data.points;
-
-            // Now you can use the 'points' variable as needed
-            console.log("Points:", points);
-            NextStepAfterGettingPoints(
-              playerName,
-              points,
-              NumberOfBlocksToMine,
-              context,
-              MinecraftSkin,
-              target
-            );
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error.message);
-          });
-      }
-
-      let points = await getPointsPlayersHasOnStreamElements(playerName);
-
-      console.log(`* Executed ${commandName} command`);
-    } else {
-      console.log(`* Unknown command ${commandName}`);
-    }
-  }
-
-  function NextStepAfterGettingPoints(
-    playerName,
-    points,
-    NumberOfBlocksToMine,
-    context,
-    MinecraftSkin,
-    target
-  ) {
-    console.log(`${playerName} has ${points}`);
-    if (points >= NumberOfBlocksToMine) {
-      AddOrRemovePointsForUserOnStreamElements(
-        target,
-        playerName,
-        NumberOfBlocksToMine * -1
-      );
-
-      AddMinerToMineTogetherModeListYML(
-        context,
-        NumberOfBlocksToMine,
-        MinecraftSkin,
-        target
-      );
-    } else if (points > 0) {
-      //use up rest of points
-      AddOrRemovePointsForUserOnStreamElements(target, playerName, points * -1);
-      AddMinerToMineTogetherModeListYML(context, points, MinecraftSkin, target);
-    } else {
-      //This player has no points
-      client.say(
-        target,
-        `Sorry ${playerName} you do not have any points. Try again later.`
-      );
-    }
+/**
+ * Command: !mineclear
+ * Clears the list of miners if executed by the adminName
+ */
+function handleMineClearCommand(commandName, context, target) {
+  if (commandName.toLowerCase() === "!mineclear" && context["display-name"] === adminName) {
+    clearMinerList(target);
   }
 }
 
-function AddOrRemovePointsForUserOnStreamElements(target, playerName, points) {
-  //If you pass in a positive number it adds points
-  //if you pass in a negative number it subtracts points
+/**
+ * Command: !mine <optional params>
+ * Adds a user to the mining list
+ */
+async function handleAddMinerCommand(commandName, context, target) {
+  if (!commandName.toLowerCase().startsWith("!mine")) {
+    return; // Ignore other commands
+  }
 
-  const axios = require("axios");
+  if (!isMineTogetherModeActive) {
+    client.say(target, "Cannot add you to the miner list because 'Mine Together Mode' is not currently active.");
+    return;
+  }
 
-  client.say(target, `Changed ${playerName} point balance: ${points} points.`);
+  // Parse parameters from the command
+  const { playerName, minecraftSkin, numberOfBlocks } = parseMineCommand(commandName, context);
+
+  // Fetch the player's points from StreamElements
+  const points = await getPointsFromStreamElements(playerName);
+  if (points == null) {
+    client.say(target, `Failed to fetch points for user ${playerName}.`);
+    return;
+  }
+
+  // Evaluate the player's points and proceed
+  evaluatePlayerPoints(playerName, points, numberOfBlocks, context, minecraftSkin, target);
+
+  console.log(`* Executed command: ${commandName}`);
+}
+
+/* ==============================
+   Core Logic / Helpers
+   ============================== */
+
+/**
+ * Checks the config to see if Mine Together Mode has been requested.
+ * If RequestedAction === "StartRequested", it automatically triggers
+ * the sign-up window, countdown, and awarding cycle.
+ */
+async function checkMineTogetherModeStatus(target) {
+  const doc = readYAML(pluginConfigPath);
+  if (!doc || !doc.General) {
+    console.log("Configuration file not loaded or missing 'General' section.");
+    return;
+  }
+
+  if (doc.General.RequestedAction === "StartRequested") {
+    client.say(target, "Detected that a Start has been requested...");
+    setRequestedAction("PlayerSignUpOpen");
+    isMineTogetherModeActive = true;
+
+    announceMineTogetherStart(target);
+
+    // Wait 60 seconds for sign-ups
+    await sleep(60000);
+    client.say(target, "60 seconds have passed. Starting the mining phase...");
+
+    // Example of writing to the config if desired:
+    //   setRequestedAction("PlayerSignUpClosed");
+    //   setRequestedAction("MiningStarted");
+
+    // Wait 120 seconds for the mining phase
+    await sleep(120000);
+    client.say(target, "2 minutes have passed. Mining is now over.");
+
+    // Award prizes to participants
+    awardPrizesToPlayers(target);
+
+    // End cycle
+    isMineTogetherModeActive = false;
+    clearMinerList(target);
+
+    // Optionally update the config if needed:
+    //   setRequestedAction("MiningFinished");
+    //   setRequestedAction("PrizesAwarded");
+    //   setRequestedAction("Complete");
+    //   setRequestedAction("NotStarted");
+  }
+}
+
+/**
+ * Reads and parses a YAML file from the given path
+ */
+function readYAML(path) {
+  try {
+    return yaml.load(fs.readFileSync(path, "utf8"));
+  } catch (error) {
+    console.error("Error reading YAML file:", error.message);
+    return null;
+  }
+}
+
+/**
+ * Writes the data object to a YAML file at the specified path
+ */
+function writeYAML(path, dataObj) {
+  try {
+    fs.writeFileSync(path, yaml.dump(dataObj), "utf8");
+  } catch (err) {
+    console.error("Error writing to YAML file:", err.message);
+  }
+}
+
+/**
+ * Sets doc.General.RequestedAction in the YAML config
+ */
+function setRequestedAction(value) {
+  const doc = readYAML(pluginConfigPath);
+  if (!doc || !doc.General) return;
+
+  doc.General.RequestedAction = value;
+  writeYAML(pluginConfigPath, doc);
+}
+
+/**
+ * Announces the start of "Mine Together Mode" in the chat
+ */
+function announceMineTogetherStart(target) {
+  client.say(target, "***");
+  client.say(target, "Mine Together Mode Activated!");
+  client.say(target, 'Type "!mine 100 Notch" to participate in mining.');
+  client.say(target, "Syntax: !mine <numberOfBlocks> <minecraftSkin>");
+  client.say(target, "It costs 1 channel point for each block you want to mine.");
+}
+
+/**
+ * Reads the list of players from 'ChattersThatWantToPlay' in the YAML config
+ * and awards them points
+ */
+function awardPrizesToPlayers(target) {
+  const doc = readYAML(pluginConfigPath);
+  if (!doc || !doc.ChattersThatWantToPlay) {
+    console.log("No 'ChattersThatWantToPlay' section found in the config.");
+    return;
+  }
+
+  doc.ChattersThatWantToPlay.forEach((record) => {
+    const [playerNameRaw, blocksRaw, skinNameRaw] = record.split(",");
+    const playerName = (playerNameRaw || "").trim();
+    const blocks = parseInt((blocksRaw || "0").trim(), 10) || 0;
+    const skinName = (skinNameRaw || "").trim();
+
+    console.log("Awarding player:", playerName, "blocks:", blocks, "skin:", skinName);
+
+    // Example: Add (blocks + 100) points to each participant
+    addOrRemovePointsForUser(target, playerName, blocks + 100);
+  });
+}
+
+/**
+ * Clears the mining list in the YAML config
+ */
+function clearMinerList(target) {
+  const doc = readYAML(pluginConfigPath);
+  if (!doc) return;
+
+  doc.ChattersThatWantToPlay = [];
+  writeYAML(pluginConfigPath, doc);
+
+  client.say(target, "The miner list has been cleared.");
+}
+
+/**
+ * Fetches the user's points from StreamElements
+ */
+async function getPointsFromStreamElements(playerName) {
+  const url = `https://api.streamelements.com/kappa/v2/points/${streamElementsChannelId}/${playerName}`;
+
+  try {
+    const response = await axios.get(url);
+    return response.data.points;
+  } catch (error) {
+    console.error("Error fetching points from StreamElements:", error.message);
+    return null;
+  }
+}
+
+/**
+ * Evaluates the player's points and either deducts the required
+ * number of blocks, the remainder of their points, or denies them
+ * if they have zero
+ */
+function evaluatePlayerPoints(playerName, points, blocksRequired, context, minecraftSkin, target) {
+  console.log(`${playerName} currently has ${points} points.`);
+
+  if (points >= blocksRequired) {
+    addOrRemovePointsForUser(target, playerName, -blocksRequired);
+    addMinerToList(context, blocksRequired, minecraftSkin, target);
+  } else if (points > 0) {
+    addOrRemovePointsForUser(target, playerName, -points);
+    addMinerToList(context, points, minecraftSkin, target);
+  } else {
+    client.say(target, `Sorry ${playerName}, you have no points. Try again later.`);
+  }
+}
+
+/**
+ * Adds the player's record to 'ChattersThatWantToPlay'
+ */
+function addMinerToList(context, blocksRequired, minecraftSkin, target) {
+  const doc = readYAML(pluginConfigPath);
+  if (!doc) return;
+
+  doc.ChattersThatWantToPlay.push(
+      `${context["display-name"]},${blocksRequired},${minecraftSkin}`
+  );
+
+  writeYAML(pluginConfigPath, doc);
+  client.say(target, `${context["display-name"]}, you have been added to the miner list!`);
+}
+
+/**
+ * Adds or removes points from a user in StreamElements:
+ *  - Positive 'points' => adds points
+ *  - Negative 'points' => subtracts points
+ */
+function addOrRemovePointsForUser(target, playerName, points) {
+  client.say(target, `Changing ${playerName}'s point balance by ${points} points.`);
 
   const url = `https://api.streamelements.com/kappa/v2/points/${streamElementsChannelId}/${playerName}/${points}`;
   const headers = {
@@ -162,237 +319,54 @@ function AddOrRemovePointsForUserOnStreamElements(target, playerName, points) {
   };
 
   axios
-    .put(url, {}, { headers })
-    .then((response) => {
-      console.log("Response:", response.data);
-    })
-    .catch((error) => {
-      console.error("Error:", error.message);
-    });
+      .put(url, {}, { headers })
+      .then((response) => {
+        console.log("StreamElements response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating points on StreamElements:", error.message);
+      });
 }
 
-function AddMinerToMineTogetherModeListYML(
-  context,
-  NumberOfBlocksToMine,
-  MinecraftSkin,
-  target
-) {
-  let doc = yaml.load(fs.readFileSync(path, "utf8"));
-
-  doc.ChattersThatWantToPlay.push(
-    context["display-name"] +
-      "," +
-      NumberOfBlocksToMine.toString() +
-      "," +
-      MinecraftSkin.toString()
-  );
-  fs.writeFile(path, yaml.dump(doc), (err) => {
-    if (err) {
-      console.log(err);
-    }
-    client.say(
-      target,
-      context["display-name"] + `, your name has been added to the list.`
-    );
-  });
-}
-
-function ParseAddMinerCommandFromChat(my_string, commandName, context) {
-  let spaceCount = my_string.split(" ").length - 1;
-
-  let splitCommand = commandName.split(/[ ,]+/);
-
+/**
+ * Parses the !mine command, extracting the number of blocks and (optional) Minecraft skin
+ */
+function parseMineCommand(commandName, context) {
+  const splitCmd = commandName.split(/[ ,]+/); // e.g. ["!mine", "100", "Notch"] ...
   let playerName = context["display-name"];
-  let NumberOfBlocksToMine = "24";
-  let MinecraftSkin = "Player";
-  let secondArg = 0;
-  let thirdArg = 0;
+  let numberOfBlocks = 24;
+  let minecraftSkin = "Player";
 
-  switch (spaceCount) {
-    case 0:
-      //This is just the mine command
-      break;
-    case 1:
-      //Its mine command with a skin or a number specified
-      secondArg = splitCommand[1];
-      if (!isNaN(secondArg)) {
-        //Then it is our number of blocks
-        NumberOfBlocksToMine = secondArg;
-      } else {
-        //Then it is the minecraft skin
-        MinecraftSkin = secondArg;
-      }
-      break;
-    case 2:
-      //Its mine command with skin and number speicied
-      secondArg = splitCommand[1];
-      thirdArg = splitCommand[2];
-      if (!isNaN(secondArg)) {
-        //Then it is our number of blocks
-        NumberOfBlocksToMine = secondArg;
-      } else {
-        //Then it is the minecraft skin
-        MinecraftSkin = secondArg;
-      }
+  const args = splitCmd.slice(1); // everything after "!mine"
 
-      if (!isNaN(thirdArg)) {
-        //Then it is our number of blocks
-        NumberOfBlocksToMine = thirdArg;
-      } else {
-        //Then it is the minecraft skin
-        MinecraftSkin = thirdArg;
-      }
-
-      break;
-    default:
-      console.log("Default Case");
-      //Unkown Command
-      break;
-  }
-  return { playerName, MinecraftSkin, NumberOfBlocksToMine };
-}
-
-function ClearMinerListCommand(commandName, context, msg, target) {
-  if (
-    commandName.toUpperCase() === "!MINECLEAR" &&
-    context["display-name"] === adminName
-  ) {
-    ClearMinerList(msg, target);
-  }
-}
-
-// Function called when the "dice" command is issued
-function rollDice() {
-  const sides = 6;
-  return Math.floor(Math.random() * sides) + 1;
-}
-
-// Called every time the bot connects to Twitch chat
-function onConnectedHandler(addr, port) {
-  console.log(`* Connected to ${addr}:${port}`);
-}
-
-function ClearMinerList(msg, target) {
-  let doc = yaml.load(fs.readFileSync(path, "utf8"));
-  doc.ChattersThatWantToPlay = [];
-
-  fs.writeFile(path, yaml.dump(doc), (err) => {
-    if (err) {
-      console.log(err);
+  if (args.length === 1) {
+    // Could be either block count or skin
+    if (!isNaN(args[0])) {
+      numberOfBlocks = parseInt(args[0], 10);
+    } else {
+      minecraftSkin = args[0];
     }
-
-    client.say(target, `Cleared Miner List`);
-  });
-}
-
-function SetRequestedAction(value) {
-  let doc = yaml.load(fs.readFileSync(path, "utf8"));
-
-  doc.General.RequestedAction = value;
-  fs.writeFile(path, yaml.dump(doc), (err) => {
-    if (err) {
-      console.log(err);
+  } else if (args.length === 2) {
+    // One is a number, the other is a skin name
+    const [arg1, arg2] = args;
+    if (!isNaN(arg1)) {
+      numberOfBlocks = parseInt(arg1, 10);
+    } else {
+      minecraftSkin = arg1;
     }
-  });
-}
-
-async function CheckMineTogetherModeStatus(target, msg) {
-  let doc = yaml.load(fs.readFileSync(path, "utf8"));
-
-  if (!doc) {
-    console.log(
-      "Minecraft MineTogetherMode Config File is not loading or does not exist"
-    );
-    return;
-  }
-
-  if (!doc.General) {
-    console.log("doc general is not");
-    return;
-  }
-
-  if ("StartRequested" === doc.General.RequestedAction) {
-    client.say(target, `Detected that a Start has been requested...`);
-
-    SetRequestedAction("PlayerSignUpOpen");
-
-    IsMineTogetherModeAcivated = true;
-
-    StartingMessageToChat(target);
-
-    //Set 60 second timer
-    await sleep(60000);
-
-    //SetRequestedAction("PlayerSignUpClosed");
-    client.say(target, `60 Seconds have passed. Starting Mining...`);
-
-    //SetRequestedAction("MiningStarted");
-
-    await sleep(120000);
-    //SetRequestedAction("MiningFinished");
-    client.say(target, `2 minutes have passed Mining is now over.`);
-
-    //SetRequestedAction("PrizesAwarding");
-
-    // Read the YAML file
-    try {
-      const fileContents = fs.readFileSync(path, "utf8");
-      const config = yaml.load(fileContents);
-
-      // Check if ChattersThatWantToPlay exists in the YAML file
-      if (
-        config.ChattersThatWantToPlay &&
-        Array.isArray(config.ChattersThatWantToPlay)
-      ) {
-        // Iterate through each record
-        config.ChattersThatWantToPlay.forEach((record) => {
-          // Split each record into three fields by commas
-          const [playerName, blocks, skinName] = record.split(",");
-
-          // Display the fields
-          console.log("Player Name:", playerName.trim());
-          console.log("Blocks:", blocks.trim());
-          console.log("Skin Name:", skinName.trim());
-          console.log("-----------------------");
-
-          //Need to figure out the actual amount to award at this time we are just going to award each player 100 points.
-          AddOrRemovePointsForUserOnStreamElements(
-            target,
-            playerName,
-            parseInt(blocks) + 100
-          );
-        });
-      } else {
-        console.log(
-          "ChattersThatWantToPlay not found or not an array in the YAML file."
-        );
-      }
-    } catch (error) {
-      console.error("Error reading the YAML file:", error.message);
+    if (!isNaN(arg2)) {
+      numberOfBlocks = parseInt(arg2, 10);
+    } else {
+      minecraftSkin = arg2;
     }
-
-    //SetRequestedAction("PrizesAwarded");
-
-    //SetRequestedAction("Complete");
-
-    // SetRequestedAction("NotStarted");
-
-    IsMineTogetherModeAcivated = false;
-    ClearMinerList(msg, target);
   }
 
-  // Define a sleep function that returns a promise
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  return { playerName, minecraftSkin, numberOfBlocks };
 }
-function StartingMessageToChat(target) {
-  client.say(target, `***`);
-  client.say(target, `Mine Together Mode Activated`);
-  client.say(target, `Type "!mine 100 Notch" to play`);
-  client.say(
-    target,
-    "Note: !mine <NumberOfBlocksToMine> <MinecraftPlayerName>"
-  );
-  client.say(target, "Note2: It costs 1 channel point per block to mine.");
+
+/**
+ * Sleep utility function for async operations
+ */
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
