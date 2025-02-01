@@ -3,6 +3,8 @@ package com.gikk.twirk;
 import com.gikk.twirk.events.TwirkListener;
 import com.gikk.twirk.types.mode.Mode;
 import com.gikk.twirk.types.mode.Mode.MODE_EVENT;
+import com.gikk.twirk.types.twitchMessage.TwitchMessage;
+import com.gikk.twirk.types.users.TwitchUser;
 import com.gikk.twirk.types.users.Userstate;
 
 /**Class for taking care of basic tasks that our bot should do. However, writing all 
@@ -12,10 +14,10 @@ import com.gikk.twirk.types.users.Userstate;
  * @author Gikkman
  *
  */
-class TwirkMaintainanceListener implements TwirkListener{
+class TwirlMaintenanceListener implements TwirkListener{
 	private final Twirk instance;
 	
-	TwirkMaintainanceListener(Twirk twirk) {
+	TwirlMaintenanceListener(Twirk twirk) {
 		this.instance = twirk;
 	}
 	
@@ -38,17 +40,17 @@ class TwirkMaintainanceListener implements TwirkListener{
         }
 	}
 
+	
 	@Override
-	public void onMode(Mode mode) {			
-		if( mode.getEvent() == MODE_EVENT.GAINED_MOD ){
-			instance.moderators.add( mode.getUser() );
-		}
-		else {
-			instance.moderators.remove( mode.getUser() );
+	public void onPrivMsg(TwitchUser sender, TwitchMessage message) {
+		if (sender.isMod()) {
+			instance.moderators.add(sender.getUserName());
+		} else {
+			instance.moderators.remove(sender.getUserName());
 		}
 	}
 
-    @Override
+	@Override
     public void onUserstate(Userstate userstate) {
         //If the bot is a Mod, it may send 100 messages per 30 seconds
         //None-Mods may send 20 messages per 30 seconds
