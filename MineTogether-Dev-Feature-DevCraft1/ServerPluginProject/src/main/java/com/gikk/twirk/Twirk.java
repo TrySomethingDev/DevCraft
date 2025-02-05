@@ -21,6 +21,8 @@ import com.gikk.twirk.types.users.TwitchUser;
 import com.gikk.twirk.types.users.TwitchUserBuilder;
 import com.gikk.twirk.types.users.Userstate;
 import com.gikk.twirk.types.users.UserstateBuilder;
+import lombok.Getter;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -66,7 +68,14 @@ public final class Twirk {
 	private final String serverAddress;
 	private final int serverPort;
 
-	private final String nick;
+    /**
+     * -- GETTER --
+     * Fetches the nick of the bot, which it will use to connect to an IRC server
+     *
+     * @return The bot nick
+     */
+    @Getter
+    private final String nick;
 	private final String pass;
 	private final String channel;
 	final TwirkLogger logger;
@@ -126,7 +135,7 @@ public final class Twirk {
 
 		this.queue = new OutputQueue();
 
-		addIrcListener( new TwirkMaintainanceListener(this) );
+		addIrcListener( new TwirlMaintenanceListener(this) );
 	}
 
 	//***********************************************************************************************
@@ -241,15 +250,7 @@ public final class Twirk {
 	}
 
 
-	/** Fetches the nick of the bot, which it will use to connect to an IRC server
-	 *
-	 * @return The bot nick
-	 */
-	public String getNick() {
-		return nick;
-	}
-
-	/**Adds a specific listener to the list of active listeners
+    /**Adds a specific listener to the list of active listeners
 	 *
 	 * @param listener Listener to be added
 	 */
