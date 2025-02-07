@@ -4,6 +4,7 @@ import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
+import net.trysomethingdev.devcraft.util.CommandUtil;
 
 public class JoinCommand implements Command {
     @Override

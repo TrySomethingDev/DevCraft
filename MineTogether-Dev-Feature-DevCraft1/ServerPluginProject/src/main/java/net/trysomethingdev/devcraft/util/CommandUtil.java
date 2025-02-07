@@ -1,11 +1,10 @@
-package net.trysomethingdev.devcraft.command;
+package net.trysomethingdev.devcraft.util;
 
 import org.bukkit.Bukkit;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.trysomethingdev.devcraft.command.CommandConsumer;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.util.DelayedTask;
-import net.trysomethingdev.devcraft.util.NpcHelper;
 
 @SuppressWarnings("deprecation")
 public abstract class CommandUtil {

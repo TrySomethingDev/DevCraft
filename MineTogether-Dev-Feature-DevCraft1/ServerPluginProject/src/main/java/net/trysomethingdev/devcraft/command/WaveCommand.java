@@ -5,6 +5,7 @@ import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.traits.WaveTrait;
+import net.trysomethingdev.devcraft.util.CommandUtil;
 
 
 public class WaveCommand implements Command {
