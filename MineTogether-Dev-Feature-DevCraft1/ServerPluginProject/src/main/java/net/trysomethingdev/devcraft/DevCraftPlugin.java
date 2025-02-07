@@ -31,8 +31,6 @@ import net.trysomethingdev.devcraft.util.DelayedTask;
 
 import org.bukkit.Bukkit;
 
-import static java.lang.Character.getType;
-
 
 @Getter
 public final class DevCraftPlugin extends JavaPlugin {
