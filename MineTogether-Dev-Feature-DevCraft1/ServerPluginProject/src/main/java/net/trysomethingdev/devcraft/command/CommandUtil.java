@@ -3,8 +3,8 @@ package net.trysomethingdev.devcraft.command;
 import org.bukkit.Bukkit;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
+import net.trysomethingdev.devcraft.util.DelayedTask;
 import net.trysomethingdev.devcraft.util.NpcHelper;
 
 @SuppressWarnings("deprecation")
@@ -16,8 +16,8 @@ public abstract class CommandUtil {
     public static void schedule(CommandConsumer<NpcHelper> fn, DevCraftTwitchUser user, int delay) {
         var helper = NpcHelper.getInstance();
         NPC npc = helper.getNPCThatMatchesUser(user);
-        
-        Bukkit.getScheduler().runTaskLater(DevCraftPlugin.instance(), () -> {
+
+        new DelayedTask(() -> {
             if (npc == null) {
                 Bukkit.broadcastMessage("Could not find NPC with Name " + user.twitchUserName);
                 return;
