@@ -5,14 +5,8 @@ import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.traits.QuarryTrait;
-import net.trysomethingdev.devcraft.util.DelayedTask;
-import net.trysomethingdev.devcraft.util.NpcHelper;
-import org.bukkit.Bukkit;
-import org.bukkit.util.Vector;
-
 import java.util.Arrays;
 
-import static net.trysomethingdev.devcraft.util.NpcHelper.*;
 
 
 
@@ -47,20 +41,12 @@ public class QuarryCommand implements Command {
 
     private void StartQuarryTrait(int length, int width, int depth, DevCraftTwitchUser user, DevCraftPlugin plugin) {
 
-        new DelayedTask(() -> {
-            var npcHelper = new NpcHelper();
-            var npc = npcHelper.getNPCThatMatchesUser(user);
-            if (npc == null) {
-                Bukkit.broadcastMessage("Could not find NPC with Name " + user.twitchUserName);
-                return;
-            }
+        CommandUtil.schedule((npcHelper, npc) -> {
             if(npc.hasTrait(QuarryTrait.class)) npc.removeTrait(QuarryTrait.class);
             npcHelper.resetHeadPosition(npc);
             npcHelper.removeTraits(npc);
             var quarry = new QuarryTrait(length,width,depth, plugin);
             npc.addTrait(quarry);
-
-        }, 20 * 1);
-
+        }, user, 20 * 1);
     }
 }

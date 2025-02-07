@@ -16,17 +16,33 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.units.qual.s;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.inject.Singleton;
+
+
+@Singleton
 public class NpcHelper {
     public void moveClosestNPCOneBlockPostiveX(BlockPlaceEvent event, DevCraftPlugin plugin) {
      var npc = getNearestNPCToLocation(event.getBlock().getLocation());
 
      //Seems like you have to add 2 to the x in order to move one
      npc.getNavigator().setTarget(npc.getEntity().getLocation().add(2,0,0));
+    }
 
+    private static NpcHelper INSTANCE = null;
 
+    public static NpcHelper getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new NpcHelper();
+        }
+        return INSTANCE;
+    }
+
+    public NpcHelper() {
+       throw new RuntimeException("Cannot construct a new instance when is marked as @Singleton");
     }
 
     public NPC getNPCThatMatchesUser(DevCraftTwitchUser user)
@@ -47,7 +63,6 @@ public class NpcHelper {
         npc.getNavigator().setTarget(npc.getEntity().getLocation().add(-2,0,0));
     }
 
-
     private NPC getNearestNPCToLocation(Location location) {
         NPC nearestNPC = null;
         double nearestDistance = Double.MAX_VALUE;
@@ -60,7 +75,6 @@ public class NpcHelper {
         }
         return nearestNPC;
     }
-
 
     public void removeTraits(NPC npc) {
         Bukkit.broadcastMessage("Removing All Traits");
@@ -81,7 +95,7 @@ public class NpcHelper {
     }
 
     public void resetHeadPosition(NPC npc) {
-        var rote = npc.getOrAddTrait(RotationTrait.class);
+        npc.getOrAddTrait(RotationTrait.class);
         float pitch = 0;
         float yaw = 0;
         npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
@@ -103,7 +117,6 @@ public class NpcHelper {
             npc.addTrait(followTraitCustom);
         }, 20);
     }
-
 
     public void addSkinTrait(DevCraftTwitchUser user, String skinName) {
         new DelayedTask(() -> {
@@ -130,7 +143,6 @@ public class NpcHelper {
             addSkinTrait(user,user.minecraftSkinName);
         }, 20);
     }
-
 
     public void changeSkin(DevCraftTwitchUser user, String skin) {
         user.minecraftSkinName = skin;
