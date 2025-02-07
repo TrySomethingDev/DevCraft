@@ -98,6 +98,8 @@ public class NpcHelper {
         if (npc.hasTrait(ThrowItemTrait.class)) npc.removeTrait(ThrowItemTrait.class);
         if (npc.hasTrait(NPCBehaviorTrait.class)) npc.removeTrait(NPCBehaviorTrait.class);
         if (npc.hasTrait(ThrowTrait.class)) npc.removeTrait(ThrowTrait.class);
+        if (npc.hasTrait(GuardTrait.class)) npc.removeTrait(GuardTrait.class);
+        if (npc.hasTrait(MinerV2Trait.class)) npc.removeTrait(MinerV2Trait.class);
 
 
     }

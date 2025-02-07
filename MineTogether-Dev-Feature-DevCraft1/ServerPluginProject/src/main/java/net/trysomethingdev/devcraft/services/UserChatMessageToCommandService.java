@@ -42,17 +42,17 @@ public class UserChatMessageToCommandService {
         //!Energy  !E
 
 
-
-//       registerCommand("!SKIN",new SkinChangeCommand());
-         registerCommand("!JOIN", new JoinCommand());
+       registerCommand("!SKIN",new SkinChangeCommand());
+        registerCommand("!JOIN", new JoinCommand());
         registerCommand("!J", new JoinCommand());
 //       registerCommand("!RESPAWN", new RespawnCommand());
 //
 //       registerCommand("!FOLLOW", new FollowPlayerCommand());
-//
+        registerCommand("!DEFEND", new DefendCommand());
+        registerCommand("!D", new DefendCommand());
 //       registerCommand("!CHOP", new ChopCommand());
-         registerCommand("!MINE", new MineCommand());
-         registerCommand("!M", new MineCommand());
+        registerCommand("!MINE",  M3Trait.class);
+        registerCommand("!M", M3Trait.class);
 //        registerCommand("!NOTHING", new NothingCommand());
 //       registerCommand("!QUARRY", new QuarryCommand());
 //

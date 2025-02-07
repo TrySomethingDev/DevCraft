@@ -169,8 +169,16 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         new ExperimentalHandler(this);
         getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
+        new OnPlayerAttackedHandler(this);
+
+        //getServer().getPluginManager().registerEvents(new OnPlayerAttackedHandler(), this);
+
 
         registerCitizensTraits();
+
+
+
+
     }
 
     @Nullable
