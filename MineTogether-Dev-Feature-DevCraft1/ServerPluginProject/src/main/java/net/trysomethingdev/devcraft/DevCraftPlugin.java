@@ -31,8 +31,6 @@ import net.trysomethingdev.devcraft.util.DelayedTask;
 
 import org.bukkit.Bukkit;
 
-import static java.lang.Character.getType;
-
 
 @Getter
 public final class DevCraftPlugin extends JavaPlugin {
@@ -53,9 +51,15 @@ public final class DevCraftPlugin extends JavaPlugin {
     private Location fishingAreaStartPoint;
     private Location miningLocationStartPoint;
     private String mainPlayerUserName;
+    public static DevCraftPlugin _instance;
+
+    public static DevCraftPlugin instance() {
+        return _instance;
+    }
 
     @Override
     public void onEnable() {
+        _instance = this;
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
 
         saveDefaultConfig();
