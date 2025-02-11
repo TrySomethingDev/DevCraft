@@ -68,32 +68,39 @@ public final class DevCraftPlugin extends JavaPlugin {
     public void onEnable() {
 
         instance = this; // Save the instance
-
         Bukkit.getLogger().info("Starting TrySomethingDev Pluggin");
-
-
 
         saveDefaultConfig();
         String worldName = getConfig().getString("WorldName");
-        //assert worldName != null;
-
-   //     getServer().getPluginManager().registerEvents(new ExperimentalHandler(this), this);
 
         miningLocationStartPoint = getLocationFromConfig(worldName, "MiningLocationStartPoint");
         npcGlobalSpawnPoint =  getLocationFromConfig(worldName, "NpcGlobalSpawnPoint");
         fishingAreaStartPoint = getLocationFromConfig(worldName, "FishingAreaStartPoint");
         mainPlayerUserName = getConfig().getString("MainPlayerUserName");
+
+        new DelayedTask(this);
+
+        //StartupTwitchBot();
+
+        //new ExperimentalHandler(this);
+        //getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
+        //new OnPlayerAttackedHandler(this);
+
+        var foo = 3;
+
+        registerCitizensTraits();
+
+
+
+
+    }
+
+    private void StartupTwitchBot() {
         var refreshToken = getConfig().getString("RefreshToken");
 
         var clientId = getConfig().getString("TwitchClientId");
         var clientSecret = getConfig().getString("TwitchClientSecret");
 
-
-
-
-        new DelayedTask(this);
-
-       // new NpcBlockBreakCustomHandler(this);
 
         dataManager = new DataManager();
         encryptionManager = new EncryptionManager();
@@ -101,8 +108,9 @@ public final class DevCraftPlugin extends JavaPlugin {
         chatHandler =   new ChatHandler(this);
         userChatMessageToCommandService = new UserChatMessageToCommandService(this);
 
+
         getLogger().info("Creating new TwitchBot!!!!!!!!!!!!!!");
-      // var foo = GetNewTokenAndRefreshToken(clientId,clientSecret);
+        // var foo = GetNewTokenAndRefreshToken(clientId,clientSecret);
         twitchBot = new TwitchBot();
 
         boolean success = false;
@@ -126,7 +134,7 @@ public final class DevCraftPlugin extends JavaPlugin {
             if(newTokenResponse == null)
             {
                 getLogger().log(Level.WARNING,"Failed a second time to load twitch bot");
-               newTokenResponse = GetNewTokenAndRefreshToken(clientId,clientSecret);
+               newTokenResponse = GetNewTokenAndRefreshToken(clientId, clientSecret);
 
             }
             twitchBot = new TwitchBot();
@@ -141,20 +149,6 @@ public final class DevCraftPlugin extends JavaPlugin {
 
             }
 
-
-
-//            if(!success)
-//            {
-//                getLogger().log(Level.WARNING,"Failed a second time to load twitch bot");
-//                GetNewTokenAndRefreshToken(clientId,clientSecret);
-//                success = twitchBot.reload();
-//                if(!success)
-//                {
-//                    getLogger().warning("I dont know what to do here");
-//                }
-//
-//
-//            }
         }
 
         if (!success) getLogger().log(Level.WARNING, "Unable to start twitch plugin fully. Please make sure it is fully configured!");
@@ -166,19 +160,6 @@ public final class DevCraftPlugin extends JavaPlugin {
         getCommand("twitchchaton").setTabCompleter(new TwitchChatOnTabCompleter());
         getCommand("twitchchatoff").setExecutor(new TwitchChatOffCommand());
         getCommand("twitchchatoff").setTabCompleter(new TwitchChatOffTabCompleter());
-
-        new ExperimentalHandler(this);
-        getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
-        new OnPlayerAttackedHandler(this);
-
-        //getServer().getPluginManager().registerEvents(new OnPlayerAttackedHandler(), this);
-
-
-        registerCitizensTraits();
-
-
-
-
     }
 
     @Nullable
