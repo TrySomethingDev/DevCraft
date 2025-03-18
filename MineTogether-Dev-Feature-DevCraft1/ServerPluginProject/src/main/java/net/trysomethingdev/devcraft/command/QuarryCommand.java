@@ -4,16 +4,12 @@ import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.traits.QuarryTrait;
+import net.trysomethingdev.devcraft.traits.mining.QuarryTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import net.trysomethingdev.devcraft.util.NpcHelper;
 import org.bukkit.Bukkit;
-import org.bukkit.util.Vector;
 
 import java.util.Arrays;
-
-import static net.trysomethingdev.devcraft.util.NpcHelper.*;
-
 
 
 public class QuarryCommand implements Command {

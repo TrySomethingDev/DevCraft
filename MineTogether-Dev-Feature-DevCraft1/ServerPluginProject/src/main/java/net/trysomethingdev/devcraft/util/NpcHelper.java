@@ -2,25 +2,33 @@ package net.trysomethingdev.devcraft.util;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.SkinTrait;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.traits.*;
+import net.trysomethingdev.devcraft.traits.TreeLogging.LoggingTreesTrait;
+import net.trysomethingdev.devcraft.traits.combat.GuardTrait;
+import net.trysomethingdev.devcraft.traits.dance.Dance2Trait;
+import net.trysomethingdev.devcraft.traits.dance.Dance3Trait;
+import net.trysomethingdev.devcraft.traits.dance.DanceTrait;
+import net.trysomethingdev.devcraft.traits.fishing.FishTogetherTrait;
+import net.trysomethingdev.devcraft.traits.mining.MinerTrait;
+import net.trysomethingdev.devcraft.traits.mining.MinerV2Trait;
+import net.trysomethingdev.devcraft.traits.mining.QuarryTrait;
+import net.trysomethingdev.devcraft.traits.mining.StripMinerTrait;
+import net.trysomethingdev.devcraft.traits.others.*;
+import net.trysomethingdev.devcraft.traits.social.SpinTrait;
+import net.trysomethingdev.devcraft.traits.social.WaveTrait;
+import net.trysomethingdev.devcraft.traits.sorting.SortingTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class NpcHelper {

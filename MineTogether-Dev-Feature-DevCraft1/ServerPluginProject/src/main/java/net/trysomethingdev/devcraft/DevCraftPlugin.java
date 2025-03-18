@@ -3,7 +3,6 @@ package net.trysomethingdev.devcraft;
 import net.citizensnpcs.api.trait.Trait;
 import net.trysomethingdev.devcraft.services.UserChatMessageToCommandService;
 import net.trysomethingdev.devcraft.services.UserService;
-import net.trysomethingdev.devcraft.traits.*;
 import net.trysomethingdev.devcraft.twitchconnection.OAuthResponse;
 import net.trysomethingdev.devcraft.twitchconnection.TwitchOAuth;
 import net.trysomethingdev.twitchplugin.Commands.togglecommands.TwitchChatOffCommand;
@@ -21,9 +20,9 @@ import net.trysomethingdev.twitchplugin.Twirk.TwitchBot;
 
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Level;
@@ -31,7 +30,6 @@ import java.util.logging.Logger;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
-import net.trysomethingdev.devcraft.traits.FishTogetherTrait;
 import net.trysomethingdev.devcraft.handlers.*;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 
@@ -80,13 +78,16 @@ public final class DevCraftPlugin extends JavaPlugin {
 
         new DelayedTask(this);
 
-        //StartupTwitchBot();
+        StartupTwitchBot();
 
         //new ExperimentalHandler(this);
         //getServer().getPluginManager().registerEvents(new NpcFishHandler(), this);
         //new OnPlayerAttackedHandler(this);
 
         var foo = 3;
+
+        getCommand("gm").setExecutor((CommandExecutor) new MyCommandExecutor());
+
 
         registerCitizensTraits();
 
@@ -243,4 +244,6 @@ public final class DevCraftPlugin extends JavaPlugin {
     public String getMainPlayerUserName() {
         return mainPlayerUserName;
     }
+
+
 }

@@ -30,7 +30,9 @@ public class RespawnCommand implements Command {
                 var npcHelper2 = new NpcHelper();
                 if (npc != null) {
                     Bukkit.broadcastMessage("Spawning NPC");
-                    npcHelper2.spawnNPC(npc, plugin.getNpcGlobalSpawnPoint());
+                   // npcHelper2.spawnNPC(npc, plugin.getNpcGlobalSpawnPoint());
+                    var mainPlayerLocation = Bukkit.getPlayer(plugin.getMainPlayerUserName()).getLocation();
+                    npcHelper.getOrCreateNPCAndSpawnIt(user,mainPlayerLocation);
                 }
             }, 20);
 

@@ -1,6 +1,5 @@
 package net.trysomethingdev.devcraft.command;
 
-import com.denizenscript.denizen.scripts.commands.npc.VulnerableCommand;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import net.citizensnpcs.api.trait.trait.Equipment;
@@ -8,11 +7,10 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.traits.GuardTrait;
+import net.trysomethingdev.devcraft.traits.combat.GuardTrait;
 import net.trysomethingdev.devcraft.util.NpcHelper;
 import net.trysomethingdev.devcraft.util.NpcMiningHelper;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;

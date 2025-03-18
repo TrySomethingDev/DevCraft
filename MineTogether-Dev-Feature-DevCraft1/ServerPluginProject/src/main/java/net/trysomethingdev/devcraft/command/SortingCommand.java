@@ -4,13 +4,10 @@ import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.traits.QuarryTrait;
-import net.trysomethingdev.devcraft.traits.SortingTrait;
+import net.trysomethingdev.devcraft.traits.sorting.SortingTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import net.trysomethingdev.devcraft.util.NpcHelper;
 import org.bukkit.Bukkit;
-
-import java.util.Arrays;
 
 
 public class SortingCommand implements Command {

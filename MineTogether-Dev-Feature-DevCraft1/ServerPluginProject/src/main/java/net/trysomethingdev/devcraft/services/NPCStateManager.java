@@ -1,17 +1,7 @@
 package net.trysomethingdev.devcraft.services;
 
-import net.citizensnpcs.api.ai.flocking.Flocker;
-import net.citizensnpcs.api.ai.flocking.RadiusNPCFlock;
-import net.citizensnpcs.api.ai.flocking.SeparationBehavior;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.persistence.Persist;
-import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.traits.NPCBehaviorTrait;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
-
-import java.util.UUID;
+import net.trysomethingdev.devcraft.traits.others.NPCBehaviorTrait;
 
 public class NPCStateManager {
     private NPCBehaviorTrait behaviorTrait;

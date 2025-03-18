@@ -5,14 +5,9 @@ import com.gikk.twirk.types.users.TwitchUser;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
 import net.trysomethingdev.devcraft.services.NPCState;
-import net.trysomethingdev.devcraft.traits.NPCBehaviorTrait;
+import net.trysomethingdev.devcraft.traits.others.NPCBehaviorTrait;
 import net.trysomethingdev.devcraft.util.DelayedTask;
 import net.trysomethingdev.devcraft.util.NpcHelper;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 public class NothingCommand implements Command {
     @Override

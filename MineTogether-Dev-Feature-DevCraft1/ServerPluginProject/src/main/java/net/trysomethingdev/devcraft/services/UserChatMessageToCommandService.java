@@ -6,7 +6,9 @@ import net.citizensnpcs.api.trait.Trait;
 import net.trysomethingdev.devcraft.DevCraftPlugin;
 import net.trysomethingdev.devcraft.command.*;
 import net.trysomethingdev.devcraft.models.DevCraftTwitchUser;
-import net.trysomethingdev.devcraft.traits.*;
+import net.trysomethingdev.devcraft.traits.mining.M3Trait;
+import net.trysomethingdev.devcraft.traits.social.SpinTrait;
+import net.trysomethingdev.devcraft.traits.social.WaveTrait;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
@@ -45,9 +47,9 @@ public class UserChatMessageToCommandService {
        registerCommand("!SKIN",new SkinChangeCommand());
         registerCommand("!JOIN", new JoinCommand());
         registerCommand("!J", new JoinCommand());
-//       registerCommand("!RESPAWN", new RespawnCommand());
+        registerCommand("!RESPAWN", new RespawnCommand());
 //
-//       registerCommand("!FOLLOW", new FollowPlayerCommand());
+        registerCommand("!FOLLOW", new FollowPlayerCommand());
         registerCommand("!DEFEND", new DefendCommand());
         registerCommand("!D", new DefendCommand());
 //       registerCommand("!CHOP", new ChopCommand());
@@ -65,11 +67,11 @@ public class UserChatMessageToCommandService {
 //        registerCommand("!DANCE2", Dance2Trait.class);
 //        registerCommand("!DANCE3", Dance3Trait.class);
 //        registerCommand("!FISH", FishTogetherTrait.class);
-//        registerCommand("!WAVE", WaveTrait.class);
-//        registerCommand("!SPIN", SpinTrait.class);
+        registerCommand("!WAVE", WaveTrait.class);
+        registerCommand("!SPIN", SpinTrait.class);
 //        registerCommand("!FINDCHEST", FindChestTrait.class);
 //        registerCommand("!TAKE", TakeItemFromChestTrait.class);
-//        registerCommand("!SORT", new SortingCommand());
+        registerCommand("!SORT", new SortingCommand());
 //
 //        registerCommand("!THROW", ThrowTrait.class);
 //        registerCommand("!GIVECAKE", GiveTrait.class);
