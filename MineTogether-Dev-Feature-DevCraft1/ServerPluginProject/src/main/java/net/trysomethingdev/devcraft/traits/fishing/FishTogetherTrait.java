@@ -161,7 +161,10 @@ public class FishTogetherTrait extends Trait {
     }
 
     private void GetFishingLocation() {
-            if(npc.getEntity().getLocation().distance(plugin.getFishingAreaStartPoint()) < 5 && !scanning){
+
+            var fishingAreaStartPoint = plugin.getLocationService().getLocation((plugin.getWorldName()), "FishingAreaStartPoint");
+
+            if(npc.getEntity().getLocation().distance(fishingAreaStartPoint) < 5 && !scanning){
                 scanning = true;
                 new DelayedTask(() -> {
                     this.lookingForLocation = true;
@@ -169,7 +172,7 @@ public class FishTogetherTrait extends Trait {
                 }, 20 * 1);
             }
             else{
-                npc.getNavigator().setTarget(plugin.getFishingAreaStartPoint());
+                npc.getNavigator().setTarget(fishingAreaStartPoint);
             }
     }
 

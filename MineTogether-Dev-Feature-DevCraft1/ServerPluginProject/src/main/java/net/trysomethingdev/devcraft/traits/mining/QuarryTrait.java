@@ -209,7 +209,7 @@ import java.util.Queue;
             {
                 creatingMiningPlan = true;
               //  Bukkit.broadcastMessage("Setting Mining Location");
-                miningLocation = plugin.getMiningLocationStartPoint();
+                miningLocation = plugin.getLocationService().getLocation((plugin.getWorldName()), "MiningLocationStartPoint");
             //    Bukkit.broadcastMessage("Mining Location= " + miningLocation);
                 CreateListOfLocationsToMine(miningLocation);
                 readyForNextBlock = true;
@@ -227,7 +227,7 @@ import java.util.Queue;
                  miningLocation = null;
          //        Bukkit.broadcastMessage("Finished Mining Going Back to Player");
 
-                npc.teleport(plugin.getNpcGlobalSpawnPoint(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                npc.teleport(plugin.getLocationService().getLocation(plugin.getWorldName(),"NpcGlobalSpawnPoint"), PlayerTeleportEvent.TeleportCause.PLUGIN);
               //  npc.getOrAddTrait(FollowTraitCustom.class);
 
                  npc.removeTrait(QuarryTrait.class);

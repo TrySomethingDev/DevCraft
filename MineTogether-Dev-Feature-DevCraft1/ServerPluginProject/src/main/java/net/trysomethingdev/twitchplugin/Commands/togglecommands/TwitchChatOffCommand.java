@@ -15,7 +15,7 @@ public class TwitchChatOffCommand implements CommandExecutor {
         if (!sender.hasPermission(DevCraftPlugin.TWITCH_TOGGLE_PERMISSION)) return true;
 
         DevCraftPlugin twitchPlugin = DevCraftPlugin.getPlugin(DevCraftPlugin.class);
-        TwitchBot twitchBot = twitchPlugin.getTwitchBot();
+        TwitchBot twitchBot = twitchPlugin.getTwitchBotManager().getTwitchBot();
         Player player = ((Player) sender);
 
         twitchBot.getDisabledUsers().add(player.getUniqueId().toString());
