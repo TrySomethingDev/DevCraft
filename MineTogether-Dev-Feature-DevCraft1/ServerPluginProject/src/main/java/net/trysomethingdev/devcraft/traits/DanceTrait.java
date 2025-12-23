@@ -4,12 +4,13 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.trysomethingdev.devcraft.DevCraftPlugin;
-import net.trysomethingdev.devcraft.util.DelayedTask;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.util.Vector;
+import net.citizensnpcs.util.PlayerAnimation;
 
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
 //the Trait class has a reference to the attached NPC class through the protected field 'npc' or getNPC().
@@ -17,13 +18,18 @@ import org.bukkit.util.Vector;
     @TraitName("dance")
     public class DanceTrait extends Trait {
 
+    private static final int JUMP_COOLDOWN_TICKS = 35;
+    private static final int ARM_SWING_TICKS = 8;
+    private static final double CIRCLE_RADIUS = 0.8;
+    private static final double ROTATION_SPEED_DEGREES = 8.0;
+
     private int jumpDelay;
+    private int armSwingDelay;
+    private double angleDegrees;
 
     public DanceTrait() {
         super("dance");
        }
-
-        DevCraftPlugin plugin = null;
 
         boolean SomeSetting = false;
 
@@ -33,8 +39,6 @@ import org.bukkit.util.Vector;
         int length = 1;
         int width = 1;
         int depth = 1;
-
-        int currentDepth = 0;
 
         int maxSize = 10;
     public DanceTrait(int length, int width, int depth) {
@@ -69,14 +73,8 @@ import org.bukkit.util.Vector;
             }
         }
 
-        private int tickCounter = 1;
-
-    private int rotation = 0;
-
-
         @Override
         public void run() {
-            
             if (!npc.isSpawned())  return;
 
             if(npc.getNavigator().isNavigating())
@@ -84,15 +82,28 @@ import org.bukkit.util.Vector;
                 return;
             }
 
-            rotation = (rotation + 10) % 360;
-            npc.faceLocation(npc.getEntity().getLocation().add(Math.cos(Math.toRadians(rotation)), 0, Math.sin(Math.toRadians(rotation))));
+            angleDegrees = (angleDegrees + ROTATION_SPEED_DEGREES) % 360;
+            Location center = npc.getEntity().getLocation();
+            double radians = Math.toRadians(angleDegrees);
+            double offsetX = Math.cos(radians) * CIRCLE_RADIUS;
+            double offsetZ = Math.sin(radians) * CIRCLE_RADIUS;
+            Location target = center.clone().add(offsetX, 0, offsetZ);
+            npc.faceLocation(target);
 
-            if (jumpDelay <= 0) {
+            Vector forward = target.toVector().subtract(center.toVector()).normalize().multiply(0.25);
+            npc.getEntity().setVelocity(forward);
+
+            if (npc.getEntity() instanceof Player) {
+                if (armSwingDelay-- <= 0) {
+                    PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
+                    armSwingDelay = ARM_SWING_TICKS;
+                }
+            }
+
+            if (jumpDelay-- <= 0) {
                 LivingEntity entity = (LivingEntity) npc.getEntity();
-                entity.setVelocity(entity.getVelocity().setY(1));  // Makes the NPC jump
-                jumpDelay = 120;  // Makes the NPC jump once per second
-            } else {
-                jumpDelay--;
+                entity.setVelocity(entity.getVelocity().setY(0.5));  // Hop for rhythm
+                jumpDelay = JUMP_COOLDOWN_TICKS;
             }
 
         }
@@ -106,10 +117,7 @@ import org.bukkit.util.Vector;
     }
 
     private void NPCJump() {
-        new DelayedTask(() -> {
-            npc.getEntity().setVelocity(new Vector(0,1f,0));
-
-        }, 20 * 1);
+        npc.getEntity().setVelocity(new Vector(0,0.6f,0));
        }
 
 
@@ -142,6 +150,5 @@ import org.bukkit.util.Vector;
         }
 
     }
-
 
 
