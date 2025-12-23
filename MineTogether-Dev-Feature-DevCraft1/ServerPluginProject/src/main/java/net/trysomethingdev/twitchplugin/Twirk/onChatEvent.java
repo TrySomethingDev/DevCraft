@@ -32,17 +32,19 @@ public class onChatEvent implements TwirkListener {
     public void onPrivMsg(TwitchUser sender, TwitchMessage message) {
         if (!plugin.getTwitchBot().isStatus()) return;
 
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (!plugin.getTwitchBot().isStatus()) return;
 
+            devCraftChatHandler.handlChat(sender, message);
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (plugin.getTwitchBot().getDisabledUsers().contains(player.getUniqueId().toString())) continue;
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (plugin.getTwitchBot().getDisabledUsers().contains(player.getUniqueId().toString())) continue;
 
-            devCraftChatHandler.handlChat(sender,message);
-
-            Colorizer.sendMessage(player, ChatColor.of("#6441A5") + "<twitch> " +
-                    dataManager.getConfig().getString(dataManager.USER_COLOR_PATH, "&r")+ sender.getDisplayName() + "&r: " +
-                    message.getContent());
-        }
+                Colorizer.sendMessage(player, ChatColor.of("#6441A5") + "<twitch> " +
+                        dataManager.getConfig().getString(dataManager.USER_COLOR_PATH, "&r") + sender.getDisplayName() + "&r: " +
+                        message.getContent());
+            }
+        });
     }
 
     @Override
